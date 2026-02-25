@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<waves>
+
+    <wave id="1">
+        <enemyCount>10</enemyCount>
+        <spawnInterval>0.3</spawnInterval>
+        <health>100</health>
+        <speed>1000</speed>
+        <money>10</money>
+        <attack>5</attack>
+    </wave>
+
+    <wave id="2">
+        <enemyCount>15</enemyCount>
+        <spawnInterval>0.3</spawnInterval>
+        <health>150</health>
+        <speed>1400</speed>
+        <money>15</money>
+        <attack>7</attack>
+    </wave>
+
+</waves>
