@@ -15,18 +15,18 @@ public class Tower {
         this.speed = speed;
     }
 
-    private void setGoal() {
+    private void setGoalEnemy() {
         cb.setItems(FXCollections.observableArrayList("erster", "letzter", "starkster", "schnellster"));
 
         if (cb.getSelectionModel().getSelectedItem().equals("erster")) {
             // brauche zuerst die Gegner-Klasse für die Funktion
             // setze Ziel auf den ersten
         } else if (cb.getSelectionModel().getSelectedItem().equals("letzter")) {
-            // setze Ziel auf den letzten
+
         } else if (cb.getSelectionModel().getSelectedItem().equals("staerkster")) {
-            // setze Ziel auf den stärksten
+
         } else {
-            // setze Ziel auf den schnellsten
+
         }
     }
 }
