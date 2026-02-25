@@ -1,11 +1,21 @@
 package org.example.towerdefense;
 
+import javafx.geometry.Point2D;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Circle;
+
 public class Enemy {
     private float health;
     private float speed;
     private int moneyDropped;
     private float attackOutput;
     private boolean lifeStatus=true;
+    private double distance = 0;
+    private boolean finished = false;
+    // for debugging ->
+    private final Circle circle = new Circle(20);
+
+    public boolean getFinished(){return finished;}
     public float getHealth() {
         return health;
     }
@@ -24,6 +34,30 @@ public class Enemy {
     public void setMoneyDropped(int moneyDropped) {
         this.moneyDropped = moneyDropped;
     }
+
+    public void update(double dt, GamePath path){
+        if (!lifeStatus || finished){ return; }
+
+        distance += dt * speed;
+        if(distance >= path.getTotalLeanght()){
+            distance = path.getTotalLeanght();
+            finished = true;
+        }
+
+        Point2D point = path.getPointAt(distance);
+        circle.setCenterX(point.getX());
+        circle.setCenterY(point.getY());
+
+    }
+
+    public Circle getView(){
+        return circle;
+    }
+
+    public void destroy(AnchorPane root) {
+        root.getChildren().remove(circle);
+    }
+
     public void damageTaken(float damage){
         setHealth(getHealth() - damage);
         if(getHealth()<=0){
@@ -35,6 +69,9 @@ public class Enemy {
         setSpeed(speed);
         setMoneyDropped(moneyDropped);
         setAttackOutput(attackOutput);
+
+        circle.setCenterX(0);
+        circle.setCenterY(0);
     }
 
     public float getAttackOutput() {
