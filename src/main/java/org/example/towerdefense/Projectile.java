@@ -1,36 +1,61 @@
 package org.example.towerdefense;
 
-public class Projectile {
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
+public class Projectile {
     private double x, y;
     private double speed;
     private Enemy target;
+    private boolean active = true;
+    private final double damage = 10.0;
+
+    private final Circle view = new Circle(5, Color.RED);
 
     public Projectile(double x, double y, double speed, Enemy target) {
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.target = target;
+        updateView();
     }
 
-    public void move() {
+    public void update(double dt) {
+// if projectile is not active or target is dead, stop
+        if (!active || target == null || target.isDead()) {
+            active = false;
+            return;
+        }
 
-        if (target == null) return; // No existing Target.Do nothing
+        // get target's current position
+        double targetX = target.getView().getCenterX();
+        double targetY = target.getView().getCenterY();
 
-        double dx = target.getX() - x; // vector from projectile to target on the x-axis
-        double dy = target.getY() - y; // vector from projectile to target on the y-axis
+        // calculate direction to target
+        double dx = targetX - x;
+        double dy = targetY - y;
+        double distance = Math.sqrt(dx * dx + dy * dy);
 
-        double length = Math.sqrt(dx * dx + dy * dy); // Distance between projectile and target
+// if close enough to hit, deal damage and deactivate
+        if (distance < speed * dt + 5) {
+            target.damageTaken((float) damage);
+            active = false;
+            return;
+        }
 
-        if (length == 0) return; // Projectile is on enemy
+        // move projectile towards target
+        x += (dx / distance) * speed * dt;
+        y += (dy / distance) * speed * dt;
 
-        double dirX = dx / length; // Normalize the vector
-        double dirY = dy / length;
-
-        x += dirX * speed; //movement per frame
-        y += dirY * speed;
+        updateView();
     }
 
-    public double getX() { return x; }
-    public double getY() { return y; }
+    private void updateView() {
+        view.setCenterX(x);
+        view.setCenterY(y);
+    }
+
+    public Circle getView() { return view; }
+    public boolean isActive() { return active; }
+    public Enemy getTarget() { return target; }
 }

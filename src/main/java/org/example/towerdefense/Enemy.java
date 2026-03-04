@@ -19,6 +19,10 @@ public class Enemy {
     public float getHealth() {
         return health;
     }
+    public boolean isDead() {
+        return !lifeStatus; // true, wenn lifeStatus false ist → Gegner tot
+    }
+
     public float getSpeed() {
         return speed;
     }
