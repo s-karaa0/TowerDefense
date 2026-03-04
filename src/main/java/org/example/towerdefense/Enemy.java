@@ -9,6 +9,7 @@ public class Enemy {
     private float speed;
     private int moneyDropped;
     private float attackOutput;
+    private int id = 0;
     private boolean lifeStatus=true;
     private double distance = 0;
     private boolean finished = false;
@@ -64,11 +65,12 @@ public class Enemy {
             setLifeStatus(false);
         }
     }
-    public Enemy(float health, float speed, int moneyDropped, float attackOutput) {
+    public Enemy(float health, float speed, int moneyDropped, float attackOutput, int id) {
         setHealth(health);
         setSpeed(speed);
         setMoneyDropped(moneyDropped);
         setAttackOutput(attackOutput);
+        setId(id);
 
         circle.setCenterX(0);
         circle.setCenterY(0);
@@ -84,5 +86,13 @@ public class Enemy {
 
     public void setLifeStatus(boolean lifeStatus) {
         this.lifeStatus = lifeStatus;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public double getDistance() {
+        return distance;
     }
 }

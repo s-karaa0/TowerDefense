@@ -1,5 +1,7 @@
 package org.example.towerdefense;
 
+import java.util.List;
+
 public class Wave {
 
     private final int enemyCount;
@@ -8,6 +10,7 @@ public class Wave {
     private final float speed;
     private final int money;
     private final float attack;
+    private int enemyId = 0;
 
     private enum WaveState {
         SPAWNING,
@@ -33,4 +36,7 @@ public class Wave {
     public float getSpeed() { return speed; }
     public int getMoney() { return money; }
     public float getAttack() { return attack; }
+    public int getEnemyId() {
+        return enemyId;
+    }
 }

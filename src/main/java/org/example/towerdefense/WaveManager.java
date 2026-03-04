@@ -12,6 +12,7 @@ public class WaveManager {
 
     private int spawned = 0;
     private double spawnTimer = 0;
+    private int enemyId = 0;
 
     public WaveManager(Game game, List<Wave> waves) {
         this.game = game;
@@ -61,9 +62,15 @@ public class WaveManager {
                 currentWave.getHealth(),
                 currentWave.getSpeed(),
                 currentWave.getMoney(),
-                currentWave.getAttack()
+                currentWave.getAttack(),
+                getEnemyId()
         );
         game.addEnemy(enemy);
         System.out.println("enemy added");
+    }
+
+    public int getEnemyId() {
+        ++enemyId;
+        return enemyId;
     }
 }

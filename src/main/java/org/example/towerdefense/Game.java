@@ -1,6 +1,7 @@
 package org.example.towerdefense;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.layout.AnchorPane;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.function.Consumer;
 public class Game {
     private final List<Enemy> enemies = new ArrayList<>();
     private final GamePath path;
+    private final List<Tower> towers = new ArrayList<>();
 
     private List<Enemy> removedEnemies = new ArrayList<>();
 
@@ -47,6 +49,14 @@ public class Game {
         }
 
         enemies.removeIf(e -> e.getHealth() <= 0 || e.getFinished());
+
+        for (Tower t : towers) {
+            t.update(dt);
+        }
+    }
+
+    public void addTower(Tower t) {
+        towers.add(t);
     }
 
 
