@@ -5,14 +5,18 @@ import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-
+import java.awt.*;
 import java.util.List;
+import java.util.Objects;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class HelloController {
     private final AnchorPane root = new AnchorPane();
 
     private Game game;
     private Gameloop loop;
+    private Image shopImage;
 
     private int lastEnemyCount = 0;
 
@@ -111,6 +115,50 @@ public class HelloController {
 
             }
         };
+
+        createShop();
+    }
+
+    public void createShop() {
+        shopImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/pictures/Screenshot.png")));
+
+        ImageView shopTower = new ImageView(shopImage);
+
+        shopTower.setFitWidth(64);
+        shopTower.setFitHeight(64);
+
+        shopTower.setLayoutX(20);
+        shopTower.setLayoutY(720);
+
+        root.getChildren().add(shopTower);
+
+        shopTower.setOnMousePressed(event -> {
+
+            // neuen Tower erstellen
+            Tower tower = new Tower(10,  game);
+
+            game.addTower(tower);
+
+            ImageView view = tower.getView();
+
+            view.setLayoutX(event.getSceneX() - 32);
+            view.setLayoutY(event.getSceneY() - 32);
+
+            root.getChildren().add(view);
+
+            // Drag
+            view.setOnMouseDragged(e -> {
+                view.setLayoutX(e.getSceneX() - 32);
+                view.setLayoutY(e.getSceneY() - 32);
+            });
+
+            // Drop
+            view.setOnMouseReleased(e -> {
+                System.out.println("placed Tower: "
+                        + view.getLayoutX() + " / "
+                        + view.getLayoutY());
+            });
+        });
     }
 
     public Parent getRoot() {
