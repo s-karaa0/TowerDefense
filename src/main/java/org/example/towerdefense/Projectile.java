@@ -10,7 +10,7 @@ public class Projectile {
     private boolean active = true;
     private final double damage = 10.0;
 
-    private final Circle view = new Circle(5, Color.RED);
+    private final Circle view = new Circle(10, Color.RED);
 
     public Projectile(double x, double y, double speed, Enemy target) {
         this.x = x;
@@ -36,7 +36,7 @@ public class Projectile {
         double dy = targetY - y;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-// if close enough to hit, deal damage and deactivate
+        // if close enough to hit, deal damage and deactivate
         if (distance < speed * dt + 5) {
             target.damageTaken((float) damage);
             active = false;
