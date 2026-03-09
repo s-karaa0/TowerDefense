@@ -1,10 +1,12 @@
 package org.example.towerdefense;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.AnchorPane;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class Game {

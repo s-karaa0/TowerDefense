@@ -1,8 +1,12 @@
 package org.example.towerdefense;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import java.awt.*;
@@ -17,12 +21,13 @@ public class HelloController {
     private Game game;
     private Gameloop loop;
     private Image shopImage;
-
+    ChoiceBox<Object> cb = new ChoiceBox<>();
     private int lastEnemyCount = 0;
 
     private int i = 0;
 
     public HelloController() {
+        cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
 
         // Path
         List<GamePath.BezierSegment> segments = List.of(
@@ -120,7 +125,7 @@ public class HelloController {
     }
 
     public void createShop() {
-        shopImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/pictures/Screenshot.png")));
+        shopImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
 
         ImageView shopTower = new ImageView(shopImage);
 
@@ -140,6 +145,25 @@ public class HelloController {
             game.addTower(tower);
 
             ImageView view = tower.getView();
+
+            ChoiceBox<String> cb = new ChoiceBox<>();
+            cb.setItems(FXCollections.observableArrayList(
+                    "erster",
+                    "letzter",
+                    "staerkster",
+                    "schnellster"
+            ));
+
+            ContextMenu contextMenu = new ContextMenu();
+            CustomMenuItem choiceItem = new CustomMenuItem(cb);
+            choiceItem.setHideOnClick(false);
+
+            contextMenu.getItems().add(choiceItem);
+
+            view.setOnContextMenuRequested(e ->
+                    contextMenu.show(view, e.getScreenX(), e.getScreenY())
+            );
+
 
             view.setLayoutX(event.getSceneX() - 32);
             view.setLayoutY(event.getSceneY() - 32);
