@@ -27,7 +27,7 @@ public class Tower {
         // Choice-Box wird nur einmal erstellt/befüllt
         cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
 
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/pictures/Screenshot.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
         imageView = new ImageView(image);
 
         imageView.setFitWidth(64);
