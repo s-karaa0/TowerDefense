@@ -22,7 +22,7 @@ public class Projectile {
 
     public void update(double dt) {
 // if projectile is not active or target is dead, stop
-        if (!active || target == null || target.isDead()) {
+        if (!active || target == null || !target.getLifeStatus()) {
             active = false;
             return;
         }

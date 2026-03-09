@@ -4,16 +4,25 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+
+import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.awt.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 public class HelloController {
     private final AnchorPane root = new AnchorPane();
@@ -23,6 +32,13 @@ public class HelloController {
     private Image shopImage;
     ChoiceBox<Object> cb = new ChoiceBox<>();
     private int lastEnemyCount = 0;
+
+    private final Button stopButton = new Button("Stop");
+    private final Button resumeButton = new Button("Resume");
+    private final Button restartButton = new Button("Restart");
+    private final HBox hBox = new HBox();
+
+    private HashSet<Enemy> enemyHashSet = new HashSet<>();
 
     private int i = 0;
 
@@ -75,10 +91,12 @@ public class HelloController {
                 )
         );
 
-        GamePath path = new GamePath(segments, 80);
+        GamePath path = new GamePath(segments, 320);
 
         // Game
         game = new Game(path);
+        createShop();
+        root.setOnMouseClicked(game::handleMouseClicked);
 
         // XML
         List<Wave> waves = WaveLoader.loadWaves();
@@ -88,46 +106,75 @@ public class HelloController {
         WaveManager waveManager = new WaveManager(game, waves);
         waveManager.startNextWave();
 
+        // FXML \ Graphics
+
+        stopButton.setOnAction(e -> {loop.pause();});
+        resumeButton.setOnAction(e -> {loop.resume();});
+        restartButton.setOnAction(e -> {
+            loop.stop();
+            deleteAllEnemies();
+            i = 0;
+            game.resetEnemies();
+            waveManager.resetAllWaves();
+            waveManager.startNextWave();
+            loop.start();
+            loop.resume();
+        });
+
+        hBox.getChildren().addAll(stopButton, resumeButton, restartButton);
+        root.getChildren().add(hBox);
+
         // Looop
         loop = new Gameloop(game, waveManager) {
             @Override
             public void handle(long now) {
                 super.handle(now);
+                sync();
 
-                List<Enemy> removed = game.getRemovedEnemies();
-
-                // add enemies
-                if (game.getEnemies().size() > lastEnemyCount) {
-                    for (int i = lastEnemyCount; i < game.getEnemies().size(); i++) {
-                        root.getChildren().add(game.getEnemies().get(i).getView());
-                    }
-                    lastEnemyCount = game.getEnemies().size();
-                }
-
-                // remove enemies
-                if(!removed.isEmpty()) {
-                    for (Enemy e : removed){
-                        root.getChildren().remove(e.getView());
-                        e.destroy(root);
-                        System.out.println(removed.size() + "|" + game.getRemovedEnemies().size() + "|" + game.getEnemies().size());
-                        i++;
-                        System.out.println("iterations: " + i);
-                    }
-                }
-
-                game.resetRemovedEnemies();
-                removed.clear();
 
             }
         };
+    }
 
-        createShop();
+
+
+    public void sync(){
+
+        // add enemies, to the Set
+        for (Enemy e : game.getEnemies()) {
+            if (!enemyHashSet.contains(e)){
+                root.getChildren().add(e.getView());
+                enemyHashSet.add(e);
+                i++;
+                System.out.println("enemy " + i + " added");
+                if (i == 5 || i == 10){
+                    loop.pause();
+                }
+            }
+        }
+
+        // rm enemies, via thei Set
+        enemyHashSet.removeIf(e -> {
+            if (!game.getEnemies().contains(e)){
+                root.getChildren().remove(e.getView());
+                return true;
+            }
+            return false;
+        });
+    }
+
+    public void deleteAllEnemies(){
+        for (Enemy e: game.getEnemies()){
+            root.getChildren().remove(e.getView());
+            e.destroy(root);
+        }
     }
 
     public void createShop() {
         shopImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
 
         ImageView shopTower = new ImageView(shopImage);
+
 
         shopTower.setFitWidth(64);
         shopTower.setFitHeight(64);

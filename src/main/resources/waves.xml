@@ -3,7 +3,7 @@
 
     <wave id="1">
         <enemyCount>10</enemyCount>
-        <spawnInterval>0.3</spawnInterval>
+        <spawnInterval>0.07</spawnInterval>
         <health>100</health>
         <speed>1000</speed>
         <money>10</money>
@@ -11,12 +11,30 @@
     </wave>
 
     <wave id="2">
-        <enemyCount>15</enemyCount>
+        <enemyCount>5</enemyCount>
+        <spawnInterval>1</spawnInterval>
+        <health>150</health>
+        <speed>900</speed>
+        <money>15</money>
+        <attack>7</attack>
+    </wave>
+
+    <wave id="3">
+        <enemyCount>10</enemyCount>
         <spawnInterval>0.3</spawnInterval>
         <health>150</health>
         <speed>1400</speed>
         <money>15</money>
         <attack>7</attack>
+    </wave>
+
+    <wave id="4">
+        <enemyCount>25</enemyCount>
+        <spawnInterval>0.009</spawnInterval>
+        <health>300</health>
+        <speed>800</speed>
+        <money>60</money>
+        <attack>9</attack>
     </wave>
 
 </waves>

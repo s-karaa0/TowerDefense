@@ -6,9 +6,9 @@ public class WaveManager {
     private final Game game;
     private final List<Wave> waves;
 
-    private int currentWaveIndex = -1;
+    private int WaveIndex = -1;
     private Wave currentWave;
-    private boolean waveActive = false;
+    private boolean endOfAllWaves = false;
 
     private int spawned = 0;
     private double spawnTimer = 0;
@@ -20,41 +20,47 @@ public class WaveManager {
     }
 
     public void startNextWave() {
-        currentWaveIndex++;
+        WaveIndex++;
 
-        if (currentWaveIndex >= waves.size()) {
+        // if the Index of the next wave >= the list of all Waves
+        if (WaveIndex >= waves.size()) {
             System.out.println("All waves finished");
+            endOfAllWaves = true;
             return;
         }
 
-        currentWave = waves.get(currentWaveIndex);
+        currentWave = waves.get(WaveIndex);
         spawned = 0;
         spawnTimer = 0;
-        waveActive = true;
 
-        System.out.println("Starting wave " + (currentWaveIndex + 1));
+        System.out.println("Starting wave " + (WaveIndex + 1));
     }
 
     public void update(double dt) {
-        if (currentWave == null) return;
-        if(waveActive) {
+        if(currentWave != null  && !endOfAllWaves) {
             spawnTimer += dt;
 
             while ((spawnTimer >= currentWave.getSpawnInterval()
-                    && spawned < currentWave.getEnemyCount()) && waveActive) {
-
+                    && spawned < currentWave.getEnemyCount())) {
                 spawnTimer -= currentWave.getSpawnInterval();
                 spawnEnemy();
                 spawned++;
             }
 
-            if (spawned >= currentWave.getEnemyCount()
-                    && game.getEnemies().isEmpty()) {
-                waveActive = false;
+            if (spawned >= currentWave.getEnemyCount() && game.isEmpty())  {
                 System.out.println("end of wave");
-            }
+                System.out.println("-------");
+                System.out.println(" ");
 
+                // here the next wave is called. If all waves are over -> endOfAllWaves negates this ones "parent" if
+                startNextWave();
+            }
         }
+    }
+
+    public void resetAllWaves() {
+        WaveIndex = -1;
+        endOfAllWaves = false;
     }
 
     private void spawnEnemy() {
@@ -66,7 +72,6 @@ public class WaveManager {
                 getEnemyId()
         );
         game.addEnemy(enemy);
-        System.out.println("enemy added");
     }
 
     public int getEnemyId() {

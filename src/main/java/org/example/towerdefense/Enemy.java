@@ -1,6 +1,8 @@
 package org.example.towerdefense;
 
 import javafx.geometry.Point2D;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 
@@ -20,10 +22,6 @@ public class Enemy {
     public float getHealth() {
         return health;
     }
-    public boolean isDead() {
-        return !lifeStatus; // true, wenn lifeStatus false ist → Gegner tot
-    }
-
     public float getSpeed() {
         return speed;
     }
@@ -52,7 +50,6 @@ public class Enemy {
         Point2D point = path.getPointAt(distance);
         circle.setCenterX(point.getX());
         circle.setCenterY(point.getY());
-
     }
 
     public Circle getView(){
@@ -80,6 +77,8 @@ public class Enemy {
         circle.setCenterY(0);
     }
 
+
+
     public float getAttackOutput() {
         return attackOutput;
     }
@@ -90,6 +89,10 @@ public class Enemy {
 
     public void setLifeStatus(boolean lifeStatus) {
         this.lifeStatus = lifeStatus;
+    }
+
+    public boolean getLifeStatus() {
+        return lifeStatus;
     }
 
     public void setId(int id) {
