@@ -19,6 +19,7 @@ public class Tower {
     private Game game;
     private Enemy target;
     private double attackTimer = 0;
+    private static final double ATTACK_COOLDOWN = 1.0;
 
     public Tower(int damage, Game game) {
         this.damage = damage;
@@ -43,20 +44,17 @@ public class Tower {
         }
 
         String mode = (String) cb.getSelectionModel().getSelectedItem();
-        if (mode == null) {
-            return;
-        }
+        if (mode == null) return;
 
-        for (Enemy e : enemies) {
-            if (mode.equals("erster") && e.getDistance() > target.getDistance()) {
-                target = e;
-            } else if (mode.equals("letzter") && e.getDistance() > target.getDistance()) {
-                target = e;
-            } else if (mode.equals("staerkster") && e.getDistance() > target.getDistance()) {
-                target = e;
-            } else if (mode.equals("schnellster") && e.getDistance() > target.getDistance()) {
-                target = e;
-            }
+        switch (mode) {
+            case "erster" -> target = enemies.stream()
+                    .max(Comparator.comparingDouble(Enemy::getDistance)).orElse(null);
+            case "letzter" -> target = enemies.stream()
+                    .min(Comparator.comparingDouble(Enemy::getDistance)).orElse(null);
+            case "staerkster" -> target = enemies.stream()
+                    .max(Comparator.comparingDouble(e -> e.getHealth())).orElse(null);
+            case "schnellster" -> target = enemies.stream()
+                    .max(Comparator.comparingDouble(e -> e.getSpeed())).orElse(null);
         }
 
 
@@ -68,12 +66,7 @@ public class Tower {
 
     public void update(double dt) {
         attackTimer += dt;
-
         setGoal();
-
-        if (target != null) {
-            target.damageTaken(damage);
-        }
     }
 
 }
