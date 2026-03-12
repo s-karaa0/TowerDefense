@@ -1,10 +1,9 @@
 package org.example.towerdefense;
 
 import javafx.geometry.Point2D;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
+import org.example.towerdefense.Path.GamePath;
 
 public class Enemy {
     private float health;

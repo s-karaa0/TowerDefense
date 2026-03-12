@@ -1,4 +1,4 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Path;
 
 
 import javafx.geometry.Point2D;
