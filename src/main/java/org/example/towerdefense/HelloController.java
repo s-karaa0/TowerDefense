@@ -1,35 +1,27 @@
 package org.example.towerdefense;
 
 import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
-import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 
 public class HelloController {
     private final AnchorPane root = new AnchorPane();
 
     private Game game;
     private Gameloop loop;
-    private Image shopImage;
+    private Image towerImage;
     ChoiceBox<Object> cb = new ChoiceBox<>();
     private int lastEnemyCount = 0;
 
@@ -39,6 +31,11 @@ public class HelloController {
     private final HBox hBox = new HBox();
 
     private HashSet<Enemy> enemyHashSet = new HashSet<>();
+    private List<Point2D> buildSpots = List.of(
+            new Point2D(200, 300),
+            new Point2D(400, 250),
+            new Point2D(600, 450),
+            new Point2D(800, 300));
 
     private int i = 0;
 
@@ -96,6 +93,20 @@ public class HelloController {
         // Game
         game = new Game(path);
         createShop();
+
+        for (Point2D p : buildSpots) {
+            ImageView spot = new ImageView(towerImage);
+
+            spot.setFitWidth(64);
+            spot.setFitHeight(64);
+            spot.setOpacity(0.1);
+
+            spot.setLayoutX(400);
+            spot.setLayoutX(200);
+
+            root.getChildren().add(spot);
+        }
+
         root.setOnMouseClicked(game::handleMouseClicked);
 
         // XML
@@ -171,9 +182,9 @@ public class HelloController {
     }
 
     public void createShop() {
-        shopImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
+        towerImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
 
-        ImageView shopTower = new ImageView(shopImage);
+        ImageView shopTower = new ImageView(towerImage);
 
 
         shopTower.setFitWidth(64);
@@ -184,13 +195,11 @@ public class HelloController {
 
         root.getChildren().add(shopTower);
 
-        shopTower.setOnMousePressed(event -> {
+        shopTower.setOnMouseClicked(event -> {
 
             // neuen Tower erstellen
             Tower tower = new Tower(10,  game);
-
             game.addTower(tower);
-
             ImageView view = tower.getView();
 
             ChoiceBox<String> cb = new ChoiceBox<>();
@@ -216,6 +225,14 @@ public class HelloController {
             view.setLayoutY(event.getSceneY() - 32);
 
             root.getChildren().add(view);
+
+            root.setOnMouseMoved(e -> {
+                view.setLayoutX(e.getSceneX() - 32);
+                view.setLayoutY(e.getSceneY() - 32);
+            });
+
+            view.setLayoutX(event.getSceneX() - 32);
+            view.setLayoutY(event.getSceneY() - 32);
 
             // Drag
             view.setOnMouseDragged(e -> {
