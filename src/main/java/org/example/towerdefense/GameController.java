@@ -10,6 +10,7 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -23,13 +24,11 @@ import org.example.towerdefense.Wave.WaveManager;
 public class GameController {
     private final AnchorPane root = new AnchorPane();
     private final GameApplication  gameApp = new GameApplication();
-
     private Game game;
     private Gameloop loop;
     private Image towerImage;
     ChoiceBox<Object> cb = new ChoiceBox<>();
     private int lastEnemyCount = 0;
-
     private final Button stopButton = new Button("Stop");
     private final Button resumeButton = new Button("Resume");
     private final Button restartButton = new Button("Restart");
@@ -41,8 +40,8 @@ public class GameController {
             new Point2D(400, 250),
             new Point2D(600, 450),
             new Point2D(800, 300));
-
     private int i = 0;
+    private HashSet<Point2D> usedSpots = new HashSet<>();
 
     public GameController() {
         cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
@@ -106,8 +105,8 @@ public class GameController {
             spot.setFitHeight(64);
             spot.setOpacity(0.1);
 
-            spot.setLayoutX(400);
-            spot.setLayoutX(200);
+            spot.setLayoutX(p.getX() - 32);
+            spot.setLayoutY(p.getY() - 32);
 
             root.getChildren().add(spot);
         }
@@ -226,14 +225,14 @@ public class GameController {
                     contextMenu.show(view, e.getScreenX(), e.getScreenY())
             );
 
-            view.setLayoutX(event.getSceneX() - 32);
-            view.setLayoutY(event.getSceneY() - 32);
+            view.setLayoutX(event.getX() - 32);
+            view.setLayoutY(event.getY() - 32);
 
             root.getChildren().add(view);
 
             root.setOnMouseMoved(e -> {
-                view.setLayoutX(e.getSceneX() - 32);
-                view.setLayoutY(e.getSceneY() - 32);
+                view.setLayoutX(e.getX() - 32);
+                view.setLayoutY(e.getY() - 32);
             });
 
             view.setLayoutX(event.getSceneX() - 32);
@@ -247,9 +246,45 @@ public class GameController {
 
             // Drop
             view.setOnMouseReleased(e -> {
-                System.out.println("placed Tower: "
-                        + view.getLayoutX() + " / "
-                        + view.getLayoutY());
+                Point2D towerCenter = new Point2D(
+                        view.getLayoutX() + 32,
+                        view.getLayoutY() + 32
+                );
+
+                Point2D closestSpot = null;
+                double closestDistance = Double.MAX_VALUE;
+
+                for (Point2D spot : buildSpots) {
+
+                    double distance = towerCenter.distance(spot);
+
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestSpot = spot;
+                    }
+                }
+
+                if (closestSpot != null && closestDistance < 50 && !usedSpots.contains(closestSpot)) {
+
+                    view.setLayoutX(closestSpot.getX() - 32);
+                    view.setLayoutY(closestSpot.getY() - 32);
+
+                    usedSpots.add(closestSpot);
+                    view.setImage(towerImage);
+
+                    System.out.println("Tower placed");
+                    root.setOnMouseMoved(null);
+                    view.setOnMouseDragged(null);
+
+                } else {
+                    System.out.println("Invalid placement");
+                }
+
+
+
+                /**System.out.println("placed Tower: "
+                 + view.getLayoutX() + " / "
+                 + view.getLayoutY());**/
             });
         });
     }
