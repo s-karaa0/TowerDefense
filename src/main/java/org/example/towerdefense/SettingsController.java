@@ -1,6 +1,7 @@
 package org.example.towerdefense;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,36 +9,46 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class SettingsController {
 
     private final AnchorPane root = new AnchorPane();
+    private GameApplication gameApp;
+    @FXML
     public Button closeButton;
+    @FXML
+    public Button continueButton;
 
-    public Parent getRoot() {
-        return root;
+    public void setApplication(GameApplication gameApp) {
+        this.gameApp = gameApp;
+        if(gameApp != null && gameApp.isStartState()) {
+            continueButton.setDisable(true);
+            continueButton.setVisible(false);
+        } else {
+            continueButton.setDisable(false);
+            continueButton.setVisible(true);
+        }
     }
 
-    public void start() {
-        start();
-    }
     public void onMusicButtonClicked(ActionEvent actionEvent) {
     }
 
     public void onSaveClicked(ActionEvent actionEvent) {
     }
 
-    public void onContinueClicked(ActionEvent actionEvent) {
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        HelloController controller = new HelloController();
-        Scene scene = new Scene(controller.getRoot(), 1000, 800);
-        stage.setScene(scene);
-        stage.setTitle("Tower Defense Game");
-        stage.show();
-        controller.start();
+    public void onContinueClicked(ActionEvent actionEvent) throws IOException {
+        gameApp.switchScene("game", "game");
+        gameApp.resumeGame();
+        Stage stage = (Stage) continueButton.getScene().getWindow();
+        stage.close();
+
     }
 
-    public void onExitClicked(ActionEvent actionEvent) {
-        Stage stage=(Stage) closeButton.getScene().getWindow();
+    public void onExitClicked(ActionEvent actionEvent) throws IOException {
+        gameApp.switchScene("/start-game-view.fxml", "start");
+        Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
+
     }
 }

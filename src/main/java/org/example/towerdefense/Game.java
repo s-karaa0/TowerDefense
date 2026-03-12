@@ -1,16 +1,12 @@
 package org.example.towerdefense;
 
-import javafx.animation.AnimationTimer;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.layout.AnchorPane;
+import org.example.towerdefense.Path.GamePath;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 public class Game {
     private final List<Enemy> enemies = new ArrayList<>();

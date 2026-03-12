@@ -1,31 +1,29 @@
 package org.example.towerdefense;
 
 import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
-import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.awt.*;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import org.example.towerdefense.Path.GamePath;
+import org.example.towerdefense.Wave.Wave;
+import org.example.towerdefense.Wave.WaveLoader;
+import org.example.towerdefense.Wave.WaveManager;
 
-public class HelloController {
+public class GameController {
     private final AnchorPane root = new AnchorPane();
+    private final GameApplication  gameApp = new GameApplication();
 
     private Game game;
     private Gameloop loop;
@@ -42,7 +40,7 @@ public class HelloController {
 
     private int i = 0;
 
-    public HelloController() {
+    public GameController() {
         cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
 
         // Path
@@ -91,7 +89,7 @@ public class HelloController {
                 )
         );
 
-        GamePath path = new GamePath(segments, 320);
+        GamePath path = new GamePath( segments,320);
 
         // Game
         game = new Game(path);
@@ -106,9 +104,15 @@ public class HelloController {
         WaveManager waveManager = new WaveManager(game, waves);
         waveManager.startNextWave();
 
-        // FXML \ Graphics
-
-        stopButton.setOnAction(e -> {loop.pause();});
+        // FXML \ Buttons
+        stopButton.setOnAction(e -> {
+            loop.pause();
+            try {
+                gameApp.switchScene("/settings-view.fxml", "settings");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         resumeButton.setOnAction(e -> {loop.resume();});
         restartButton.setOnAction(e -> {
             loop.stop();
@@ -130,16 +134,11 @@ public class HelloController {
             public void handle(long now) {
                 super.handle(now);
                 sync();
-
-
             }
         };
     }
 
-
-
     public void sync(){
-
         // add enemies, to the Set
         for (Enemy e : game.getEnemies()) {
             if (!enemyHashSet.contains(e)){
@@ -147,13 +146,14 @@ public class HelloController {
                 enemyHashSet.add(e);
                 i++;
                 System.out.println("enemy " + i + " added");
+                // experimental
                 if (i == 5 || i == 10){
                     loop.pause();
                 }
             }
         }
 
-        // rm enemies, via thei Set
+        // rm enemies, via their Set
         enemyHashSet.removeIf(e -> {
             if (!game.getEnemies().contains(e)){
                 root.getChildren().remove(e.getView());
@@ -174,7 +174,6 @@ public class HelloController {
         shopImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
 
         ImageView shopTower = new ImageView(shopImage);
-
 
         shopTower.setFitWidth(64);
         shopTower.setFitHeight(64);
@@ -211,7 +210,6 @@ public class HelloController {
                     contextMenu.show(view, e.getScreenX(), e.getScreenY())
             );
 
-
             view.setLayoutX(event.getSceneX() - 32);
             view.setLayoutY(event.getSceneY() - 32);
 
@@ -236,7 +234,11 @@ public class HelloController {
         return root;
     }
 
-    public void start() {
-        loop.start();
+    public void stopLoop(){
+        loop.stop();
     }
+
+    public void startLoop() {loop.start();}
+
+    public void resumeLoop(){loop.resume();}
 }
