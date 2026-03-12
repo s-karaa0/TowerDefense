@@ -1,6 +1,4 @@
-package org.example.towerdefense;
-
-import java.util.List;
+package org.example.towerdefense.Wave;
 
 public class Wave {
 

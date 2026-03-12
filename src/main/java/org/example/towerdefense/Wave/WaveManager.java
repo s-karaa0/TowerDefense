@@ -1,4 +1,7 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Wave;
+
+import org.example.towerdefense.Enemy;
+import org.example.towerdefense.Game;
 
 import java.util.List;
 

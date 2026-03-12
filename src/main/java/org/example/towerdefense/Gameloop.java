@@ -1,6 +1,7 @@
 package org.example.towerdefense;
 
 import javafx.animation.AnimationTimer;
+import org.example.towerdefense.Wave.WaveManager;
 
 public class Gameloop extends AnimationTimer {
     private final Game game;
