@@ -32,6 +32,10 @@ public class GameController {
     private final Button stopButton = new Button("Stop");
     private final Button resumeButton = new Button("Resume");
     private final Button restartButton = new Button("Restart");
+    private final Button normalSpeedButton = new Button("1x");
+    private final Button doubleSpeedButton = new Button("2x");
+    private final Button quadroupleSpeedutton = new Button("4x");
+    private final Button nextWaveButton = new Button("skip");
     private final HBox hBox = new HBox();
 
     private HashSet<Enemy> enemyHashSet = new HashSet<>();
@@ -92,7 +96,7 @@ public class GameController {
                 )
         );
 
-        GamePath path = new GamePath( segments,320);
+        GamePath path = new GamePath( segments,10024);
 
         // Game
         game = new Game(path);
@@ -124,6 +128,7 @@ public class GameController {
         // FXML \ Buttons
         stopButton.setOnAction(e -> {
             loop.pause();
+            System.out.println("speed: " + loop.getSpeed());
             try {
                 gameApp.switchScene("/settings-view.fxml", "settings");
             } catch (IOException ex) {
@@ -142,8 +147,18 @@ public class GameController {
             loop.resume();
         });
 
-        hBox.getChildren().addAll(stopButton, resumeButton, restartButton);
+        // speedButtons to change GameLoop-Speed
+        normalSpeedButton.setOnAction(e -> {loop.setSpeed(1);});
+        doubleSpeedButton.setOnAction(e -> {loop.setSpeed(2);});
+        quadroupleSpeedutton.setOnAction(e -> {loop.setSpeed(4);});
+
+        nextWaveButton.setLayoutX(30);
+        nextWaveButton.setLayoutY(300);
+        nextWaveButton.setOnAction(e -> {});
+
+        hBox.getChildren().addAll(stopButton, resumeButton, restartButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedutton);
         root.getChildren().add(hBox);
+        root.getChildren().add(nextWaveButton);
 
         // Looop
         loop = new Gameloop(game, waveManager) {
@@ -162,11 +177,10 @@ public class GameController {
                 root.getChildren().add(e.getView());
                 enemyHashSet.add(e);
                 i++;
-                System.out.println("enemy " + i + " added");
-                // experimental
-                if (i == 5 || i == 10){
-                    loop.pause();
-                }
+
+                // experimental:
+                 System.out.println("enemy " + i + " added");
+                // if (i == 5 || i == 10){loop.pause();}
             }
         }
 
