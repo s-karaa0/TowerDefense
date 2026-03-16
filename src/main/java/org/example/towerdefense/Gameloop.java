@@ -8,6 +8,8 @@ public class Gameloop extends AnimationTimer {
     private final WaveManager waveManager;
     private long lastTime = 0;
     private boolean running = true;
+    private static final double step = 1.0 / 120.0; // simulation ticks
+    private double speed = 1.0; // 1x speed
 
     public Gameloop(Game game, WaveManager waveManager) {
         this.game = game;
@@ -23,6 +25,17 @@ public class Gameloop extends AnimationTimer {
         running = true;
     }
 
+    public void stop(){running = false;}
+
+    public void setSpeed(double speed){
+        this.speed = speed;
+    }
+
+    public double getSpeed(){
+        return this.speed;
+    }
+
+
     @Override
     public void handle(long now) {
         if (running) {
@@ -35,8 +48,13 @@ public class Gameloop extends AnimationTimer {
         double dt = (now - lastTime) / 1_000_000_000.0;
         lastTime = now;
 
-        game.update(dt);
-        waveManager.update(dt);
+        dt *= speed;
+
+        while(dt >= step) {
+            game.update(step);
+            waveManager.update(step);
+            dt -= step;
+        }
         }
     }
 }

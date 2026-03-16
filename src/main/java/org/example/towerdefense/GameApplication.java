@@ -42,7 +42,6 @@ public class GameApplication extends Application {
     }
 
     public void switchScene(String fxml, String layout) throws IOException {
-        System.out.println(getCurrentState());
         boolean x = gameController != null;
         try {
         switch (layout) {
@@ -63,8 +62,6 @@ public class GameApplication extends Application {
                 settingsStage.centerOnScreen();
                 settingsStage.show();
 
-                System.out.println("state: " + x);
-
                 break;
             }
 
@@ -79,8 +76,6 @@ public class GameApplication extends Application {
                 stage.setScene(scene);
                 stage.centerOnScreen();
                 isRunning = false;
-
-                System.out.println("state: " + x);
 
                 currentState = SceneState.start;
 
