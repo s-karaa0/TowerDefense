@@ -177,6 +177,11 @@ public class HelloController {
             e.destroy(root);
         }
     }
+/**
+ * Erstellt ein klickbares Shop-Item, das per Drag & Drop auf der Karte platziert werden kann.
+ * Ausgelagert aus createShop(), damit verschiedene Turmtypen ohne Code-Duplizierung
+ * hinzugefügt werden können – einfach createShop() erweitern.
+ */
     private void createShopItem(String imagePath, int x, int y, java.util.function.Supplier<Tower> towerFactory) {
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
         ImageView shopItem = new ImageView(img);
@@ -214,12 +219,11 @@ public class HelloController {
         });
     }
 
-
-
-
-
+    /**
+     * Befüllt den Shop mit platzierbaren Türmen.
+     * Für neuen Turmtyp: createShopItem(..., () -> new MeinTurm(damage, game)) hinzufügen.
+     */
     public void createShop() {
-
             createShopItem("/images/tower.png",     20, 720, () -> new Tower(10, game));
         createShopItem("/images/tower.png", 100, 720, () -> new FastTower(10, game));
 
