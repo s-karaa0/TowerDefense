@@ -8,15 +8,16 @@ public class Projectile {
     private double speed;
     private Enemy target;
     private boolean active = true;
-    private final double damage = 10.0;
+    private final double damage ;
 
     private final Circle view = new Circle(10, Color.RED);
 
-    public Projectile(double x, double y, double speed, Enemy target) {
+    public Projectile(double x, double y, double speed, Enemy target, double damage) {
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.target = target;
+        this.damage = damage;
         updateView();
     }
 

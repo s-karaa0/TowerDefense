@@ -72,6 +72,23 @@ public class Game {
     public void addTower(Tower t) {
         towers.add(t);
     }
+
+    public void spawnProjectile(Projectile p) {
+        projectiles.add(p);
+        if (onProjectileSpawned != null) {
+            onProjectileSpawned.accept(p);
+        }
+    }
+
+    private Consumer<Projectile> onProjectileSpawned; // Funktion die ein Projectile bekommt und etwas damit macht (kein Rückgabewert)
+
+    public void setOnProjectileSpawned(Consumer<Projectile> callback) {
+        this.onProjectileSpawned = callback;
+    }
+
+    public List<Projectile> getProjectiles() {
+        return projectiles;
+    }
 }
 
 

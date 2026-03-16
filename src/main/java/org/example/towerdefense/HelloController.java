@@ -95,6 +95,7 @@ public class HelloController {
 
         // Game
         game = new Game(path);
+        game.setOnProjectileSpawned(p -> root.getChildren().add(p.getView()));
         createShop();
         root.setOnMouseClicked(game::handleMouseClicked);
 
@@ -157,6 +158,13 @@ public class HelloController {
         enemyHashSet.removeIf(e -> {
             if (!game.getEnemies().contains(e)){
                 root.getChildren().remove(e.getView());
+                return true;
+            }
+            return false;
+        });
+        game.getProjectiles().removeIf(p -> {
+            if (!p.isActive()) {
+                root.getChildren().remove(p.getView());
                 return true;
             }
             return false;
