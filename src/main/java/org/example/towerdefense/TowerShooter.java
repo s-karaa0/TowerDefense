@@ -18,14 +18,16 @@ public class TowerShooter {
     private double attackTimer = 0;
     private final double attackCooldown;
     private final double range;
+    private final double projectileSpeed;
 
-    public TowerShooter(Game game, ImageView towerView, double damage, ChoiceBox<Object> cb, double attackCooldown, double range) {
+    public TowerShooter(Game game, ImageView towerView, double damage, ChoiceBox<Object> cb, double attackCooldown, double range,  double projectileSpeed) {
         this.game = game;
         this.towerView = towerView;
         this.damage = damage;
         this.cb = cb;
         this.attackCooldown = attackCooldown;
         this.range = range;
+        this.projectileSpeed = projectileSpeed;
     }
 
     public void update(double dt) {
@@ -58,7 +60,7 @@ public class TowerShooter {
     private void shoot() {
         double cx = towerView.getLayoutX() + 32;
         double cy = towerView.getLayoutY() + 32;
-        game.spawnProjectile(new Projectile(cx, cy, 300, target, damage));
+        game.spawnProjectile(new Projectile(cx, cy, projectileSpeed, target, damage));
     }
 
     private boolean isInRange(Enemy e) {

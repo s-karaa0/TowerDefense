@@ -177,67 +177,52 @@ public class HelloController {
             e.destroy(root);
         }
     }
+    private void createShopItem(String imagePath, int x, int y, java.util.function.Supplier<Tower> towerFactory) {
+        Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+        ImageView shopItem = new ImageView(img);
+        shopItem.setFitWidth(64);
+        shopItem.setFitHeight(64);
+        shopItem.setLayoutX(x);
+        shopItem.setLayoutY(y);
+        root.getChildren().add(shopItem);
 
-    public void createShop() {
-        shopImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
-
-        ImageView shopTower = new ImageView(shopImage);
-
-
-        shopTower.setFitWidth(64);
-        shopTower.setFitHeight(64);
-
-        shopTower.setLayoutX(20);
-        shopTower.setLayoutY(720);
-
-        root.getChildren().add(shopTower);
-
-        shopTower.setOnMousePressed(event -> {
-
-            // neuen Tower erstellen
-            Tower tower = new Tower(10,  game);
-
+        shopItem.setOnMousePressed(event -> {
+            Tower tower = towerFactory.get(); // FastTower oder Tower je nach Aufruf
             game.addTower(tower);
-
             ImageView view = tower.getView();
 
             ChoiceBox<String> cb = new ChoiceBox<>();
-            cb.setItems(FXCollections.observableArrayList(
-                    "erster",
-                    "letzter",
-                    "staerkster",
-                    "schnellster"
-            ));
-
+            cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
             ContextMenu contextMenu = new ContextMenu();
             CustomMenuItem choiceItem = new CustomMenuItem(cb);
             choiceItem.setHideOnClick(false);
-
             contextMenu.getItems().add(choiceItem);
-
-            view.setOnContextMenuRequested(e ->
-                    contextMenu.show(view, e.getScreenX(), e.getScreenY())
-            );
-
+            view.setOnContextMenuRequested(e -> contextMenu.show(view, e.getScreenX(), e.getScreenY()));
 
             view.setLayoutX(event.getSceneX() - 32);
             view.setLayoutY(event.getSceneY() - 32);
-
             root.getChildren().add(view);
 
-            // Drag
             view.setOnMouseDragged(e -> {
                 view.setLayoutX(e.getSceneX() - 32);
                 view.setLayoutY(e.getSceneY() - 32);
             });
 
-            // Drop
-            view.setOnMouseReleased(e -> {
-                System.out.println("placed Tower: "
-                        + view.getLayoutX() + " / "
-                        + view.getLayoutY());
-            });
+            view.setOnMouseReleased(e ->
+                    System.out.println("placed: " + view.getLayoutX() + " / " + view.getLayoutY())
+            );
         });
+    }
+
+
+
+
+
+    public void createShop() {
+
+            createShopItem("/images/tower.png",     20, 720, () -> new Tower(10, game));
+        createShopItem("/images/tower.png", 100, 720, () -> new FastTower(10, game));
+
     }
 
     public Parent getRoot() {

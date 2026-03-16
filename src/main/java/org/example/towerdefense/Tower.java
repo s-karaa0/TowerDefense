@@ -13,8 +13,8 @@ import java.util.Objects;
 public class Tower {
     private int damage;
     ChoiceBox<Object> cb = new ChoiceBox<>();
-    private ImageView imageView;
-    private Game game;
+    protected ImageView imageView;
+    protected Game game;
     protected TowerShooter shooter;
 
     public Tower(int damage, Game game) {
@@ -31,7 +31,7 @@ public class Tower {
     }
 
     protected TowerShooter createShooter(int damage) {
-        return new TowerShooter(game, imageView, damage, cb, 1.0, 150.0);
+        return new TowerShooter(game, imageView, damage, cb, 1.0, 150.0, 300);
     }
 
     public void update(double dt) {

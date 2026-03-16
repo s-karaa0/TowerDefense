@@ -14,7 +14,7 @@
         <enemyCount>5</enemyCount>
         <spawnInterval>1</spawnInterval>
         <health>150</health>
-        <speed>900</speed>
+        <speed>500</speed>
         <money>15</money>
         <attack>7</attack>
     </wave>
@@ -23,7 +23,7 @@
         <enemyCount>10</enemyCount>
         <spawnInterval>0.3</spawnInterval>
         <health>150</health>
-        <speed>1400</speed>
+        <speed>300</speed>
         <money>15</money>
         <attack>7</attack>
     </wave>
