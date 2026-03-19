@@ -1,4 +1,7 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Wave;
+
+import org.example.towerdefense.Enemy;
+import org.example.towerdefense.Game;
 
 import java.util.List;
 
@@ -17,6 +20,12 @@ public class WaveManager {
     public WaveManager(Game game, List<Wave> waves) {
         this.game = game;
         this.waves = waves;
+    }
+    public Wave getCurrentWave(){
+        return currentWave;
+    }
+    public void setCurrentWave(Wave wave){
+        wave=currentWave;
     }
 
     public void startNextWave() {

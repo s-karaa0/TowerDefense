@@ -24,7 +24,7 @@ import org.example.towerdefense.Wave.WaveManager;
 public class GameController {
     private final AnchorPane root = new AnchorPane();
     private final GameApplication  gameApp = new GameApplication();
-
+    private WaveManager waveManager;
     private Game game;
     private Gameloop loop;
     private Image shopImage;
@@ -39,7 +39,9 @@ public class GameController {
     private HashSet<Enemy> enemyHashSet = new HashSet<>();
 
     private int i = 0;
-
+    public WaveManager getWaveManager(){
+        return waveManager;
+    }
     public GameController() {
         cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
 
@@ -101,7 +103,7 @@ public class GameController {
         System.out.println("load waves: " + waves.size());
 
         // Wave manager
-        WaveManager waveManager = new WaveManager(game, waves);
+        waveManager = new WaveManager(game, waves);
         waveManager.startNextWave();
 
         // FXML \ Buttons

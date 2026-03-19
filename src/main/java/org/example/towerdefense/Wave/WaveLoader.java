@@ -1,6 +1,7 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Wave;
 
 import javax.xml.parsers.*;
+
 import org.w3c.dom.*;
 import java.io.InputStream;
 import java.util.ArrayList;
