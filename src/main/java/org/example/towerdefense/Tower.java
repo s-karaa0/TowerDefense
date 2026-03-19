@@ -5,8 +5,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +17,10 @@ public class Tower {
     private Game game;
     private Enemy target;
     private double attackTimer = 0;
+    private int height;
+    private int width;
+    private int x;
+    private int y;
 
     public Tower(int damage, Game game) {
         this.damage = damage;
@@ -32,6 +34,13 @@ public class Tower {
 
         imageView.setFitWidth(64);
         imageView.setFitHeight(64);
+    }
+
+    public Tower(int x, int y, int height, int width) {
+        this.x = x;
+        this.y = y;
+        this.height = height;
+        this.width = width;
     }
 
     public void setGoal() {
@@ -74,6 +83,12 @@ public class Tower {
         if (target != null) {
             target.damageTaken(damage);
         }
+    }
+
+
+    public boolean contains(int mouseX, int mouseY) {
+        return mouseX >= x && mouseX <= x + width &&
+                mouseY >= y && mouseY <= y + height;
     }
 
 }

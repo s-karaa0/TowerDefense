@@ -24,7 +24,7 @@ import org.example.towerdefense.Wave.WaveManager;
 public class GameController {
     private final AnchorPane root = new AnchorPane();
     private final GameApplication  gameApp = new GameApplication();
-    private WaveManager waveManager;
+
     private Game game;
     private Gameloop loop;
     private Image shopImage;
@@ -39,9 +39,7 @@ public class GameController {
     private HashSet<Enemy> enemyHashSet = new HashSet<>();
 
     private int i = 0;
-    public WaveManager getWaveManager(){
-        return waveManager;
-    }
+
     public GameController() {
         cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
 
@@ -91,11 +89,62 @@ public class GameController {
                 )
         );
 
-        GamePath path = new GamePath( segments,320);
+        GamePath path = new GamePath( segments,10024);
 
         // Game
         game = new Game(path);
         createShop();
+
+        for (Point2D p : buildSpots) {
+            ImageView spot = new ImageView(towerImage);
+
+            spot.setFitWidth(64);
+            spot.setFitHeight(64);
+            spot.setOpacity(0.1);
+
+            spot.setLayoutX(p.getX() - 32);
+            spot.setLayoutY(p.getY() - 32);
+
+            ChoiceBox<String> towerChoice = new ChoiceBox<>();
+            towerChoice.setItems(FXCollections.observableArrayList("Tower1", "Tower2", "Tower3"));
+
+            ContextMenu buildMenu = new ContextMenu();
+            CustomMenuItem towerItem = new CustomMenuItem(towerChoice);
+            towerItem.setHideOnClick(false);
+
+            buildMenu.getItems().add(towerItem);
+
+            spot.setOnContextMenuRequested(e ->
+                    buildMenu.show(spot, e.getScreenX(), e.getScreenY())
+            );
+
+            towerChoice.setOnAction(e -> {
+
+                String selected = towerChoice.getValue();
+
+                if (selected != null && !usedSpots.contains(p)) {
+
+                    Tower tower = new Tower(10, game);
+                    game.addTower(tower);
+
+                    ImageView view = tower.getView();
+
+                    view.setLayoutX(p.getX() - 32);
+                    view.setLayoutY(p.getY() - 32);
+
+                    root.getChildren().add(view);
+
+                    usedSpots.add(p);
+
+                    addTowerMenu(view);
+
+                    System.out.println("Tower gebaut: " + selected);
+                }
+            });
+
+            root.getChildren().add(spot);
+        }
+
         root.setOnMouseClicked(game::handleMouseClicked);
 
         // XML
@@ -103,12 +152,13 @@ public class GameController {
         System.out.println("load waves: " + waves.size());
 
         // Wave manager
-        waveManager = new WaveManager(game, waves);
+        WaveManager waveManager = new WaveManager(game, waves);
         waveManager.startNextWave();
 
         // FXML \ Buttons
         stopButton.setOnAction(e -> {
             loop.pause();
+            System.out.println("speed: " + loop.getSpeed());
             try {
                 gameApp.switchScene("/settings-view.fxml", "settings");
             } catch (IOException ex) {
@@ -127,8 +177,18 @@ public class GameController {
             loop.resume();
         });
 
-        hBox.getChildren().addAll(stopButton, resumeButton, restartButton);
+        // speedButtons to change GameLoop-Speed
+        normalSpeedButton.setOnAction(e -> {loop.setSpeed(1);});
+        doubleSpeedButton.setOnAction(e -> {loop.setSpeed(2);});
+        quadroupleSpeedutton.setOnAction(e -> {loop.setSpeed(4);});
+
+        nextWaveButton.setLayoutX(30);
+        nextWaveButton.setLayoutY(300);
+        nextWaveButton.setOnAction(e -> {});
+
+        hBox.getChildren().addAll(stopButton, resumeButton, restartButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedutton);
         root.getChildren().add(hBox);
+        root.getChildren().add(nextWaveButton);
 
         // Looop
         loop = new Gameloop(game, waveManager) {
@@ -147,11 +207,10 @@ public class GameController {
                 root.getChildren().add(e.getView());
                 enemyHashSet.add(e);
                 i++;
-                System.out.println("enemy " + i + " added");
-                // experimental
-                if (i == 5 || i == 10){
-                    loop.pause();
-                }
+
+                // experimental:
+                 System.out.println("enemy " + i + " added");
+                // if (i == 5 || i == 10){loop.pause();}
             }
         }
 
@@ -173,9 +232,9 @@ public class GameController {
     }
 
     public void createShop() {
-        shopImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
+        towerImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
 
-        ImageView shopTower = new ImageView(shopImage);
+        ImageView shopTower = new ImageView(towerImage);
 
         shopTower.setFitWidth(64);
         shopTower.setFitHeight(64);
@@ -183,53 +242,51 @@ public class GameController {
         shopTower.setLayoutX(20);
         shopTower.setLayoutY(720);
 
-        root.getChildren().add(shopTower);
-
-        shopTower.setOnMousePressed(event -> {
+        shopTower.setOnMouseClicked(event -> {
 
             // neuen Tower erstellen
             Tower tower = new Tower(10,  game);
-
             game.addTower(tower);
-
             ImageView view = tower.getView();
+            addTowerMenu(view);
 
-            ChoiceBox<String> cb = new ChoiceBox<>();
-            cb.setItems(FXCollections.observableArrayList(
-                    "erster",
-                    "letzter",
-                    "staerkster",
-                    "schnellster"
-            ));
+            ChoiceBox<String> towerOptions = new ChoiceBox<>();
+            ContextMenu towerMenu = new ContextMenu();
+            CustomMenuItem choiceMenu = new CustomMenuItem(towerOptions);
+            choiceMenu.setHideOnClick(false);
+            towerMenu.getItems().add(choiceMenu);
 
-            ContextMenu contextMenu = new ContextMenu();
-            CustomMenuItem choiceItem = new CustomMenuItem(cb);
-            choiceItem.setHideOnClick(false);
-
-            contextMenu.getItems().add(choiceItem);
-
-            view.setOnContextMenuRequested(e ->
-                    contextMenu.show(view, e.getScreenX(), e.getScreenY())
-            );
-
-            view.setLayoutX(event.getSceneX() - 32);
-            view.setLayoutY(event.getSceneY() - 32);
+            view.setLayoutX(event.getX() - 32);
+            view.setLayoutY(event.getY() - 32);
 
             root.getChildren().add(view);
 
-            // Drag
-            view.setOnMouseDragged(e -> {
-                view.setLayoutX(e.getSceneX() - 32);
-                view.setLayoutY(e.getSceneY() - 32);
+            root.setOnMouseMoved(e -> {
+                view.setLayoutX(e.getX() - 32);
+                view.setLayoutY(e.getY() - 32);
             });
 
-            // Drop
-            view.setOnMouseReleased(e -> {
-                System.out.println("placed Tower: "
-                        + view.getLayoutX() + " / "
-                        + view.getLayoutY());
-            });
+            view.setLayoutX(event.getSceneX() - 32);
+            view.setLayoutY(event.getSceneY() - 32);
         });
+    }
+
+    private void addTowerMenu(ImageView view) {
+
+        ChoiceBox<String> targetChoice = new ChoiceBox<>();
+
+        targetChoice.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
+
+        ContextMenu targetMenu = new ContextMenu();
+
+        CustomMenuItem targetItem = new CustomMenuItem(targetChoice);
+        targetItem.setHideOnClick(false);
+
+        targetMenu.getItems().add(targetItem);
+
+        view.setOnContextMenuRequested(e ->
+                targetMenu.show(view, e.getScreenX(), e.getScreenY())
+        );
     }
 
     public Parent getRoot() {

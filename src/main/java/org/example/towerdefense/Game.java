@@ -43,12 +43,10 @@ public class Game {
             Enemy enemy = iterator.next();
             enemy.update(dt, path);
 
-            if (enemy.getHealth() <= 0 || enemy.getFinished()) {
+            if (enemy.getHealth() <= 0 || enemy.getFinished() || !enemy.getLifeStatus()) {
                 iterator.remove();
             }
         }
-        enemies.removeIf(e -> e.getHealth() <= 0 || e.getFinished());
-        enemies.removeIf(e -> !e.getLifeStatus());
 
         for (Tower t : towers) {
             t.update(dt);
@@ -59,6 +57,9 @@ public class Game {
         }
     }
 
+
+
+    // delete later
     public void handleMouseClicked(MouseEvent e) {
         if(e.getButton() == MouseButton.PRIMARY){
             enemies.getFirst().setLifeStatus(false);
