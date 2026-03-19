@@ -3,10 +3,7 @@ package org.example.towerdefense;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
@@ -27,8 +24,11 @@ public class GameController {
     private Game game;
     private Gameloop loop;
     private Image towerImage;
-    ChoiceBox<Object> cb = new ChoiceBox<>();
     private int lastEnemyCount = 0;
+    private boolean guiSetup = false;
+    ChoiceBox<Object> cb = new ChoiceBox<>();
+
+    // FX:
     private final Button stopButton = new Button("Stop");
     private final Button resumeButton = new Button("Resume");
     private final Button restartButton = new Button("Restart");
@@ -36,6 +36,7 @@ public class GameController {
     private final Button doubleSpeedButton = new Button("2x");
     private final Button quadroupleSpeedutton = new Button("4x");
     private final Button nextWaveButton = new Button("skip");
+    private final Label hp = new Label();
     private final HBox hBox = new HBox();
 
     private HashSet<Enemy> enemyHashSet = new HashSet<>();
@@ -115,17 +116,18 @@ public class GameController {
             root.getChildren().add(spot);
         }
 
-        root.setOnMouseClicked(game::handleMouseClicked);
-
         // XML
         List<Wave> waves = WaveLoader.loadWaves();
         System.out.println("load waves: " + waves.size());
 
         // Wave manager
-        WaveManager waveManager = new WaveManager(game, waves);
+        WaveManager waveManager = new WaveManager(game, WaveLoader.loadWaves());
         waveManager.startNextWave();
 
-        // FXML \ Buttons
+        // -------------------------------------------------
+        // FXML \ Buttons \ onClicks
+        root.setOnMouseClicked(game::handleMouseClicked);
+
         stopButton.setOnAction(e -> {
             loop.pause();
             System.out.println("speed: " + loop.getSpeed());
@@ -135,6 +137,7 @@ public class GameController {
                 throw new RuntimeException(ex);
             }
         });
+
         resumeButton.setOnAction(e -> {loop.resume();});
         restartButton.setOnAction(e -> {
             loop.stop();
@@ -147,30 +150,62 @@ public class GameController {
             loop.resume();
         });
 
+        nextWaveButton.setOnAction(e -> {
+            waveManager.triggerNextWave();
+        });
+
         // speedButtons to change GameLoop-Speed
         normalSpeedButton.setOnAction(e -> {loop.setSpeed(1);});
         doubleSpeedButton.setOnAction(e -> {loop.setSpeed(2);});
         quadroupleSpeedutton.setOnAction(e -> {loop.setSpeed(4);});
 
-        nextWaveButton.setLayoutX(30);
-        nextWaveButton.setLayoutY(300);
-        nextWaveButton.setOnAction(e -> {});
-
+        // --------------------------------------------------
+        // Layout
         hBox.getChildren().addAll(stopButton, resumeButton, restartButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedutton);
+        root.getChildren().add(hp);
         root.getChildren().add(hBox);
         root.getChildren().add(nextWaveButton);
+        // ----------------------------------------------------
 
-        // Looop
+
+        // Looop, very important
         loop = new Gameloop(game, waveManager) {
             @Override
             public void handle(long now) {
                 super.handle(now);
                 sync();
+                updateGUI();
+
             }
         };
     }
 
-    public void sync(){
+    public void updateGUI() {
+        hp.setText(String.valueOf("Health Points: " + game.getHp()));
+
+        if(!guiSetup){
+            double rootX = root.getLayoutBounds().getWidth();;
+            double rootY = root.getLayoutBounds().getHeight();
+
+            double rootMaxX = root.getWidth();
+            double rootMaxY = root.getHeight();
+
+
+            System.out.println(rootX + " " + rootY);
+            System.out.println(rootMaxX + " " + rootMaxY);
+
+            nextWaveButton.setLayoutX(30);
+            nextWaveButton.setLayoutY(300);
+            hp.setLayoutX(rootX + 30);
+            hp.setLayoutY(60);
+
+
+            guiSetup = true;
+        }
+
+    }
+
+    public void sync() {
         // add enemies, to the Set
         for (Enemy e : game.getEnemies()) {
             if (!enemyHashSet.contains(e)){
@@ -215,7 +250,6 @@ public class GameController {
         root.getChildren().add(shopTower);
 
         shopTower.setOnMouseClicked(event -> {
-
             // neuen Tower erstellen
             Tower tower = new Tower(10,  game);
             game.addTower(tower);

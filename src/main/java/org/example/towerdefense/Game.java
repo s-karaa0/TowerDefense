@@ -13,6 +13,10 @@ public class Game {
     private final GamePath path;
     private final List<Tower> towers = new ArrayList<>();
     private final List<Projectile> projectiles = new ArrayList<>();
+    private int hp = 20; // hp = health points
+
+
+    public int getHp() {return hp;}
 
     public Game(GamePath path) {
         this.path = path;
@@ -43,8 +47,12 @@ public class Game {
             Enemy enemy = iterator.next();
             enemy.update(dt, path);
 
-            if (enemy.getHealth() <= 0 || enemy.getFinished() || !enemy.getLifeStatus()) {
+            if (enemy.getHealth() <= 0 || !enemy.getLifeStatus()) {
                 iterator.remove();
+            } else if (enemy.getFinished()) {
+                enemy.setLifeStatus(false);
+                float damage = enemy.getAttackOutput();
+                hp = hp - Math.round(damage);
             }
         }
 
@@ -52,17 +60,18 @@ public class Game {
             t.update(dt);
         }
 
-        for(Projectile p: projectiles) {
+        for (Projectile p: projectiles) {
             p.update(dt);
         }
+
     }
+
 
 
 
     // delete later
     public void handleMouseClicked(MouseEvent e) {
         if(e.getButton() == MouseButton.PRIMARY){
-            enemies.getFirst().setLifeStatus(false);
         }
     };
 

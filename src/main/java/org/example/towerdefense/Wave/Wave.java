@@ -2,6 +2,8 @@ package org.example.towerdefense.Wave;
 
 public class Wave {
 
+    private final int group;
+    private final int waveID;
     private final int enemyCount;
     private final double spawnInterval;
     private final float health;
@@ -9,17 +11,17 @@ public class Wave {
     private final int money;
     private final float attack;
     private int enemyId = 0;
+    private boolean isFinished = false;
 
-    private enum WaveState {
-        SPAWNING,
-        WAITING,
-        COOLDOWN
-    }
+    private int spawned = 0;
+    private double spawnTimer = 0;
 
-    public Wave(int enemyCount, double spawnInterval,
+    public Wave(int group, int waveID, int enemyCount, double spawnInterval,
                 float health, float speed,
                 int money, float attack) {
 
+        this.group = group;
+        this.waveID = waveID;
         this.enemyCount = enemyCount;
         this.spawnInterval = spawnInterval;
         this.health = health;
@@ -28,13 +30,27 @@ public class Wave {
         this.attack = attack;
     }
 
+
+    public int getGroup() { return group; }
+    public int getWaveID() {return waveID;}
     public int getEnemyCount() { return enemyCount; }
     public double getSpawnInterval() { return spawnInterval; }
     public float getHealth() { return health; }
     public float getSpeed() { return speed; }
     public int getMoney() { return money; }
     public float getAttack() { return attack; }
-    public int getEnemyId() {
-        return enemyId;
+    public int getEnemyId() {return enemyId;}
+    public void setSpawned(int spawned) {this.spawned = spawned;}
+    public void setSpawnTimer(double spawnTimer) {this.spawnTimer = spawnTimer;}
+    public double getSpawnTimer() {return spawnTimer;}
+    public int getSpawned() {return spawned;}
+
+    public boolean isFinished() {
+        return isFinished;
     }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
+    }
+
 }
