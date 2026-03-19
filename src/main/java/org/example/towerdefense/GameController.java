@@ -6,7 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -49,8 +50,6 @@ public class GameController {
     private HashSet<Point2D> usedSpots = new HashSet<>();
 
     public GameController() {
-        cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
-
         // Path
         List<GamePath.BezierSegment> segments = List.of(
                 new GamePath.BezierSegment(
@@ -112,6 +111,43 @@ public class GameController {
 
             spot.setLayoutX(p.getX() - 32);
             spot.setLayoutY(p.getY() - 32);
+
+            ChoiceBox<String> towerChoice = new ChoiceBox<>();
+            towerChoice.setItems(FXCollections.observableArrayList("Tower1", "Tower2", "Tower3"));
+
+            ContextMenu buildMenu = new ContextMenu();
+            CustomMenuItem towerItem = new CustomMenuItem(towerChoice);
+            towerItem.setHideOnClick(false);
+
+            buildMenu.getItems().add(towerItem);
+
+            spot.setOnContextMenuRequested(e ->
+                    buildMenu.show(spot, e.getScreenX(), e.getScreenY())
+            );
+
+            towerChoice.setOnAction(e -> {
+
+                String selected = towerChoice.getValue();
+
+                if (selected != null && !usedSpots.contains(p)) {
+
+                    Tower tower = new Tower(10, game);
+                    game.addTower(tower);
+
+                    ImageView view = tower.getView();
+
+                    view.setLayoutX(p.getX() - 32);
+                    view.setLayoutY(p.getY() - 32);
+
+                    root.getChildren().add(view);
+
+                    usedSpots.add(p);
+
+                    addTowerMenu(view);
+
+                    System.out.println("Tower gebaut: " + selected);
+                }
+            });
 
             root.getChildren().add(spot);
         }
@@ -247,31 +283,18 @@ public class GameController {
         shopTower.setLayoutX(20);
         shopTower.setLayoutY(720);
 
-        root.getChildren().add(shopTower);
-
         shopTower.setOnMouseClicked(event -> {
             // neuen Tower erstellen
             Tower tower = new Tower(10,  game);
             game.addTower(tower);
             ImageView view = tower.getView();
+            addTowerMenu(view);
 
-            ChoiceBox<String> cb = new ChoiceBox<>();
-            cb.setItems(FXCollections.observableArrayList(
-                    "erster",
-                    "letzter",
-                    "staerkster",
-                    "schnellster"
-            ));
-
-            ContextMenu contextMenu = new ContextMenu();
-            CustomMenuItem choiceItem = new CustomMenuItem(cb);
-            choiceItem.setHideOnClick(false);
-
-            contextMenu.getItems().add(choiceItem);
-
-            view.setOnContextMenuRequested(e ->
-                    contextMenu.show(view, e.getScreenX(), e.getScreenY())
-            );
+            ChoiceBox<String> towerOptions = new ChoiceBox<>();
+            ContextMenu towerMenu = new ContextMenu();
+            CustomMenuItem choiceMenu = new CustomMenuItem(towerOptions);
+            choiceMenu.setHideOnClick(false);
+            towerMenu.getItems().add(choiceMenu);
 
             view.setLayoutX(event.getX() - 32);
             view.setLayoutY(event.getY() - 32);
@@ -285,56 +308,25 @@ public class GameController {
 
             view.setLayoutX(event.getSceneX() - 32);
             view.setLayoutY(event.getSceneY() - 32);
-
-            // Drag
-            view.setOnMouseDragged(e -> {
-                view.setLayoutX(e.getSceneX() - 32);
-                view.setLayoutY(e.getSceneY() - 32);
-            });
-
-            // Drop
-            view.setOnMouseReleased(e -> {
-                Point2D towerCenter = new Point2D(
-                        view.getLayoutX() + 32,
-                        view.getLayoutY() + 32
-                );
-
-                Point2D closestSpot = null;
-                double closestDistance = Double.MAX_VALUE;
-
-                for (Point2D spot : buildSpots) {
-
-                    double distance = towerCenter.distance(spot);
-
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closestSpot = spot;
-                    }
-                }
-
-                if (closestSpot != null && closestDistance < 50 && !usedSpots.contains(closestSpot)) {
-
-                    view.setLayoutX(closestSpot.getX() - 32);
-                    view.setLayoutY(closestSpot.getY() - 32);
-
-                    usedSpots.add(closestSpot);
-                    view.setImage(towerImage);
-
-                    System.out.println("Tower placed");
-                    root.setOnMouseMoved(null);
-                    view.setOnMouseDragged(null);
-
-                } else {
-                    System.out.println("Invalid placement");
-                }
-
-
-
-                /**System.out.println("placed Tower: "
-                 + view.getLayoutX() + " / "
-                 + view.getLayoutY());**/
-            });
         });
+    }
+
+    private void addTowerMenu(ImageView view) {
+
+        ChoiceBox<String> targetChoice = new ChoiceBox<>();
+
+        targetChoice.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
+
+        ContextMenu targetMenu = new ContextMenu();
+
+        CustomMenuItem targetItem = new CustomMenuItem(targetChoice);
+        targetItem.setHideOnClick(false);
+
+        targetMenu.getItems().add(targetItem);
+
+        view.setOnContextMenuRequested(e ->
+                targetMenu.show(view, e.getScreenX(), e.getScreenY())
+        );
     }
 
     public Parent getRoot() {
