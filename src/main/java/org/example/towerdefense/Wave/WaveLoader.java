@@ -1,4 +1,4 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Wave;
 
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
@@ -33,6 +33,12 @@ public class WaveLoader {
 
                 Element waveElement = (Element) waveNodes.item(i);
 
+                int group = Integer.parseInt(
+                        waveElement.getElementsByTagName("group").item(0).getTextContent());
+
+                int waveID = Integer.parseInt(
+                        waveElement.getElementsByTagName("waveID").item(0).getTextContent());
+
                 int count = Integer.parseInt(
                         waveElement.getElementsByTagName("enemyCount").item(0).getTextContent());
 
@@ -51,7 +57,7 @@ public class WaveLoader {
                 float attack = Float.parseFloat(
                         waveElement.getElementsByTagName("attack").item(0).getTextContent());
 
-                waves.add(new Wave(count, interval, health, speed, money, attack));
+                waves.add(new Wave(group, waveID, count, interval, health, speed, money, attack));
             }
 
         } catch (Exception e) {

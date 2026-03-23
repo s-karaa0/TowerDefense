@@ -1,10 +1,9 @@
 package org.example.towerdefense;
 
 import javafx.geometry.Point2D;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
+import org.example.towerdefense.Path.GamePath;
 
 public class Enemy {
     private float health;
@@ -38,7 +37,7 @@ public class Enemy {
         this.moneyDropped = moneyDropped;
     }
 
-    public void update(double dt, GamePath path){
+    public void update(double dt    , GamePath path){
         if (!lifeStatus || finished){ return; }
 
         distance += dt * speed;
@@ -73,8 +72,8 @@ public class Enemy {
         setAttackOutput(attackOutput);
         setId(id);
 
-        circle.setCenterX(0);
-        circle.setCenterY(0);
+        circle.setTranslateX(0);
+        circle.setTranslateY(0);
     }
 
 

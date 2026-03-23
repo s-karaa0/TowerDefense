@@ -1,22 +1,22 @@
 package org.example.towerdefense;
 
-import javafx.animation.AnimationTimer;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.layout.AnchorPane;
+import org.example.towerdefense.Path.GamePath;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 public class Game {
     private final List<Enemy> enemies = new ArrayList<>();
     private final GamePath path;
     private final List<Tower> towers = new ArrayList<>();
     private final List<Projectile> projectiles = new ArrayList<>();
+    private int hp = 20; // hp = health points
+
+
+    public int getHp() {return hp;}
 
     public Game(GamePath path) {
         this.path = path;
@@ -47,25 +47,31 @@ public class Game {
             Enemy enemy = iterator.next();
             enemy.update(dt, path);
 
-            if (enemy.getHealth() <= 0 || enemy.getFinished()) {
+            if (enemy.getHealth() <= 0 || !enemy.getLifeStatus()) {
                 iterator.remove();
+            } else if (enemy.getFinished()) {
+                enemy.setLifeStatus(false);
+                float damage = enemy.getAttackOutput();
+                hp = hp - Math.round(damage);
             }
         }
-        enemies.removeIf(e -> e.getHealth() <= 0 || e.getFinished());
-        enemies.removeIf(e -> !e.getLifeStatus());
 
         for (Tower t : towers) {
             t.update(dt);
         }
 
-        for(Projectile p: projectiles) {
+        for (Projectile p: projectiles) {
             p.update(dt);
         }
+
     }
 
+
+
+
+    // delete later
     public void handleMouseClicked(MouseEvent e) {
         if(e.getButton() == MouseButton.PRIMARY){
-            enemies.getFirst().setLifeStatus(false);
         }
     };
 
