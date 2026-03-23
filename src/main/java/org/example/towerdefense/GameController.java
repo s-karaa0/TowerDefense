@@ -100,6 +100,10 @@ public class GameController {
 
         // Game
         game = new Game(path);
+        game.setOnProjectileSpawned(p -> root.getChildren().add(p.getView()));
+
+// Und noch den remove-Callback in Game.java hinzufügen (wie vorhin erklärt)
+        game.setOnProjectileRemoved(p -> root.getChildren().remove(p.getView()));
         createShop();
 
         for (Point2D p : buildSpots) {
@@ -143,7 +147,7 @@ public class GameController {
 
                     usedSpots.add(p);
 
-                    addTowerMenu(view);
+                    addTowerMenu(view, tower);
 
                     System.out.println("Tower gebaut: " + selected);
                 }
@@ -284,44 +288,44 @@ public class GameController {
         shopTower.setLayoutY(720);
 
         shopTower.setOnMouseClicked(event -> {
-            // neuen Tower erstellen
-            Tower tower = new Tower(10,  game);
-            game.addTower(tower);
-            ImageView view = tower.getView();
-            addTowerMenu(view);
+                Tower tower = new Tower(10, game);
+                game.addTower(tower);
+                ImageView view = tower.getView();
+                addTowerMenu(view, tower); // gefixed
 
-            ChoiceBox<String> towerOptions = new ChoiceBox<>();
-            ContextMenu towerMenu = new ContextMenu();
-            CustomMenuItem choiceMenu = new CustomMenuItem(towerOptions);
-            choiceMenu.setHideOnClick(false);
-            towerMenu.getItems().add(choiceMenu);
+                // Nur sceneX/Y verwenden, kein doppeltes Set
+                view.setLayoutX(event.getSceneX() - 32);
+                view.setLayoutY(event.getSceneY() - 32);
 
-            view.setLayoutX(event.getX() - 32);
-            view.setLayoutY(event.getY() - 32);
+                root.getChildren().add(view);
 
-            root.getChildren().add(view);
+                // MouseMoved-Handler mit Referenz damit man ihn entfernen kann
+                javafx.event.EventHandler<MouseEvent> moveHandler = e -> {
+                    view.setLayoutX(e.getX() - 32);
+                    view.setLayoutY(e.getY() - 32);
+                };
+                root.setOnMouseMoved(moveHandler);
 
-            root.setOnMouseMoved(e -> {
-                view.setLayoutX(e.getX() - 32);
-                view.setLayoutY(e.getY() - 32);
+                // Platzieren bei Klick
+                view.setOnMouseClicked(e -> {
+                    root.setOnMouseMoved(null); // Handler entfernen!
+                    e.consume();
+                });
             });
 
-            view.setLayoutX(event.getSceneX() - 32);
-            view.setLayoutY(event.getSceneY() - 32);
-        });
+
     }
 
-    private void addTowerMenu(ImageView view) {
+    private void addTowerMenu(ImageView view, Tower tower) {
 
-        ChoiceBox<String> targetChoice = new ChoiceBox<>();
+        ChoiceBox<Object> targetChoice = tower.getChoiceBox(); // dieselbe CB!
 
-        targetChoice.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
+        targetChoice.setItems(FXCollections.observableArrayList(
+                "erster", "letzter", "staerkster", "schnellster"));
 
         ContextMenu targetMenu = new ContextMenu();
-
         CustomMenuItem targetItem = new CustomMenuItem(targetChoice);
         targetItem.setHideOnClick(false);
-
         targetMenu.getItems().add(targetItem);
 
         view.setOnContextMenuRequested(e ->
@@ -341,3 +345,4 @@ public class GameController {
 
     public void resumeLoop(){loop.resume();}
 }
+

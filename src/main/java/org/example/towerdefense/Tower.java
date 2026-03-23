@@ -17,6 +17,8 @@ public class Tower {
     protected Game game;
     protected TowerShooter shooter;
 
+    public ChoiceBox<Object> getChoiceBox() { return cb; }
+
     public Tower(int damage, Game game) {
         this.damage = damage;
         this.game = game;

@@ -37,12 +37,17 @@ public class TowerShooter {
             if (target != null && isInRange(target)) {
                 shoot();
                 attackTimer = 0;
+            } else {
+                target = null; // reset wenn nicht in range!
             }
         }
     }
 
     private void setGoal() {
-        List<Enemy> enemies = game.getEnemies();
+        List<Enemy> enemies = game.getEnemies().stream()
+                .filter(this::isInRange) // nur Gegner in Range!
+                .toList();
+
         if (enemies.isEmpty()) { target = null; return; }
 
         String mode = (String) cb.getSelectionModel().getSelectedItem();
