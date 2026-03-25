@@ -4,6 +4,7 @@ module org.example.towerdefense {
     requires java.xml;
     requires java.desktop;
     requires javafx.graphics;
+    requires javafx.media;
 
 
     opens org.example.towerdefense to javafx.fxml;

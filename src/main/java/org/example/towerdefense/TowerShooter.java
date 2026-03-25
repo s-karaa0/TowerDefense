@@ -2,9 +2,11 @@ package org.example.towerdefense;
 
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.ImageView;
+import javafx.scene.media.AudioClip; // NEU: Import für Soundeffekte
 import org.example.towerdefense.Enemy;
 import org.example.towerdefense.Game;
 
+import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 
@@ -20,7 +22,9 @@ public class TowerShooter {
     private final double range;
     private final double projectileSpeed;
 
-    public TowerShooter(Game game, ImageView towerView, double damage, ChoiceBox<Object> cb, double attackCooldown, double range,  double projectileSpeed) {
+    private AudioClip shootSound;
+
+    public TowerShooter(Game game, ImageView towerView, double damage, ChoiceBox<Object> cb, double attackCooldown, double range, double projectileSpeed) {
         this.game = game;
         this.towerView = towerView;
         this.damage = damage;
@@ -28,6 +32,23 @@ public class TowerShooter {
         this.attackCooldown = attackCooldown;
         this.range = range;
         this.projectileSpeed = projectileSpeed;
+
+        loadSound();
+    }
+
+    private void loadSound() {
+        try {
+
+            URL soundUrl = getClass().getResource("/Soundeffects/pew sound effect.mp3");
+            if (soundUrl != null) {
+                shootSound = new AudioClip(soundUrl.toExternalForm());
+                shootSound.setVolume(1.0);
+            } else {
+                System.err.println("Sounddatei pew sound effect wurde nicht gefunden!");
+            }
+        } catch (Exception e) {
+            System.err.println("Fehler beim Laden des Sounds: " + e.getMessage());
+        }
     }
 
     public void update(double dt) {
@@ -38,17 +59,20 @@ public class TowerShooter {
                 shoot();
                 attackTimer = 0;
             } else {
-                target = null; // reset wenn nicht in range!
+                target = null; // Reset wenn nicht in Range!
             }
         }
     }
 
     private void setGoal() {
         List<Enemy> enemies = game.getEnemies().stream()
-                .filter(this::isInRange) // nur Gegner in Range!
+                .filter(this::isInRange) // Nur Gegner in Range!
                 .toList();
 
-        if (enemies.isEmpty()) { target = null; return; }
+        if (enemies.isEmpty()) {
+            target = null;
+            return;
+        }
 
         String mode = (String) cb.getSelectionModel().getSelectedItem();
         if (mode == null) mode = "erster";
@@ -66,11 +90,16 @@ public class TowerShooter {
         double cx = towerView.getLayoutX() + 32;
         double cy = towerView.getLayoutY() + 32;
         game.spawnProjectile(new Projectile(cx, cy, projectileSpeed, target, damage));
+
+
+        if (shootSound != null) {
+            shootSound.play();
+        }
     }
 
     private boolean isInRange(Enemy e) {
         double dx = e.getView().getCenterX() - (towerView.getLayoutX() + 32);
         double dy = e.getView().getCenterY() - (towerView.getLayoutY() + 32);
-        return Math.sqrt(dx*dx + dy*dy) <= range;
+        return Math.sqrt(dx * dx + dy * dy) <= range;
     }
 }
