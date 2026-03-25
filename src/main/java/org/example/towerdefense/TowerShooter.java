@@ -2,7 +2,7 @@ package org.example.towerdefense;
 
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.ImageView;
-import javafx.scene.media.AudioClip; // NEU: Import für Soundeffekte
+import javafx.scene.media.AudioClip;
 import org.example.towerdefense.Enemy;
 import org.example.towerdefense.Game;
 
@@ -36,10 +36,12 @@ public class TowerShooter {
         loadSound();
     }
 
+
+    //loads shooting soundeffect
     private void loadSound() {
         try {
 
-            URL soundUrl = getClass().getResource("/Soundeffects/pew sound effect.mp3");
+            URL soundUrl = getClass().getResource("/Soundeffects/pew sound effect.mp3"); // hier für Ändern des shoot sounds pfad ändern
             if (soundUrl != null) {
                 shootSound = new AudioClip(soundUrl.toExternalForm());
                 shootSound.setVolume(1.0);
