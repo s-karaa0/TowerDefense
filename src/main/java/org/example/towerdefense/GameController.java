@@ -8,10 +8,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.example.towerdefense.Path.GamePath;
@@ -21,7 +23,7 @@ import org.example.towerdefense.Wave.WaveManager;
 
 public class GameController {
     private final AnchorPane root = new AnchorPane();
-    private final GameApplication  gameApp = new GameApplication();
+    private final GameApplication gameApp = new GameApplication();
     private Game game;
     private Gameloop loop;
     private Image towerImage;
@@ -96,7 +98,7 @@ public class GameController {
                 )
         );
 
-        GamePath path = new GamePath( segments,10024);
+        GamePath path = new GamePath(segments, 10024);
 
         // Game
         game = new Game(path);
@@ -147,7 +149,7 @@ public class GameController {
 
                     usedSpots.add(p);
 
-                    addTowerMenu(view, tower);
+                    //addTowerMenu(view, tower);
 
                     System.out.println("Tower gebaut: " + selected);
                 }
@@ -178,7 +180,9 @@ public class GameController {
             }
         });
 
-        resumeButton.setOnAction(e -> {loop.resume();});
+        resumeButton.setOnAction(e -> {
+            loop.resume();
+        });
         restartButton.setOnAction(e -> {
             loop.stop();
             deleteAllEnemies();
@@ -195,9 +199,15 @@ public class GameController {
         });
 
         // speedButtons to change GameLoop-Speed
-        normalSpeedButton.setOnAction(e -> {loop.setSpeed(1);});
-        doubleSpeedButton.setOnAction(e -> {loop.setSpeed(2);});
-        quadroupleSpeedutton.setOnAction(e -> {loop.setSpeed(4);});
+        normalSpeedButton.setOnAction(e -> {
+            loop.setSpeed(1);
+        });
+        doubleSpeedButton.setOnAction(e -> {
+            loop.setSpeed(2);
+        });
+        quadroupleSpeedutton.setOnAction(e -> {
+            loop.setSpeed(4);
+        });
 
         // --------------------------------------------------
         // Layout
@@ -223,8 +233,9 @@ public class GameController {
     public void updateGUI() {
         hp.setText(String.valueOf("Health Points: " + game.getHp()));
 
-        if(!guiSetup){
-            double rootX = root.getLayoutBounds().getWidth();;
+        if (!guiSetup) {
+            double rootX = root.getLayoutBounds().getWidth();
+            ;
             double rootY = root.getLayoutBounds().getHeight();
 
             double rootMaxX = root.getWidth();
@@ -248,20 +259,20 @@ public class GameController {
     public void sync() {
         // add enemies, to the Set
         for (Enemy e : game.getEnemies()) {
-            if (!enemyHashSet.contains(e)){
+            if (!enemyHashSet.contains(e)) {
                 root.getChildren().add(e.getView());
                 enemyHashSet.add(e);
                 i++;
 
                 // experimental:
-                 System.out.println("enemy " + i + " added");
+                System.out.println("enemy " + i + " added");
                 // if (i == 5 || i == 10){loop.pause();}
             }
         }
 
         // rm enemies, via their Set
         enemyHashSet.removeIf(e -> {
-            if (!game.getEnemies().contains(e)){
+            if (!game.getEnemies().contains(e)) {
                 root.getChildren().remove(e.getView());
                 return true;
             }
@@ -269,8 +280,8 @@ public class GameController {
         });
     }
 
-    public void deleteAllEnemies(){
-        for (Enemy e: game.getEnemies()){
+    public void deleteAllEnemies() {
+        for (Enemy e : game.getEnemies()) {
             root.getChildren().remove(e.getView());
             e.destroy(root);
         }
@@ -287,36 +298,92 @@ public class GameController {
         shopTower.setLayoutX(20);
         shopTower.setLayoutY(720);
 
+        root.getChildren().add(shopTower);
+
         shopTower.setOnMouseClicked(event -> {
-                Tower tower = new Tower(10, game);
-                game.addTower(tower);
-                ImageView view = tower.getView();
-                addTowerMenu(view, tower); // gefixed
+            Tower tower = new Tower(10,  game);
+            game.addTower(tower);
+            ImageView view = tower.getView();
 
-                // Nur sceneX/Y verwenden, kein doppeltes Set
-                view.setLayoutX(event.getSceneX() - 32);
-                view.setLayoutY(event.getSceneY() - 32);
+            ChoiceBox<String> cb = new ChoiceBox<>();
+            cb.setItems(FXCollections.observableArrayList(
+                    "erster",
+                    "letzter",
+                    "staerkster",
+                    "schnellster"
+            ));
 
-                root.getChildren().add(view);
+            ContextMenu contextMenu = new ContextMenu();
+            CustomMenuItem choiceItem = new CustomMenuItem(cb);
+            choiceItem.setHideOnClick(false);
 
-                // MouseMoved-Handler mit Referenz damit man ihn entfernen kann
-                javafx.event.EventHandler<MouseEvent> moveHandler = e -> {
-                    view.setLayoutX(e.getX() - 32);
-                    view.setLayoutY(e.getY() - 32);
-                };
-                root.setOnMouseMoved(moveHandler);
+            contextMenu.getItems().add(choiceItem);
 
-                // Platzieren bei Klick
-                view.setOnMouseClicked(e -> {
-                    root.setOnMouseMoved(null); // Handler entfernen!
-                    e.consume();
-                });
+            view.setOnContextMenuRequested(e ->
+                    contextMenu.show(view, e.getScreenX(), e.getScreenY())
+            );
+
+            view.setLayoutX(event.getX() - 32);
+            view.setLayoutY(event.getY() - 32);
+
+            root.getChildren().add(view);
+
+            root.setOnMouseMoved(e -> {
+                view.setLayoutX(e.getX() - 32);
+                view.setLayoutY(e.getY() - 32);
             });
+
+            // DRAG
+            view.setOnMouseDragged(e -> {
+                view.setLayoutX(e.getX() - 32);
+                view.setLayoutY(e.getY() - 32);
+            });
+
+            // DROP
+            view.setOnMouseReleased(e -> {
+                System.out.println("placed Tower: "
+                        + view.getLayoutX() + " / "
+                        + view.getLayoutY());
+                Point2D towerCenter = new Point2D(
+                        view.getLayoutX() + 32,
+                        view.getLayoutY() + 32
+                );
+
+                Point2D closestSpot = null;
+                double closestDistance = Double.MAX_VALUE;
+
+                for (Point2D spot : buildSpots) {
+
+                    double distance = towerCenter.distance(spot);
+
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestSpot = spot;
+                    }
+                }
+
+                if (closestSpot != null && closestDistance < 50 && !usedSpots.contains(closestSpot)) {
+
+                    view.setLayoutX(closestSpot.getX() - 32);
+                    view.setLayoutY(closestSpot.getY() - 32);
+
+                    usedSpots.add(closestSpot);
+                    view.setImage(towerImage);
+
+                    System.out.println("Tower placed");
+                    root.setOnMouseMoved(null);
+                    view.setOnMouseDragged(null);
+
+                } else {
+                    System.out.println("Invalid placement");
+                }
+            });
+        });
 
 
     }
 
-    private void addTowerMenu(ImageView view, Tower tower) {
+    /**private void addTowerMenu(ImageView view, Tower tower) {
 
         ChoiceBox<Object> targetChoice = tower.getChoiceBox(); // dieselbe CB!
 
@@ -331,18 +398,22 @@ public class GameController {
         view.setOnContextMenuRequested(e ->
                 targetMenu.show(view, e.getScreenX(), e.getScreenY())
         );
-    }
+    }**/
 
     public Parent getRoot() {
         return root;
     }
 
-    public void stopLoop(){
+    public void stopLoop() {
         loop.stop();
     }
 
-    public void startLoop() {loop.start();}
+    public void startLoop() {
+        loop.start();
+    }
 
-    public void resumeLoop(){loop.resume();}
+    public void resumeLoop() {
+        loop.resume();
+    }
 }
 
