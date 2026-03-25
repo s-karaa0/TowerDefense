@@ -24,7 +24,7 @@ public class Tower {
         this.game = game;
         cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
 
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/thunder-cat.jpeg")));
         imageView = new ImageView(image);
         imageView.setFitWidth(64);
         imageView.setFitHeight(64);
