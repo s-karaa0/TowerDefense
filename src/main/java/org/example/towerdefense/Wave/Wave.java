@@ -1,5 +1,11 @@
 package org.example.towerdefense.Wave;
 
+import org.example.towerdefense.Enemy;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class Wave {
 
     private final int group;
@@ -10,11 +16,10 @@ public class Wave {
     private final float speed;
     private final int money;
     private final float attack;
-    private int enemyId = 0;
     private boolean isFinished = false;
-
     private int spawned = 0;
     private double spawnTimer = 0;
+    private int activeEnemies;
 
     public Wave(int group, int waveID, int enemyCount, double spawnInterval,
                 float health, float speed,
@@ -28,6 +33,7 @@ public class Wave {
         this.speed = speed;
         this.money = money;
         this.attack = attack;
+        this.activeEnemies = enemyCount;
     }
 
 
@@ -39,7 +45,6 @@ public class Wave {
     public float getSpeed() { return speed; }
     public int getMoney() { return money; }
     public float getAttack() { return attack; }
-    public int getEnemyId() {return enemyId;}
     public void setSpawned(int spawned) {this.spawned = spawned;}
     public void setSpawnTimer(double spawnTimer) {this.spawnTimer = spawnTimer;}
     public double getSpawnTimer() {return spawnTimer;}
@@ -52,5 +57,6 @@ public class Wave {
     public void setFinished(boolean finished) {
         isFinished = finished;
     }
-
+    public int getActiveEnemies() {return activeEnemies;}
+    public void setActiveEnemies(int activeEnemies) {this.activeEnemies = activeEnemies;}
 }

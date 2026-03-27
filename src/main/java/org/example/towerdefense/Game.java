@@ -49,10 +49,12 @@ public class Game {
 
             if (enemy.getHealth() <= 0 || !enemy.getLifeStatus()) {
                 iterator.remove();
+
             } else if (enemy.getFinished()) {
                 enemy.setLifeStatus(false);
                 float damage = enemy.getAttackOutput();
                 hp = hp - Math.round(damage);
+
             }
         }
 
@@ -71,9 +73,6 @@ public class Game {
             }
         }
     }
-
-
-
 
     // delete later
     public void handleMouseClicked(MouseEvent e) {
@@ -107,6 +106,7 @@ public class Game {
     public List<Projectile> getProjectiles() {
         return projectiles;
     }
+
 }
 
 

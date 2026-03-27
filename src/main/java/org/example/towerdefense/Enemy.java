@@ -11,7 +11,9 @@ public class Enemy {
     private int moneyDropped;
     private float attackOutput;
     private int id = 0;
-    private boolean lifeStatus=true;
+    private int waveID;
+    private int groupID;
+    private boolean lifeStatus = true;
     private double distance = 0;
     private boolean finished = false;
     // for debugging ->
@@ -37,8 +39,8 @@ public class Enemy {
         this.moneyDropped = moneyDropped;
     }
 
-    public void update(double dt    , GamePath path){
-        if (!lifeStatus || finished){ return; }
+    public void update(double dt, GamePath path){
+        if (!lifeStatus || finished){ return;}
 
         distance += dt * speed;
         if(distance >= path.getTotalLeanght()){
@@ -65,12 +67,14 @@ public class Enemy {
             setLifeStatus(false);
         }
     }
-    public Enemy(float health, float speed, int moneyDropped, float attackOutput, int id) {
+    public Enemy(float health, float speed, int moneyDropped, float attackOutput, int id, int groupID, int waveID) {
         setHealth(health);
         setSpeed(speed);
         setMoneyDropped(moneyDropped);
         setAttackOutput(attackOutput);
         setId(id);
+        setGroupID(groupID);
+        setWaveID(waveID);
 
         circle.setTranslateX(0);
         circle.setTranslateY(0);
@@ -97,8 +101,14 @@ public class Enemy {
     public void setId(int id) {
         this.id = id;
     }
+    public int getId() {return id;}
 
     public double getDistance() {
         return distance;
     }
+
+    public int getGroupID() {return groupID;}
+    public void setGroupID(int groupID) {this.groupID = groupID;}
+    public int getWaveID() {return waveID;}
+    public void setWaveID(int waveID) {this.waveID = waveID;}
 }

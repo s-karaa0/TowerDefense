@@ -20,7 +20,8 @@ public class GameApplication extends Application {
 
     public enum SceneState {
         start,
-        game
+        game,
+        conclusion
     }
 
     public SceneState getCurrentState() {
@@ -50,9 +51,9 @@ public class GameApplication extends Application {
                 settingsStage.initOwner(stage);
                 settingsStage.initModality(Modality.WINDOW_MODAL);
 
-
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
                 Parent root = fxmlLoader.load();
+
                 Scene settingsScene = new Scene(root);
                 settingsStage.setScene(settingsScene);
                 SettingsController settingsController = fxmlLoader.getController();
@@ -78,7 +79,6 @@ public class GameApplication extends Application {
                 isRunning = false;
 
                 currentState = SceneState.start;
-
                 break;
             }
 
@@ -95,12 +95,28 @@ public class GameApplication extends Application {
                 }
 
                 currentState = SceneState.game;
-
                 break;
             }
 
             case "conclusion": {
-                // game won/lost Screen (Controller + FXML)
+                Stage conclusionStage = new Stage();
+                conclusionStage.initOwner(stage);
+                conclusionStage.initModality(Modality.WINDOW_MODAL);
+
+
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
+                Parent root = fxmlLoader.load();
+
+                Scene conclusionScene = new Scene(root);
+                conclusionStage.setScene(conclusionScene);
+                ConclusionController conclusionController = fxmlLoader.getController();
+                conclusionController.setApplication(this);
+                conclusionStage.centerOnScreen();
+                conclusionStage.show();
+                isRunning = false;
+
+                currentState = SceneState.conclusion;
+                break;
             }
 
         }
@@ -116,15 +132,12 @@ public class GameApplication extends Application {
 
     public void startGame(){gameController.startLoop();}
     public void stopGame(){gameController.stopLoop();}
+    public void restartGame(){gameController.restartLoop();}
     public void resumeGame(){
         if(gameController != null){
             gameController.resumeLoop();
-        } else {
+        }else {
             System.out.println("GameController is nicht definiert");
         }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

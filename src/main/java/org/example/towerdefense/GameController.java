@@ -1,5 +1,7 @@
 package org.example.towerdefense;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
@@ -21,15 +23,18 @@ import org.example.towerdefense.Wave.Wave;
 import org.example.towerdefense.Wave.WaveLoader;
 import org.example.towerdefense.Wave.WaveManager;
 
+import javax.swing.event.ChangeEvent;
+
 public class GameController {
     private final AnchorPane root = new AnchorPane();
     private final GameApplication gameApp = new GameApplication();
     private Game game;
     private Gameloop loop;
+    private WaveManager waveManager;
     private Image towerImage;
-    private int lastEnemyCount = 0;
     private boolean guiSetup = false;
-    ChoiceBox<Object> cb = new ChoiceBox<>();
+    private ChoiceBox<Object> cb = new ChoiceBox<>();
+    private boolean endOfGame = false;
 
     // FX:
     private final Button stopButton = new Button("Stop");
@@ -39,7 +44,7 @@ public class GameController {
     private final Button doubleSpeedButton = new Button("2x");
     private final Button quadroupleSpeedutton = new Button("4x");
     private final Button nextWaveButton = new Button("skip");
-    private final Label hp = new Label();
+    private Label hp = new Label();
     private final HBox hBox = new HBox();
 
     private HashSet<Enemy> enemyHashSet = new HashSet<>();
@@ -48,7 +53,6 @@ public class GameController {
             new Point2D(400, 250),
             new Point2D(600, 450),
             new Point2D(800, 300));
-    private int i = 0;
     private HashSet<Point2D> usedSpots = new HashSet<>();
 
     public GameController() {
@@ -163,7 +167,7 @@ public class GameController {
         System.out.println("load waves: " + waves.size());
 
         // Wave manager
-        WaveManager waveManager = new WaveManager(game, WaveLoader.loadWaves());
+        waveManager = new WaveManager(game, WaveLoader.loadWaves());
         waveManager.startNextWave();
 
         // -------------------------------------------------
@@ -184,14 +188,7 @@ public class GameController {
             loop.resume();
         });
         restartButton.setOnAction(e -> {
-            loop.stop();
-            deleteAllEnemies();
-            i = 0;
-            game.resetEnemies();
-            waveManager.resetAllWaves();
-            waveManager.startNextWave();
-            loop.start();
-            loop.resume();
+            restartLoop();
         });
 
         nextWaveButton.setOnAction(e -> {
@@ -211,6 +208,14 @@ public class GameController {
 
         // --------------------------------------------------
         // Layout
+        root.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                System.out.println("size changed");
+                guiSetup = false;
+            }
+        });
+
         hBox.getChildren().addAll(stopButton, resumeButton, restartButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedutton);
         root.getChildren().add(hp);
         root.getChildren().add(hBox);
@@ -225,31 +230,27 @@ public class GameController {
                 super.handle(now);
                 sync();
                 updateGUI();
-
             }
         };
     }
 
     public void updateGUI() {
         hp.setText(String.valueOf("Health Points: " + game.getHp()));
-
         if (!guiSetup) {
             double rootX = root.getLayoutBounds().getWidth();
-            ;
             double rootY = root.getLayoutBounds().getHeight();
 
             double rootMaxX = root.getWidth();
             double rootMaxY = root.getHeight();
-
-
+            
             System.out.println(rootX + " " + rootY);
             System.out.println(rootMaxX + " " + rootMaxY);
 
             nextWaveButton.setLayoutX(30);
-            nextWaveButton.setLayoutY(300);
-            hp.setLayoutX(rootX + 30);
-            hp.setLayoutY(60);
+            nextWaveButton.setLayoutY(500);
 
+            hp.setLayoutX(rootMaxX - 200);
+            hp.setLayoutY(100);
 
             guiSetup = true;
         }
@@ -262,10 +263,9 @@ public class GameController {
             if (!enemyHashSet.contains(e)) {
                 root.getChildren().add(e.getView());
                 enemyHashSet.add(e);
-                i++;
 
                 // experimental:
-                System.out.println("enemy " + i + " added");
+                System.out.println("enemy " + e.getId() + "|" + e.getGroupID() + " added");
                 // if (i == 5 || i == 10){loop.pause();}
             }
         }
@@ -278,6 +278,21 @@ public class GameController {
             }
             return false;
         });
+
+        if (game.getHp() <= 0 && !endOfGame) {
+            try {
+                endOfGameCheck();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
+
+    public void endOfGameCheck() throws IOException {
+            endOfGame = true;
+            stopLoop();
+            gameApp.switchScene("/conclusion-view.fxml", "conclusion");
     }
 
     public void deleteAllEnemies() {
@@ -413,6 +428,16 @@ public class GameController {
     }
 
     public void resumeLoop() {
+        loop.resume();
+    }
+
+    public void restartLoop() {
+        loop.stop();
+        deleteAllEnemies();
+        game.resetEnemies();
+        waveManager.resetAllWaves();
+        waveManager.startNextWave();
+        loop.start();
         loop.resume();
     }
 }
