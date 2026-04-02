@@ -6,6 +6,9 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -17,6 +20,7 @@ public class GameApplication extends Application {
     private static boolean isRunning = false;
     private static SceneState currentState = SceneState.start;
     private static GameController gameController;
+    private String difficulty;
 
     public enum SceneState {
         start,
@@ -45,81 +49,97 @@ public class GameApplication extends Application {
     public void switchScene(String fxml, String layout) throws IOException {
         boolean x = gameController != null;
         try {
-        switch (layout) {
-            case "settings": {
-                Stage settingsStage = new Stage();
-                settingsStage.initOwner(stage);
-                settingsStage.initModality(Modality.WINDOW_MODAL);
+            switch (layout) {
+                case "settings": {
+                    Stage settingsStage = new Stage();
+                    settingsStage.initOwner(stage);
+                    settingsStage.initModality(Modality.WINDOW_MODAL);
 
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
-                Parent root = fxmlLoader.load();
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
+                    Parent root = fxmlLoader.load();
 
-                Scene settingsScene = new Scene(root);
-                settingsStage.setScene(settingsScene);
-                SettingsController settingsController = fxmlLoader.getController();
-                settingsController.setApplication(this);
+                    Scene settingsScene = new Scene(root);
+                    settingsStage.setScene(settingsScene);
+                    SettingsController settingsController = fxmlLoader.getController();
+                    settingsController.setApplication(this);
 
-                settingsStage.setTitle("Settings");
-                settingsStage.centerOnScreen();
-                settingsStage.show();
+                    settingsStage.setTitle("Settings");
+                    settingsStage.centerOnScreen();
+                    settingsStage.show();
 
-                break;
-            }
-
-            case "start": {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
-                Parent root = fxmlLoader.load();
-
-                StartController startController = fxmlLoader.getController();
-                startController.setApplication(this);
-
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.centerOnScreen();
-                isRunning = false;
-
-                currentState = SceneState.start;
-                break;
-            }
-
-            case "game": {
-                if (!isRunning) {
-                    isRunning = true;
-                    GameController controller = new GameController();
-                    Scene scene = new Scene(controller.getRoot(), 1000, 800);
-                    stage.setScene(scene);
-                    stage.centerOnScreen();
-                    stage.setTitle("Tower Defense Game");
-                    controller.startLoop();
-                    setGameController(controller);
+                    break;
                 }
 
-                currentState = SceneState.game;
-                break;
+                case "start": {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
+                    Parent root = fxmlLoader.load();
+
+                    StartController startController = fxmlLoader.getController();
+                    startController.setApplication(this);
+
+                    Scene scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.centerOnScreen();
+                    isRunning = false;
+
+                    currentState = SceneState.start;
+                    break;
+                }
+
+                case "game": {
+                    if (!isRunning) {
+                        isRunning = true;
+                        GameController controller = new GameController(difficulty);
+                        Pane root = controller.getRoot();
+
+                        Image bgImage = null;
+
+                        if (difficulty.equals("easy")) {
+                            bgImage = new Image(getClass().getResource("/images/fields/field-easy.png").toExternalForm());
+                        } else if (difficulty.equals("normal")) {
+                            bgImage = new Image(getClass().getResource("/images/fields/field-normal.png").toExternalForm());
+                        } else if (difficulty.equals("hard")) {
+                            bgImage = new Image(getClass().getResource("/images/fields/field-hard.png").toExternalForm());
+                        }
+
+                        ImageView bg = new ImageView(bgImage);
+                        bg.setFitWidth(1000);
+                        bg.setFitHeight(800);
+
+                        root.getChildren().add(0, bg);
+
+                        Scene scene = new Scene(root, 1000, 800);
+                        stage.setScene(scene);
+                        stage.centerOnScreen();
+                        stage.setTitle("Tower Defense Game");
+                        controller.startLoop();
+                        setGameController(controller);
+                    }
+
+                    currentState = SceneState.game;
+                    break;
+                }
+
+                case "conclusion": {
+                    Stage conclusionStage = new Stage();
+                    conclusionStage.initOwner(stage);
+                    conclusionStage.initModality(Modality.WINDOW_MODAL);
+
+
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
+                    Parent root = fxmlLoader.load();
+
+                    Scene conclusionScene = new Scene(root);
+                    conclusionStage.setScene(conclusionScene);
+                    conclusionStage.centerOnScreen();
+                    conclusionStage.show();
+                    isRunning = false;
+
+                    currentState = SceneState.conclusion;
+                    break;
+                }
+
             }
-
-            case "conclusion": {
-                Stage conclusionStage = new Stage();
-                conclusionStage.initOwner(stage);
-                conclusionStage.initModality(Modality.WINDOW_MODAL);
-
-
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
-                Parent root = fxmlLoader.load();
-
-                Scene conclusionScene = new Scene(root);
-                conclusionStage.setScene(conclusionScene);
-                ConclusionController conclusionController = fxmlLoader.getController();
-                conclusionController.setApplication(this);
-                conclusionStage.centerOnScreen();
-                conclusionStage.show();
-                isRunning = false;
-
-                currentState = SceneState.conclusion;
-                break;
-            }
-
-        }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -128,16 +148,32 @@ public class GameApplication extends Application {
         System.out.println(currentState);
     }
 
-    public void setGameController(GameController gameCtr){this.gameController = gameCtr;}
+    public void setGameController(GameController gameCtr) {
+        this.gameController = gameCtr;
+    }
 
-    public void startGame(){gameController.startLoop();}
-    public void stopGame(){gameController.stopLoop();}
-    public void restartGame(){gameController.restartLoop();}
-    public void resumeGame(){
-        if(gameController != null){
+    public void startGame() {
+        gameController.startLoop();
+    }
+
+    public void stopGame() {
+        gameController.stopLoop();
+    }
+
+    public void restartGame() {
+        gameController.restartLoop();
+    }
+
+    public void resumeGame() {
+        if (gameController != null) {
             gameController.resumeLoop();
-        }else {
+        } else {
             System.out.println("GameController is nicht definiert");
         }
+    }
+
+    public void startGameWithDifficulty(String difficulty) throws IOException {
+        this.difficulty = difficulty;
+        switchScene(null, "game");
     }
 }

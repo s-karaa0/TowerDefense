@@ -19,12 +19,11 @@ public class Tower {
 
     public ChoiceBox<Object> getChoiceBox() { return cb; }
 
-    public Tower(int damage, Game game) {
+    public Tower(int damage, Game game, Image image) {
         this.damage = damage;
         this.game = game;
         cb.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
 
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/tower.png")));
         imageView = new ImageView(image);
         imageView.setFitWidth(64);
         imageView.setFitHeight(64);

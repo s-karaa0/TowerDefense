@@ -1,9 +1,11 @@
 package org.example.towerdefense;
 
+import javafx.scene.image.Image;
+
 public class FastTower extends Tower {
 
-    public FastTower(int damage, Game game) {
-        super(damage, game);
+    public FastTower(int damage, Game game, Image image) {
+        super(damage, game, image);
     }
 
     @Override
