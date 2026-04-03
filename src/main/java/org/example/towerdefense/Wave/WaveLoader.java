@@ -9,7 +9,7 @@ import java.util.List;
 public class WaveLoader {
 
 
-    public static List<Wave> loadWaves() {
+    public static List<Wave> loadWaves(String difficulty) {
 
         List<Wave> waves = new ArrayList<>();
 
@@ -32,6 +32,13 @@ public class WaveLoader {
             for (int i = 0; i < waveNodes.getLength(); i++) {
 
                 Element waveElement = (Element) waveNodes.item(i);
+
+                String diff = waveElement
+                        .getElementsByTagName("difficulty")
+                        .item(0)
+                        .getTextContent();
+
+                if (!diff.equals(difficulty)) continue;
 
                 int group = Integer.parseInt(
                         waveElement.getElementsByTagName("group").item(0).getTextContent());

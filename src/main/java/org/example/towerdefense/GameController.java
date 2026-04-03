@@ -16,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import org.example.towerdefense.Path.GamePath;
+import org.example.towerdefense.Path.PathFactory;
 import org.example.towerdefense.Wave.Wave;
 import org.example.towerdefense.Wave.WaveLoader;
 import org.example.towerdefense.Wave.WaveManager;
@@ -50,52 +51,7 @@ public class GameController {
     public GameController(String difficulty) {
         this.difficulty = difficulty;
         // Path
-        List<GamePath.BezierSegment> segments = List.of(
-                new GamePath.BezierSegment(
-                        new Point2D(50, 400),
-                        new Point2D(50, 400),
-                        new Point2D(200, 400),
-                        new Point2D(200, 400)
-                ),
-                new GamePath.BezierSegment(
-                        new Point2D(200, 400),
-                        new Point2D(400, 400),
-                        new Point2D(200, 100),
-                        new Point2D(400, 100)
-                ),
-                new GamePath.BezierSegment(
-                        new Point2D(400, 100),
-                        new Point2D(600, 100),
-                        new Point2D(400, 700),
-                        new Point2D(600, 700)
-                ),
-                new GamePath.BezierSegment(
-                        new Point2D(600, 700),
-                        new Point2D(600, 700),
-                        new Point2D(800, 700),
-                        new Point2D(800, 700)
-                ),
-                new GamePath.BezierSegment(
-                        new Point2D(800, 700),
-                        new Point2D(900, 700),
-                        new Point2D(900, 700),
-                        new Point2D(900, 500)
-                ),
-                new GamePath.BezierSegment(
-                        new Point2D(900, 500),
-                        new Point2D(900, 350),
-                        new Point2D(700, 350),
-                        new Point2D(700, 500)
-                ),
-                new GamePath.BezierSegment(
-                        new Point2D(700, 500),
-                        new Point2D(700, 620),
-                        new Point2D(800, 600),
-                        new Point2D(1000, 600)
-                )
-        );
-
-        GamePath path = new GamePath(segments, 200);
+        GamePath path = PathFactory.createPath(difficulty);
 
         // Game
         game = new Game(path, root);
@@ -171,7 +127,7 @@ public class GameController {
         }
 
         // XML
-        List<Wave> waves = WaveLoader.loadWaves();
+        List<Wave> waves = WaveLoader.loadWaves(difficulty);
         System.out.println("load waves: " + waves.size());
 
         // Wave manager

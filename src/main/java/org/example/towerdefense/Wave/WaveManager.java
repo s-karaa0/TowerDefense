@@ -91,10 +91,10 @@ public class WaveManager {
                 if (wave.getActiveEnemies() == 0) {
                     wave.setFinished(true);
                 }
+            }
 
-                if (activeWaves.isEmpty()) {
-                    startNextWave();
-                }
+            if (activeWaves.isEmpty()) {
+                startNextWave();
             }
 
             Iterator<Wave> iterator = activeWaves.iterator();

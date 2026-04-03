@@ -6,6 +6,8 @@ import javafx.scene.image.ImageView;
 import org.example.towerdefense.Path.GamePath;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Enemy {
     private float health;
@@ -19,6 +21,7 @@ public class Enemy {
     private double distance = 0;
     private boolean finished = false;
     private final ImageView view;
+    private static final Map<String, Image> imageCache = new HashMap<>();
 
     public boolean getFinished(){return finished;}
     public float getHealth() {
@@ -74,7 +77,7 @@ public class Enemy {
         this.groupID = groupID;
         this.waveID = waveID;
 
-        Image img = new Image(getClass().getResourceAsStream(url));
+        Image img = imageCache.computeIfAbsent(url, u -> new Image(getClass().getResourceAsStream(u)));
         view = new ImageView(img);
 
         view.setFitWidth(40);   // Größe anpassen

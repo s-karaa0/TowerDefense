@@ -11,6 +11,7 @@
         <money>10</money>
         <attack>2</attack>
         <type>NormalEnemy</type>
+        <difficulty>easy</difficulty>
     </wave>
 
     <wave id="2">
@@ -23,6 +24,7 @@
         <money>15</money>
         <attack>3</attack>
         <type>FastEnemy</type>
+        <difficulty>normal</difficulty>
     </wave>
 
     <wave id="3">
@@ -35,6 +37,7 @@
         <money>15</money>
         <attack>4</attack>
         <type>StrongEnemy</type>
+        <difficulty>hard</difficulty>
     </wave>
 
     <wave id="4">
