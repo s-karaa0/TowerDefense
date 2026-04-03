@@ -20,10 +20,11 @@ public class Wave {
     private int spawned = 0;
     private double spawnTimer = 0;
     private int activeEnemies;
+    private final String type;
 
     public Wave(int group, int waveID, int enemyCount, double spawnInterval,
                 float health, float speed,
-                int money, float attack) {
+                int money, float attack, String type) {
 
         this.group = group;
         this.waveID = waveID;
@@ -34,6 +35,7 @@ public class Wave {
         this.money = money;
         this.attack = attack;
         this.activeEnemies = enemyCount;
+        this.type = type;
     }
 
 
@@ -59,4 +61,7 @@ public class Wave {
     }
     public int getActiveEnemies() {return activeEnemies;}
     public void setActiveEnemies(int activeEnemies) {this.activeEnemies = activeEnemies;}
+    public String getType() {
+        return type;
+    }
 }

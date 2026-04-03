@@ -50,11 +50,8 @@ public class Gameloop extends AnimationTimer {
 
         dt *= speed;
 
-        while(dt >= step) {
-            game.update(step);
-            waveManager.update(step);
-            dt -= step;
-        }
+        game.update(dt);
+        waveManager.update(dt);
         }
     }
 }

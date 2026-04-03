@@ -8,12 +8,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -29,7 +27,6 @@ public class GameController {
     private Gameloop loop;
     private WaveManager waveManager;
     private boolean guiSetup = false;
-    private ChoiceBox<Object> cb = new ChoiceBox<>();
     private boolean endOfGame = false;
 
     // FX:
@@ -38,13 +35,11 @@ public class GameController {
     private final Button restartButton = new Button("Restart");
     private final Button normalSpeedButton = new Button("1x");
     private final Button doubleSpeedButton = new Button("2x");
-    private final Button quadroupleSpeedutton = new Button("4x");
+    private final Button quadroupleSpeedButton = new Button("4x");
     private final Button nextWaveButton = new Button("skip");
     private Label hp = new Label();
     private final HBox hBox = new HBox();
     private String difficulty;
-
-    private HashSet<Enemy> enemyHashSet = new HashSet<>();
     private List<Point2D> buildSpots = List.of(
             new Point2D(200, 300),
             new Point2D(400, 250),
@@ -100,13 +95,13 @@ public class GameController {
                 )
         );
 
-        GamePath path = new GamePath(segments, 10024);
+        GamePath path = new GamePath(segments, 200);
 
         // Game
-        game = new Game(path);
+        game = new Game(path, root);
         game.setOnProjectileSpawned(p -> root.getChildren().add(p.getView()));
 
-// Und noch den remove-Callback in Game.java hinzufügen (wie vorhin erklärt)
+        // Und noch den remove-Callback in Game.java hinzufügen (wie vorhin erklärt)
         game.setOnProjectileRemoved(p -> root.getChildren().remove(p.getView()));
         createShop();
 
@@ -180,8 +175,9 @@ public class GameController {
         System.out.println("load waves: " + waves.size());
 
         // Wave manager
-        waveManager = new WaveManager(game, WaveLoader.loadWaves());
+        waveManager = new WaveManager(game, waves);
         waveManager.startNextWave();
+        game.setWaveManager(waveManager);
 
         // -------------------------------------------------
         // FXML \ Buttons \ onClicks
@@ -215,7 +211,7 @@ public class GameController {
         doubleSpeedButton.setOnAction(e -> {
             loop.setSpeed(2);
         });
-        quadroupleSpeedutton.setOnAction(e -> {
+        quadroupleSpeedButton.setOnAction(e -> {
             loop.setSpeed(4);
         });
 
@@ -229,7 +225,7 @@ public class GameController {
             }
         });
 
-        hBox.getChildren().addAll(stopButton, resumeButton, restartButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedutton);
+        hBox.getChildren().addAll(stopButton, resumeButton, restartButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedButton);
         root.getChildren().add(hp);
         root.getChildren().add(hBox);
         root.getChildren().add(nextWaveButton);
@@ -271,27 +267,6 @@ public class GameController {
     }
 
     public void sync() {
-        // add enemies, to the Set
-        for (Enemy e : game.getEnemies()) {
-            if (!enemyHashSet.contains(e)) {
-                root.getChildren().add(e.getView());
-                enemyHashSet.add(e);
-
-                // experimental:
-                System.out.println("enemy " + e.getId() + "|" + e.getGroupID() + " added");
-                // if (i == 5 || i == 10){loop.pause();}
-            }
-        }
-
-        // rm enemies, via their Set
-        enemyHashSet.removeIf(e -> {
-            if (!game.getEnemies().contains(e)) {
-                root.getChildren().remove(e.getView());
-                return true;
-            }
-            return false;
-        });
-
         if (game.getHp() <= 0 && !endOfGame) {
             try {
                 endOfGameCheck();
@@ -311,7 +286,6 @@ public class GameController {
     public void deleteAllEnemies() {
         for (Enemy e : game.getEnemies()) {
             root.getChildren().remove(e.getView());
-            e.destroy(root);
         }
     }
 
@@ -463,6 +437,7 @@ public class GameController {
             } else {
                 root.getChildren().remove(view);
                 System.out.println("Invalid placement");
+                root.setOnMouseMoved(null);
             }
         });
     }

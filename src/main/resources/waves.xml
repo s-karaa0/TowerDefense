@@ -10,6 +10,7 @@
         <speed>100</speed>
         <money>10</money>
         <attack>2</attack>
+        <type>NormalEnemy</type>
     </wave>
 
     <wave id="2">
@@ -21,6 +22,7 @@
         <speed>300</speed>
         <money>15</money>
         <attack>3</attack>
+        <type>FastEnemy</type>
     </wave>
 
     <wave id="3">
@@ -32,6 +34,7 @@
         <speed>100</speed>
         <money>15</money>
         <attack>4</attack>
+        <type>StrongEnemy</type>
     </wave>
 
     <wave id="4">
@@ -43,6 +46,7 @@
         <speed>200</speed>
         <money>60</money>
         <attack>5</attack>
+        <type>BossEnemy</type>
     </wave>
 
 </waves>

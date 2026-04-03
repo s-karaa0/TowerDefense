@@ -69,8 +69,8 @@ public class TowerShooter {
     }
 
     private boolean isInRange(Enemy e) {
-        double dx = e.getView().getCenterX() - (towerView.getLayoutX() + 32);
-        double dy = e.getView().getCenterY() - (towerView.getLayoutY() + 32);
+        double dx = (e.getView().getX() + e.getView().getFitWidth()/2) - (towerView.getLayoutX() + 32);
+        double dy = (e.getView().getY() + e.getView().getFitHeight()/2) - (towerView.getLayoutY() + 32);
         return Math.sqrt(dx*dx + dy*dy) <= range;
     }
 }

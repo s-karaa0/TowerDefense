@@ -2,7 +2,9 @@ package org.example.towerdefense;
 
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import org.example.towerdefense.Path.GamePath;
+import org.example.towerdefense.Wave.WaveManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,16 +17,20 @@ public class Game {
     private final List<Tower> towers = new ArrayList<>();
     private final List<Projectile> projectiles = new ArrayList<>();
     private int hp = 20; // hp = health points
-
+    private final Pane gamePane;
+    private WaveManager waveManager;
 
     public int getHp() {return hp;}
 
-    public Game(GamePath path) {
+    public Game(GamePath path, Pane gamePane) {
         this.path = path;
+        this.gamePane = gamePane;
     }
 
     public void addEnemy(Enemy e) {
         enemies.add(e);
+        // ImageView direkt ins Pane hinzufügen
+        gamePane.getChildren().add(e.getView());
     }
 
     public List<Enemy> getEnemies() {
@@ -48,13 +54,16 @@ public class Game {
             enemy.update(dt, path);
 
             if (enemy.getHealth() <= 0 || !enemy.getLifeStatus()) {
+                waveManager.onEnemyKilled(enemy);
+                gamePane.getChildren().remove(enemy.getView());
                 iterator.remove();
-
             } else if (enemy.getFinished()) {
                 enemy.setLifeStatus(false);
                 float damage = enemy.getAttackOutput();
                 hp = hp - Math.round(damage);
 
+                gamePane.getChildren().remove(enemy.getView());
+                iterator.remove();
             }
         }
 
@@ -105,6 +114,10 @@ public class Game {
 
     public List<Projectile> getProjectiles() {
         return projectiles;
+    }
+
+    public void setWaveManager(WaveManager waveManager) {
+        this.waveManager = waveManager;
     }
 
 }

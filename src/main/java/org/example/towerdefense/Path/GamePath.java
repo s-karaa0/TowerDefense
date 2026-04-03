@@ -30,7 +30,7 @@ public class GamePath {
         totalLength = lenAcc;
     }
 
-    public double getTotalLeanght(){
+    public double getTotalLenght(){
         return totalLength;
     }
 

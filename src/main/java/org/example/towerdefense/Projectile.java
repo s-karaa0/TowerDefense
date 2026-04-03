@@ -29,20 +29,22 @@ public class Projectile {
         }
 
         // get target's current position
-        double targetX = target.getView().getCenterX();
-        double targetY = target.getView().getCenterY();
+        double targetX = target.getView().getX() + target.getView().getFitWidth()/2;
+        double targetY = target.getView().getY() + target.getView().getFitHeight()/2;
+
 
         // calculate direction to target
         double dx = targetX - x;
         double dy = targetY - y;
-        double distance = Math.sqrt(dx * dx + dy * dy);
+        double distanceSquared = dx * dx + dy * dy;
 
-        // if close enough to hit, deal damage and deactivate
-        if (distance < speed * dt + 5) {
+        if (distanceSquared < (speed * dt + 5) * (speed * dt + 5)) {
             target.damageTaken((float) damage);
             active = false;
             return;
         }
+
+        double distance = Math.sqrt(distanceSquared); // nur einmal wenn nötig
 
         // move projectile towards target
         x += (dx / distance) * speed * dt;
@@ -52,8 +54,8 @@ public class Projectile {
     }
 
     private void updateView() {
-        view.setCenterX(x);
-        view.setCenterY(y);
+        view.setTranslateX(x);
+        view.setTranslateY(y);
     }
 
     public Circle getView() { return view; }

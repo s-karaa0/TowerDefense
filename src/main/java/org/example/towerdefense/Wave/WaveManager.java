@@ -2,8 +2,11 @@ package org.example.towerdefense.Wave;
 
 import org.example.towerdefense.Enemy;
 import org.example.towerdefense.Game;
+import org.example.towerdefense.e.FastEnemy;
+import org.example.towerdefense.e.StrongEnemy;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class WaveManager {
@@ -56,7 +59,6 @@ public class WaveManager {
         if(!endOfAllWaves) {
             for(int i=0; i<activeWaves.size(); i++) {
                 Wave wave = activeWaves.get(i);
-                List<Enemy> enemyList = game.getEnemies();
 
                 wave.setSpawnTimer(wave.getSpawnTimer() + dt);
                 // -> quasi: spawnTimer += dt;
@@ -64,45 +66,43 @@ public class WaveManager {
                 if ((wave.getSpawnTimer() >= wave.getSpawnInterval()
                         && wave.getSpawned() < wave.getEnemyCount())) {
                     wave.setSpawnTimer(wave.getSpawnTimer() - wave.getSpawnInterval());
-                    Enemy enemy = new Enemy(
-                            wave.getHealth(),
-                            wave.getSpeed(),
-                            wave.getMoney(),
-                            wave.getAttack(),
-                            getEnemyId(),
-                            group,
-                            wave.getWaveID()
-                    );
+                    Enemy enemy;
+                    switch (wave.getType()) {
+                        case "FastEnemy" -> enemy = new FastEnemy(getEnemyId(), group, wave.getWaveID());
+                        case "TankEnemy" -> enemy = new StrongEnemy(getEnemyId(), group, wave.getWaveID());
+                        default -> enemy = new Enemy(
+                                wave.getHealth(),
+                                wave.getSpeed(),
+                                wave.getMoney(),
+                                wave.getAttack(),
+                                getEnemyId(),
+                                group,
+                                wave.getWaveID(),
+                                "/images/enemies/enemy-lev1.png"
+                        );
+                    }
 
                     game.addEnemy(enemy);
+
                     wave.setSpawned(wave.getSpawned() + 1);
                 }
 
-                // iterates all existing enemies, and if those enemies are dead, gives the info to the wave
-                for (Enemy e : enemyList) {
-                    if (e.getWaveID() == wave.getWaveID() && !e.getLifeStatus()) {
-                        wave.setActiveEnemies(wave.getActiveEnemies() - 1);
-                    }
-                }
                 // if the wave now has no enemies left, sets end of wave
                 if (wave.getActiveEnemies() == 0) {
                     wave.setFinished(true);
                 }
 
-                if (wave.getSpawned() >= wave.getEnemyCount() && wave.isFinished())  {
-                    activeWaves.remove(wave);
-
-                    System.out.println("end of " + wave.getWaveID() + "th wave");
-                    System.out.println("---*---");
-                    System.out.println(" ");
-                    System.out.println(" ");
-
-                    // here the next wave is called. If all waves are over
-
-                }
-
                 if (activeWaves.isEmpty()) {
                     startNextWave();
+                }
+            }
+
+            Iterator<Wave> iterator = activeWaves.iterator();
+            while(iterator.hasNext()){
+                Wave w = iterator.next();
+                if (w.getSpawned() >= w.getEnemyCount() && w.isFinished()){
+                    iterator.remove();
+                    System.out.println("end of " + w.getWaveID() + "th wave");
                 }
             }
         }
@@ -127,5 +127,14 @@ public class WaveManager {
         ++enemyId;
         return enemyId;
     }
+
+    public void onEnemyKilled(Enemy e) {
+        for (Wave w : activeWaves) {
+            if (w.getWaveID() == e.getWaveID()) {
+                w.setActiveEnemies(w.getActiveEnemies() - 1);
+            }
+        }
+    }
+
 
 }

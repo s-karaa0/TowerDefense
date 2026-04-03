@@ -57,7 +57,8 @@ public class WaveLoader {
                 float attack = Float.parseFloat(
                         waveElement.getElementsByTagName("attack").item(0).getTextContent());
 
-                waves.add(new Wave(group, waveID, count, interval, health, speed, money, attack));
+                String type = waveElement.getElementsByTagName("type").item(0).getTextContent();
+                waves.add(new Wave(group, waveID, count, interval, health, speed, money, attack, type));
             }
 
         } catch (Exception e) {

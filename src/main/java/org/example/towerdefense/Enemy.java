@@ -1,9 +1,11 @@
 package org.example.towerdefense;
 
 import javafx.geometry.Point2D;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Circle;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.example.towerdefense.Path.GamePath;
+
+import java.io.InputStream;
 
 public class Enemy {
     private float health;
@@ -16,8 +18,7 @@ public class Enemy {
     private boolean lifeStatus = true;
     private double distance = 0;
     private boolean finished = false;
-    // for debugging ->
-    private final Circle circle = new Circle(20);
+    private final ImageView view;
 
     public boolean getFinished(){return finished;}
     public float getHealth() {
@@ -38,46 +39,46 @@ public class Enemy {
     public void setMoneyDropped(int moneyDropped) {
         this.moneyDropped = moneyDropped;
     }
+    private static final Image ENEMY_IMG =
+            new Image(Enemy.class.getResourceAsStream("/images/enemies/enemy-lev1.png"));
+
 
     public void update(double dt, GamePath path){
-        if (!lifeStatus || finished){ return;}
+        if (!lifeStatus || finished) { return;}
 
         distance += dt * speed;
-        if(distance >= path.getTotalLeanght()){
-            distance = path.getTotalLeanght();
+        if(distance >= path.getTotalLenght()){
+            distance = path.getTotalLenght();
             finished = true;
         }
 
         Point2D point = path.getPointAt(distance);
-        circle.setCenterX(point.getX());
-        circle.setCenterY(point.getY());
-    }
-
-    public Circle getView(){
-        return circle;
-    }
-
-    public void destroy(AnchorPane root) {
-        root.getChildren().remove(circle);
+        view.setTranslateX(point.getX());
+        view.setTranslateY(point.getY());
     }
 
     public void damageTaken(float damage){
-        setHealth(getHealth() - damage);
-        if(getHealth()<=0){
-            setLifeStatus(false);
+        health -= damage;
+        if (health <= 0){
+            lifeStatus = false;
         }
     }
-    public Enemy(float health, float speed, int moneyDropped, float attackOutput, int id, int groupID, int waveID) {
-        setHealth(health);
-        setSpeed(speed);
-        setMoneyDropped(moneyDropped);
-        setAttackOutput(attackOutput);
-        setId(id);
-        setGroupID(groupID);
-        setWaveID(waveID);
+    public Enemy(float health, float speed, int moneyDropped,
+                 float attackOutput, int id, int groupID,
+                 int waveID, String url) {
+        this.health = health;
+        this.speed = speed;
+        this.moneyDropped = moneyDropped;
+        this.attackOutput = attackOutput;
+        this.id = id;
+        this.groupID = groupID;
+        this.waveID = waveID;
 
-        circle.setTranslateX(0);
-        circle.setTranslateY(0);
+        Image img = new Image(getClass().getResourceAsStream(url));
+        view = new ImageView(img);
+
+        view.setFitWidth(40);   // Größe anpassen
+        view.setFitHeight(40);
     }
 
 
@@ -111,4 +112,8 @@ public class Enemy {
     public void setGroupID(int groupID) {this.groupID = groupID;}
     public int getWaveID() {return waveID;}
     public void setWaveID(int waveID) {this.waveID = waveID;}
+    public ImageView getView() {
+        return view; // 'view' ist dein ImageView statt Circle
+    }
+
 }
