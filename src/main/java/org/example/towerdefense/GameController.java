@@ -54,7 +54,7 @@ public class GameController {
         game = new Game(path, root);
         game.setOnProjectileSpawned(p -> root.getChildren().add(p.getView()));
 
-        // Und noch den remove-Callback in Game.java hinzufügen (wie vorhin erklärt)
+
         game.setOnProjectileRemoved(p -> root.getChildren().remove(p.getView()));
         createShop();
 

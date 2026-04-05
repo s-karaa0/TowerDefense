@@ -69,4 +69,9 @@ public class MusicManager {
         currentIndex = (currentIndex + 1) % currentTracks.size();
         playNext();
     }
+
+    public static void resumeContext() {
+        if (currentTracks == null || currentTracks.isEmpty()) return;
+        playNext();
+    }
 }

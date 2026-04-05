@@ -21,6 +21,8 @@ public class SettingsController {
     @FXML
     public Button continueButton;
 
+    private static boolean musicOn = true;
+
     public void setApplication(GameApplication gameApp) {
         this.gameApp = gameApp;
         if(gameApp != null && gameApp.isStartState()) {
@@ -33,6 +35,16 @@ public class SettingsController {
     }
 
     public void onMusicButtonClicked(ActionEvent actionEvent) {
+        if (musicOn) {
+            MusicManager.stop();
+            ((Button) actionEvent.getSource()).setText("Musik: Off");
+            musicOn = false;
+        } else {
+            // Musik wieder starten mit aktuellem Context
+            MusicManager.resumeContext();
+            ((Button) actionEvent.getSource()).setText("Musik: On");
+            musicOn = true;
+        }
     }
 
     public void onSaveClicked(ActionEvent actionEvent) {
