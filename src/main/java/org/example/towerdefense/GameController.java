@@ -399,7 +399,9 @@ public class GameController {
                 targetMenu.show(view, e.getScreenX(), e.getScreenY())
         );
     }**/
-
+    public Game getGame() {
+        return this.game;
+    }
     public Parent getRoot() {
         return root;
     }

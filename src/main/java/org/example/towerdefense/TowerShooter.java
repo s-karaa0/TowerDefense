@@ -36,7 +36,7 @@ public class TowerShooter {
         loadSound();
     }
 
-
+    // damits nicht nervig wird button einbauen mit den man das stumm schalten kann
     //loads shooting soundeffect
     private void loadSound() {
         try {
@@ -94,7 +94,7 @@ public class TowerShooter {
         game.spawnProjectile(new Projectile(cx, cy, projectileSpeed, target, damage));
 
 
-        if (shootSound != null) {
+        if (shootSound != null && game.isSoundEffectsEnabled()) {
             shootSound.play();
         }
     }

@@ -16,8 +16,10 @@ public class Game {
     private final List<Projectile> projectiles = new ArrayList<>();
     private int hp = 20; // hp = health points
 
+    // NEU: Variable für Sound-Zustand (Standardmäßig aus)
+    private boolean soundEffectsEnabled = false;
 
-    public int getHp() {return hp;}
+    public int getHp() { return hp; }
 
     public Game(GamePath path) {
         this.path = path;
@@ -35,10 +37,9 @@ public class Game {
         enemies.clear();
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return enemies.isEmpty();
     }
-
 
     public void update(double dt) {
         // enemy loop
@@ -72,14 +73,11 @@ public class Game {
         }
     }
 
-
-
-
     // delete later
     public void handleMouseClicked(MouseEvent e) {
-        if(e.getButton() == MouseButton.PRIMARY){
+        if (e.getButton() == MouseButton.PRIMARY) {
         }
-    };
+    }
 
     public void addTower(Tower t) {
         towers.add(t);
@@ -92,7 +90,7 @@ public class Game {
         }
     }
 
-    private Consumer<Projectile> onProjectileSpawned; // Funktion die ein Projectile bekommt und etwas damit macht (kein Rückgabewert)
+    private Consumer<Projectile> onProjectileSpawned;
     private Consumer<Projectile> onProjectileRemoved;
 
     public void setOnProjectileSpawned(Consumer<Projectile> callback) {
@@ -103,12 +101,16 @@ public class Game {
         this.onProjectileRemoved = callback;
     }
 
-
     public List<Projectile> getProjectiles() {
         return projectiles;
     }
+
+    // --- NEU: GETTER UND SETTER FÜR DIE SETTINGS ---
+    public boolean isSoundEffectsEnabled() {
+        return soundEffectsEnabled;
+    }
+
+    public void setSoundEffectsEnabled(boolean soundEffectsEnabled) {
+        this.soundEffectsEnabled = soundEffectsEnabled;
+    }
 }
-
-
-
-

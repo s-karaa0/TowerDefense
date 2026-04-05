@@ -110,6 +110,7 @@ public class GameApplication extends Application {
         }
 
         System.out.println(currentState);
+
     }
 
     public void setGameController(GameController gameCtr){this.gameController = gameCtr;}
@@ -122,6 +123,18 @@ public class GameApplication extends Application {
         } else {
             System.out.println("GameController is nicht definiert");
         }
+    }
+
+    public GameController getGameController() {
+        return gameController;
+    }
+
+
+    public Game getGame() {
+        if (gameController != null) {
+            return gameController.getGame();
+        }
+        return null;
     }
 
     public static void main(String[] args) {
