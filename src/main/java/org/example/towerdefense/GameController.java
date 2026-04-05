@@ -41,14 +41,11 @@ public class GameController {
     private Label hp = new Label();
     private final HBox hBox = new HBox();
     private String difficulty;
-    private List<Point2D> buildSpots = List.of(
-            new Point2D(200, 300),
-            new Point2D(400, 250),
-            new Point2D(600, 450),
-            new Point2D(800, 300));
+    private List<Point2D> buildSpots;
     private HashSet<Point2D> usedSpots = new HashSet<>();
 
     public GameController(String difficulty) {
+        buildSpots = BuildSpots.createBuildSpots(difficulty);
         this.difficulty = difficulty;
         // Path
         GamePath path = PathFactory.createPath(difficulty);
