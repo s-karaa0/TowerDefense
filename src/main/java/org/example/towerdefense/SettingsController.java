@@ -14,6 +14,7 @@ import java.io.IOException;
 public class SettingsController {
 
     private final AnchorPane root = new AnchorPane();
+    public Button skipButton;
     private GameApplication gameApp;
     @FXML
     public Button closeButton;
@@ -50,5 +51,9 @@ public class SettingsController {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
 
+    }
+
+    public void onSkipClicked(ActionEvent actionEvent) {
+        MusicManager.skipTrack();
     }
 }

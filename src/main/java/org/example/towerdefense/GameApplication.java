@@ -2,8 +2,6 @@ package org.example.towerdefense;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -13,7 +11,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameApplication extends Application {
     private static Stage stage;
@@ -83,6 +82,11 @@ public class GameApplication extends Application {
                     isRunning = false;
 
                     currentState = SceneState.start;
+                    MusicManager.playQueue(new ArrayList<>(List.of(
+                            "/music/menu2.mp3",
+                            "/music/menu.mp3",
+                            "/music/menu3.mp3"
+                    )), "menu");
                     break;
                 }
 
@@ -96,10 +100,25 @@ public class GameApplication extends Application {
 
                         if (difficulty.equals("easy")) {
                             bgImage = new Image(getClass().getResource("/images/fields/field-easy.png").toExternalForm());
+                            MusicManager.playQueue(new ArrayList<>(List.of(
+                                    "/music/game-easy2.mp3",
+                                    "/music/game-easy3.mp3",
+                                    "/music/game-easy4.mp3"
+                            )), "easy");
                         } else if (difficulty.equals("normal")) {
                             bgImage = new Image(getClass().getResource("/images/fields/field-normal.png").toExternalForm());
+                            MusicManager.playQueue(new ArrayList<>(List.of(
+                                    "/music/game-normal.mp3",
+                                    "/music/game-normal2.mp3",
+                                    "/music/game-normal3.mp3"
+                            )), "normal");
                         } else if (difficulty.equals("hard")) {
                             bgImage = new Image(getClass().getResource("/images/fields/field-hard.png").toExternalForm());
+                            MusicManager.playQueue(new ArrayList<>(List.of(
+                                    "/music/game-hard.mp3",
+                                    "/music/game-hard2.mp3",
+                                    "/music/game-hard3.mp3"
+                            )), "hard");
                         }
 
                         ImageView bg = new ImageView(bgImage);
@@ -171,6 +190,7 @@ public class GameApplication extends Application {
             System.out.println("GameController is nicht definiert");
         }
     }
+
 
     public void startGameWithDifficulty(String difficulty) throws IOException {
         this.difficulty = difficulty;
