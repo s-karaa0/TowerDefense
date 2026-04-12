@@ -2,6 +2,8 @@ package org.example.towerdefense;
 
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import org.example.towerdefense.Enemy;
 import org.example.towerdefense.Game;
 
@@ -11,23 +13,24 @@ import java.util.List;
 public class TowerShooter {
     private final Game game;
     private final ImageView towerView;
-    private final double damage;
-    private final ChoiceBox<Object> cb;
+    private double damage;
+    private String aim;
 
     private Enemy target;
     private double attackTimer = 0;
-    private final double attackCooldown;
-    private final double range;
-    private final double projectileSpeed;
+    private double attackCooldown;
+    private double range;
+    private double projectileSpeed;
 
-    public TowerShooter(Game game, ImageView towerView, double damage, ChoiceBox<Object> cb, double attackCooldown, double range,  double projectileSpeed) {
+    public TowerShooter(Game game, ImageView towerView, double damage, String aim, double attackCooldown, double range,  double projectileSpeed) {
         this.game = game;
         this.towerView = towerView;
         this.damage = damage;
-        this.cb = cb;
+        this.aim = aim;
         this.attackCooldown = attackCooldown;
         this.range = range;
         this.projectileSpeed = projectileSpeed;
+
     }
 
     public void update(double dt) {
@@ -50,8 +53,8 @@ public class TowerShooter {
 
         if (enemies.isEmpty()) { target = null; return; }
 
-        String mode = (String) cb.getSelectionModel().getSelectedItem();
-        if (mode == null) mode = "erster";
+
+        String mode = aim;
 
         target = switch (mode) {
             case "erster"      -> enemies.stream().max(Comparator.comparingDouble(Enemy::getDistance)).orElse(null);
@@ -69,8 +72,25 @@ public class TowerShooter {
     }
 
     private boolean isInRange(Enemy e) {
-        double dx = (e.getView().getX() + e.getView().getFitWidth()/2) - (towerView.getLayoutX() + 32);
-        double dy = (e.getView().getY() + e.getView().getFitHeight()/2) - (towerView.getLayoutY() + 32);
+        double dx = (e.getView().getLayoutX() + e.getView().getFitWidth()/2) - (towerView.getLayoutX() + 32);
+        double dy = (e.getView().getLayoutY() + e.getView().getFitHeight()/2) - (towerView.getLayoutY() + 32);
         return Math.sqrt(dx*dx + dy*dy) <= range;
     }
+
+    public void getTarget(String aim) {
+        this.aim = aim;
+    }
+
+    public void setRange(double range) {
+        this.range = range;
+    }
+
+    public void setAttackCooldown(double cooldown){
+        this.attackCooldown = cooldown;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
 }

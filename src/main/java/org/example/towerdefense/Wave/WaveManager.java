@@ -1,9 +1,8 @@
 package org.example.towerdefense.Wave;
 
+import javafx.scene.image.Image;
 import org.example.towerdefense.Enemy;
 import org.example.towerdefense.Game;
-import org.example.towerdefense.e.FastEnemy;
-import org.example.towerdefense.e.StrongEnemy;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +16,26 @@ public class WaveManager {
     private int waveIndex = 0;
     private int group = 0;
     private boolean endOfAllWaves = false;
+
+    private static final Image NormalEnemy =
+            new Image(WaveManager.class
+                    .getResource("/images/Enemies/enemy-lev1.png")
+                    .toExternalForm());
+
+    private static final Image FastEnemy =
+            new Image(WaveManager.class
+                    .getResource("/images/Enemies/enemy-lev2.png")
+                    .toExternalForm());
+
+    private static final Image StrongEnemy =
+            new Image(WaveManager.class
+                    .getResource("/images/Enemies/enemy-lev3.png")
+                    .toExternalForm());
+
+    private static final Image BossEnemy =
+            new Image(WaveManager.class
+                    .getResource("/images/Enemies/enemy-lev4.png")
+                    .toExternalForm());
 
     private int enemyId = 0;
 
@@ -47,65 +66,91 @@ public class WaveManager {
                 // if its the last wave, then the if from above cancels any new one
                 waveIndex = wave.getWaveID();
 
+                switch (wave.getType()) {
+                    case "NormalEnemy": {
+                        wave.setImage(NormalEnemy);
+                        break;
+                    }
+
+                    case "FastEnemy": {
+                        wave.setImage(FastEnemy);
+                        break;
+                    }
+
+                    case "StrongEnemy": {
+                        wave.setImage(StrongEnemy);
+                        break;
+                    }
+
+                    case "BossEnemy": {
+                        wave.setImage(BossEnemy);
+                        break;
+                    }
+
+                }
+
                 wave.setFinished(false);
             }
         }
-
-        System.out.println("----");
-        System.out.println("Group: " + group);
     }
 
     public void update(double dt) {
-        if(!endOfAllWaves) {
-            for(int i=0; i<activeWaves.size(); i++) {
-                Wave wave = activeWaves.get(i);
+            if(!endOfAllWaves) {
+                for(int i=0; i<activeWaves.size(); i++) {
+                    Wave wave = activeWaves.get(i);
+                    List<Enemy> enemyList = game.getEnemies();
 
-                wave.setSpawnTimer(wave.getSpawnTimer() + dt);
-                // -> quasi: spawnTimer += dt;
-                // spawning enemies in game
-                if ((wave.getSpawnTimer() >= wave.getSpawnInterval()
-                        && wave.getSpawned() < wave.getEnemyCount())) {
-                    wave.setSpawnTimer(wave.getSpawnTimer() - wave.getSpawnInterval());
-                    Enemy enemy;
-                    switch (wave.getType()) {
-                        case "FastEnemy" -> enemy = new FastEnemy(getEnemyId(), group, wave.getWaveID());
-                        case "TankEnemy" -> enemy = new StrongEnemy(getEnemyId(), group, wave.getWaveID());
-                        default -> enemy = new Enemy(
+                    wave.setSpawnTimer(wave.getSpawnTimer() + dt);
+                    // -> quasi: spawnTimer += dt;
+                    // spawning enemies in game
+                    if ((wave.getSpawnTimer() >= wave.getSpawnInterval()
+                            && wave.getSpawned() < wave.getEnemyCount())) {
+                        wave.setSpawnTimer(wave.getSpawnTimer() - wave.getSpawnInterval());
+                        Enemy enemy = new Enemy(
                                 wave.getHealth(),
                                 wave.getSpeed(),
                                 wave.getMoney(),
                                 wave.getAttack(),
                                 getEnemyId(),
                                 group,
-                                wave.getWaveID(),
-                                "/images/enemies/enemy-lev1.png"
+                                wave.getWaveID()
                         );
+
+                        enemy.setImageView(wave.getImage());
+                        enemy.getView().setLayoutX(-100);
+                        enemy.getView().setLayoutY(-100);
+
+                        game.addEnemy(enemy);
+                        enemy.getView().setLayoutX(0);
+                        enemy.getView().setLayoutY(0);
+                        wave.setSpawned(wave.getSpawned() + 1);
                     }
 
-                    game.addEnemy(enemy);
+                    // iterates all existing enemies, and if those enemies are dead, gives the info to the wave
+                    for (Enemy e : enemyList) {
+                        if (e.getWaveID() == wave.getWaveID() && !e.getLifeStatus()) {
+                            wave.setActiveEnemies(wave.getActiveEnemies() - 1);
+                        }
+                    }
+                    // if the wave now has no enemies left, sets end of wave
+                    if (wave.getActiveEnemies() == 0) {
+                        wave.setFinished(true);
+                    }
 
-                    wave.setSpawned(wave.getSpawned() + 1);
-                }
+                    if (wave.getSpawned() >= wave.getEnemyCount() && wave.isFinished())  {
+                        activeWaves.remove(wave);
 
-                // if the wave now has no enemies left, sets end of wave
-                if (wave.getActiveEnemies() == 0) {
-                    wave.setFinished(true);
+                        System.out.println("end of " + wave.getWaveID() + "th wave");
+                        System.out.println("---*---");
+                        System.out.println(" ");
+                        System.out.println(" ");
+                    }
+
+                    if (activeWaves.isEmpty()) {
+                        startNextWave();
+                    }
                 }
             }
-
-            if (activeWaves.isEmpty()) {
-                startNextWave();
-            }
-
-            Iterator<Wave> iterator = activeWaves.iterator();
-            while(iterator.hasNext()){
-                Wave w = iterator.next();
-                if (w.getSpawned() >= w.getEnemyCount() && w.isFinished()){
-                    iterator.remove();
-                    System.out.println("end of " + w.getWaveID() + "th wave");
-                }
-            }
-        }
     }
 
     public void resetAllWaves() {
@@ -128,12 +173,9 @@ public class WaveManager {
         return enemyId;
     }
 
-    public void onEnemyKilled(Enemy e) {
-        for (Wave w : activeWaves) {
-            if (w.getWaveID() == e.getWaveID()) {
-                w.setActiveEnemies(w.getActiveEnemies() - 1);
-            }
-        }
+
+    public boolean getEndOfAllWaves() {
+        return endOfAllWaves;
     }
 
 

@@ -16,7 +16,7 @@
             <Font size="30.0" />
          </font>
       </Label>
-      <ChoiceBox fx:id="fieldChoiceBox" layoutX="218.0" layoutY="200.0" prefWidth="150.0" />
+      <ChoiceBox fx:id="fieldChoiceBox" onAction="#choiceBoxClicked" layoutX="218.0" layoutY="200.0" prefWidth="150.0" />
       <Label layoutX="251.0" layoutY="174.0" text="select your field:" />
    </children>
 </AnchorPane>

@@ -29,8 +29,8 @@ public class Projectile {
         }
 
         // get target's current position
-        double targetX = target.getView().getX() + target.getView().getFitWidth()/2;
-        double targetY = target.getView().getY() + target.getView().getFitHeight()/2;
+        double targetX = target.getView().getLayoutX() + target.getView().getFitWidth()/2;
+        double targetY = target.getView().getLayoutY() + target.getView().getFitHeight()/2;
 
 
         // calculate direction to target

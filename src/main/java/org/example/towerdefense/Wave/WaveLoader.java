@@ -9,7 +9,7 @@ import java.util.List;
 public class WaveLoader {
 
 
-    public static List<Wave> loadWaves(String difficulty) {
+    public static List<Wave> loadWaves() {
 
         List<Wave> waves = new ArrayList<>();
 
@@ -20,7 +20,7 @@ public class WaveLoader {
             if (is == null) {
                 System.out.println("waves.xml not found!");
             }
-            
+
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
 
@@ -32,13 +32,6 @@ public class WaveLoader {
             for (int i = 0; i < waveNodes.getLength(); i++) {
 
                 Element waveElement = (Element) waveNodes.item(i);
-
-                String diff = waveElement
-                        .getElementsByTagName("difficulty")
-                        .item(0)
-                        .getTextContent();
-
-                if (!diff.equals(difficulty)) continue;
 
                 int group = Integer.parseInt(
                         waveElement.getElementsByTagName("group").item(0).getTextContent());
@@ -64,7 +57,9 @@ public class WaveLoader {
                 float attack = Float.parseFloat(
                         waveElement.getElementsByTagName("attack").item(0).getTextContent());
 
+
                 String type = waveElement.getElementsByTagName("type").item(0).getTextContent();
+
                 waves.add(new Wave(group, waveID, count, interval, health, speed, money, attack, type));
             }
 

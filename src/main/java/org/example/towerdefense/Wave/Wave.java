@@ -1,5 +1,6 @@
 package org.example.towerdefense.Wave;
 
+import javafx.scene.image.Image;
 import org.example.towerdefense.Enemy;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class Wave {
     private double spawnTimer = 0;
     private int activeEnemies;
     private final String type;
+    private Image image;
 
     public Wave(int group, int waveID, int enemyCount, double spawnInterval,
                 float health, float speed,
@@ -63,5 +65,11 @@ public class Wave {
     public void setActiveEnemies(int activeEnemies) {this.activeEnemies = activeEnemies;}
     public String getType() {
         return type;
+    }
+    public Image getImage(){
+        return image;
+    }
+    public void setImage(Image img){
+        this.image = img;
     }
 }

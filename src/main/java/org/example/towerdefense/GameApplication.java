@@ -19,7 +19,8 @@ public class GameApplication extends Application {
     private static boolean isRunning = false;
     private static SceneState currentState = SceneState.start;
     private static GameController gameController;
-    private String difficulty;
+    private String difficulty = "easy";
+    private boolean conclusion;
 
     public enum SceneState {
         start,
@@ -46,10 +47,10 @@ public class GameApplication extends Application {
     }
 
     public void switchScene(String fxml, String layout) throws IOException {
-        boolean x = gameController != null;
         try {
             switch (layout) {
                 case "settings": {
+                    System.out.println(difficulty);
                     Stage settingsStage = new Stage();
                     settingsStage.initOwner(stage);
                     settingsStage.initModality(Modality.WINDOW_MODAL);
@@ -74,7 +75,7 @@ public class GameApplication extends Application {
                     Parent root = fxmlLoader.load();
 
                     StartController startController = fxmlLoader.getController();
-                    startController.setApplication(this);
+                    startController.getApplication(this);
 
                     Scene scene = new Scene(root);
                     stage.setScene(scene);
@@ -98,21 +99,23 @@ public class GameApplication extends Application {
 
                         Image bgImage = null;
 
-                        if (difficulty.equals("easy")) {
+
+                        // why not difficulty.equals()? because if null throws nullpointerexception
+                        if ("easy".equals(difficulty)) {
                             bgImage = new Image(getClass().getResource("/images/fields/field-easy.png").toExternalForm());
                             MusicManager.playQueue(new ArrayList<>(List.of(
                                     "/music/game-easy2.mp3",
                                     "/music/game-easy3.mp3",
                                     "/music/game-easy4.mp3"
                             )), "easy");
-                        } else if (difficulty.equals("normal")) {
+                        } else if ("normal".equals(difficulty)) {
                             bgImage = new Image(getClass().getResource("/images/fields/field-normal.png").toExternalForm());
                             MusicManager.playQueue(new ArrayList<>(List.of(
                                     "/music/game-normal.mp3",
                                     "/music/game-normal2.mp3",
                                     "/music/game-normal3.mp3"
                             )), "normal");
-                        } else if (difficulty.equals("hard")) {
+                        } else if ("hard".equals(difficulty)) {
                             bgImage = new Image(getClass().getResource("/images/fields/field-hard.png").toExternalForm());
                             MusicManager.playQueue(new ArrayList<>(List.of(
                                     "/music/game-hard.mp3",
@@ -121,17 +124,21 @@ public class GameApplication extends Application {
                             )), "hard");
                         }
 
-                        ImageView bg = new ImageView(bgImage);
+
+
+                        /*ImageView bg = new ImageView(bgImage);
                         bg.setFitWidth(1000);
                         bg.setFitHeight(800);
+                         */
 
-                        root.getChildren().add(0, bg);
+                        controller.getBackgroundImage(bgImage);
 
                         Scene scene = new Scene(root, 1000, 800);
                         stage.setScene(scene);
                         stage.centerOnScreen();
                         stage.setTitle("Tower Defense Game");
                         controller.startLoop();
+
                         setGameController(controller);
                     }
 
@@ -140,6 +147,9 @@ public class GameApplication extends Application {
                 }
 
                 case "conclusion": {
+
+                    System.out.println(difficulty);
+
                     Stage conclusionStage = new Stage();
                     conclusionStage.initOwner(stage);
                     conclusionStage.initModality(Modality.WINDOW_MODAL);
@@ -150,9 +160,13 @@ public class GameApplication extends Application {
 
                     Scene conclusionScene = new Scene(root);
                     conclusionStage.setScene(conclusionScene);
+                    ConclusionController conclusionController = fxmlLoader.getController();
+                    conclusionController.setApplication(this);
                     conclusionStage.centerOnScreen();
                     conclusionStage.show();
                     isRunning = false;
+
+                    conclusionController.getConclusion(conclusion);
 
                     currentState = SceneState.conclusion;
                     break;
@@ -164,7 +178,6 @@ public class GameApplication extends Application {
             throw new RuntimeException(e);
         }
 
-        System.out.println(currentState);
     }
 
     public void setGameController(GameController gameCtr) {
@@ -191,9 +204,21 @@ public class GameApplication extends Application {
         }
     }
 
-
-    public void startGameWithDifficulty(String difficulty) throws IOException {
+    public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
-        switchScene(null, "game");
+        System.out.println(difficulty);
     }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setConclusion(boolean conclusion) {
+        this.conclusion = conclusion;
+    }
+
+    public boolean getConclusion() {
+        return conclusion;
+    }
+
 }

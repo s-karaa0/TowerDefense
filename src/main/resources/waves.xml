@@ -15,12 +15,12 @@
     </wave>
 
     <wave id="2">
-        <group>1</group>
+        <group>2</group>
         <waveID>2</waveID>
-        <enemyCount>20</enemyCount>
+        <enemyCount>2</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <health>1</health>
-        <speed>300</speed>
+        <speed>80</speed>
         <money>15</money>
         <attack>3</attack>
         <type>FastEnemy</type>
@@ -30,7 +30,7 @@
     <wave id="3">
         <group>2</group>
         <waveID>3</waveID>
-        <enemyCount>10</enemyCount>
+        <enemyCount>1</enemyCount>
         <spawnInterval>0.6</spawnInterval>
         <health>1</health>
         <speed>100</speed>
@@ -43,7 +43,7 @@
     <wave id="4">
         <group>3</group>
         <waveID>4</waveID>
-        <enemyCount>25</enemyCount>
+        <enemyCount>2</enemyCount>
         <spawnInterval>0.9</spawnInterval>
         <health>1</health>
         <speed>200</speed>

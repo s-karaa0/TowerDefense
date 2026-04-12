@@ -1,10 +1,11 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Path;
 
 import javafx.geometry.Point2D;
 
 import java.util.List;
 
 public class BuildSpots {
+
     public static List<Point2D> createBuildSpots(String difficulty) {
         switch (difficulty) {
 

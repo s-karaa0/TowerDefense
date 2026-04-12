@@ -1,10 +1,6 @@
 package org.example.towerdefense;
 
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import org.example.towerdefense.Path.GamePath;
-import org.example.towerdefense.Wave.WaveManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,32 +9,36 @@ import java.util.function.Consumer;
 
 public class Game {
     private final List<Enemy> enemies = new ArrayList<>();
+    private List<Enemy> deadEnemies = new ArrayList<>();
     private final GamePath path;
     private final List<Tower> towers = new ArrayList<>();
     private final List<Projectile> projectiles = new ArrayList<>();
-    private int hp = 20; // hp = health points
-    private final Pane gamePane;
-    private WaveManager waveManager;
+    private int hp = 20; // hp = health pOiNTS weil des so kheat
+    private int money = 200;
 
     public int getHp() {return hp;}
+    public int getMoney() {return money;}
+    public void addMoney(int money) {
+        this.money += money;
+    }
 
-    public Game(GamePath path, Pane gamePane) {
+    public Game(GamePath path) {
         this.path = path;
-        this.gamePane = gamePane;
     }
 
     public void addEnemy(Enemy e) {
         enemies.add(e);
-        // ImageView direkt ins Pane hinzufügen
-        gamePane.getChildren().add(e.getView());
     }
 
     public List<Enemy> getEnemies() {
         return enemies;
     }
+    public List<Enemy> getDeadEnemies() {return deadEnemies;}
 
-    public void resetEnemies() {
+    public void resetGame() {
         enemies.clear();
+        money = 200;
+
     }
 
     public boolean isEmpty(){
@@ -53,17 +53,17 @@ public class Game {
             Enemy enemy = iterator.next();
             enemy.update(dt, path);
 
-            if (enemy.getHealth() <= 0 || !enemy.getLifeStatus()) {
-                waveManager.onEnemyKilled(enemy);
-                gamePane.getChildren().remove(enemy.getView());
+            if (enemy.getHealth() <= 0 || !enemy.getLifeStatus())   {
                 iterator.remove();
+                enemy.getView().setVisible(false);
+                money = money + enemy.getMoneyDropped();
+                deadEnemies.add(enemy);
             } else if (enemy.getFinished()) {
                 enemy.setLifeStatus(false);
+                enemy.getView().setVisible(false);
                 float damage = enemy.getAttackOutput();
                 hp = hp - Math.round(damage);
 
-                gamePane.getChildren().remove(enemy.getView());
-                iterator.remove();
             }
         }
 
@@ -83,12 +83,6 @@ public class Game {
         }
     }
 
-    // delete later
-    public void handleMouseClicked(MouseEvent e) {
-        if(e.getButton() == MouseButton.PRIMARY){
-        }
-    };
-
     public void addTower(Tower t) {
         towers.add(t);
     }
@@ -102,23 +96,16 @@ public class Game {
 
     private Consumer<Projectile> onProjectileSpawned; // Funktion die ein Projectile bekommt und etwas damit macht (kein Rückgabewert)
     private Consumer<Projectile> onProjectileRemoved;
-
     public void setOnProjectileSpawned(Consumer<Projectile> callback) {
         this.onProjectileSpawned = callback;
     }
-
     public void setOnProjectileRemoved(Consumer<Projectile> callback) {
         this.onProjectileRemoved = callback;
     }
-
-
     public List<Projectile> getProjectiles() {
         return projectiles;
     }
 
-    public void setWaveManager(WaveManager waveManager) {
-        this.waveManager = waveManager;
-    }
 
 }
 

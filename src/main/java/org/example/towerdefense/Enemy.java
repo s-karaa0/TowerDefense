@@ -3,6 +3,7 @@ package org.example.towerdefense;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import org.example.towerdefense.Path.GamePath;
 
 import java.io.InputStream;
@@ -18,9 +19,10 @@ public class Enemy {
     private int waveID;
     private int groupID;
     private boolean lifeStatus = true;
+    private boolean init = false;
     private double distance = 0;
     private boolean finished = false;
-    private final ImageView view;
+    private ImageView view;
     private static final Map<String, Image> imageCache = new HashMap<>();
 
     public boolean getFinished(){return finished;}
@@ -47,6 +49,14 @@ public class Enemy {
 
 
     public void update(double dt, GamePath path){
+        if (!init) {
+            Point2D point = path.getPointAt(distance);
+            view.setLayoutX(point.getX() -32 - view.getFitWidth() / 2);
+            view.setLayoutY(point.getY() -32 - view.getFitHeight() / 2);
+            view.setVisible(true);
+            init = true;
+            return;
+        }
         if (!lifeStatus || finished) { return;}
 
         distance += dt * speed;
@@ -56,9 +66,11 @@ public class Enemy {
         }
 
         Point2D point = path.getPointAt(distance);
-        view.setTranslateX(point.getX());
-        view.setTranslateY(point.getY());
+        view.setLayoutX(point.getX());
+        view.setLayoutY(point.getY());
     }
+
+    public void destroy(AnchorPane root) {root.getChildren().remove(view);}
 
     public void damageTaken(float damage){
         health -= damage;
@@ -68,7 +80,7 @@ public class Enemy {
     }
     public Enemy(float health, float speed, int moneyDropped,
                  float attackOutput, int id, int groupID,
-                 int waveID, String url) {
+                 int waveID) {
         this.health = health;
         this.speed = speed;
         this.moneyDropped = moneyDropped;
@@ -76,12 +88,6 @@ public class Enemy {
         this.id = id;
         this.groupID = groupID;
         this.waveID = waveID;
-
-        Image img = imageCache.computeIfAbsent(url, u -> new Image(getClass().getResourceAsStream(u)));
-        view = new ImageView(img);
-
-        view.setFitWidth(40);   // Größe anpassen
-        view.setFitHeight(40);
     }
 
 
@@ -115,8 +121,15 @@ public class Enemy {
     public void setGroupID(int groupID) {this.groupID = groupID;}
     public int getWaveID() {return waveID;}
     public void setWaveID(int waveID) {this.waveID = waveID;}
-    public ImageView getView() {
-        return view; // 'view' ist dein ImageView statt Circle
+
+    public ImageView getView() {return view;}
+    public void setImageView(Image img) {
+        view = new ImageView(img);
+        view.setUserData("enemy");
+
+        view.setFitWidth(40);
+        view.setFitHeight(40);
+        view.setVisible(false);
     }
 
 }
