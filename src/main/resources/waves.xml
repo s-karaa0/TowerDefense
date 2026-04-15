@@ -6,50 +6,73 @@
         <waveID>1</waveID>
         <enemyCount>10</enemyCount>
         <spawnInterval>0.5</spawnInterval>
-        <health>1</health>
+        <health>5</health>
         <speed>100</speed>
         <money>10</money>
         <attack>2</attack>
         <type>NormalEnemy</type>
-        <difficulty>easy</difficulty>
     </wave>
 
     <wave id="2">
         <group>2</group>
         <waveID>2</waveID>
-        <enemyCount>2</enemyCount>
+        <enemyCount>4</enemyCount>
+        <spawnInterval>0.2</spawnInterval>
+        <health>4</health>
+        <speed>80</speed>
+        <money>15</money>
+        <attack>3</attack>
+        <type>FastEnemy</type>
+    </wave>
+
+    <wave id="3">
+        <group>2</group>
+        <waveID>3</waveID>
+        <enemyCount>7</enemyCount>
+        <spawnInterval>0.6</spawnInterval>
+        <health>7</health>
+        <speed>100</speed>
+        <money>15</money>
+        <attack>4</attack>
+        <type>StrongEnemy</type>
+    </wave>
+
+    <wave id="4">
+        <group>3</group>
+        <waveID>4</waveID>
+        <enemyCount>9</enemyCount>
+        <spawnInterval>0.9</spawnInterval>
+        <health>20</health>
+        <speed>200</speed>
+        <money>60</money>
+        <attack>5</attack>
+        <type>NormalEnemy</type>
+    </wave>
+
+    <wave id="5">
+        <group>4</group>
+        <waveID>5</waveID>
+        <enemyCount>20</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <health>1</health>
         <speed>80</speed>
         <money>15</money>
         <attack>3</attack>
         <type>FastEnemy</type>
-        <difficulty>normal</difficulty>
     </wave>
 
-    <wave id="3">
-        <group>2</group>
-        <waveID>3</waveID>
-        <enemyCount>1</enemyCount>
-        <spawnInterval>0.6</spawnInterval>
+    <wave id="6">
+        <group>4</group>
+        <waveID>6</waveID>
+        <enemyCount>4</enemyCount>
+        <spawnInterval>0.2</spawnInterval>
         <health>1</health>
-        <speed>100</speed>
+        <speed>80</speed>
         <money>15</money>
-        <attack>4</attack>
-        <type>StrongEnemy</type>
-        <difficulty>hard</difficulty>
-    </wave>
-
-    <wave id="4">
-        <group>3</group>
-        <waveID>4</waveID>
-        <enemyCount>2</enemyCount>
-        <spawnInterval>0.9</spawnInterval>
-        <health>1</health>
-        <speed>200</speed>
-        <money>60</money>
-        <attack>5</attack>
+        <attack>3</attack>
         <type>BossEnemy</type>
     </wave>
+
+
 
 </waves>

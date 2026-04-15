@@ -28,12 +28,12 @@ import org.example.towerdefense.Wave.WaveManager;
 
 public class GameController {
     private final AnchorPane root = new AnchorPane();
-    private final GameApplication gameApp = new GameApplication();
+    private GameApplication gameApp;
     private Game game;
     private Gameloop loop;
     private WaveManager waveManager;
     private boolean guiSetup = false;
-    private int cost = 50;
+    private boolean drag = false;
     private boolean endOfGame = false;
     private boolean conclusion; // true = won | false = lost
 
@@ -61,6 +61,7 @@ public class GameController {
 
     private final ContextMenu buildMenu = new ContextMenu();
     private final ContextMenu aimMenu = new ContextMenu();
+    private final HBox upgradeHBox = new HBox();
     private final ChoiceBox<String> towerChoice = new ChoiceBox<>();
     private final ChoiceBox<String> aimChoice = new ChoiceBox<>();
     private final Map<Point2D, Tower> towerMap = new HashMap<>();
@@ -77,11 +78,14 @@ public class GameController {
     private Label hp = new Label();
     private Label money = new Label();
     private final HBox hBox = new HBox();
-    private final HBox upgradeHBox = new HBox();
     private String difficulty;
     private List<Point2D> buildSpots;
     private HashSet<Point2D> usedSpots = new HashSet<>();
     private GamePath path;
+
+    public void setApplication(GameApplication gameApp) {
+        this.gameApp = gameApp;
+    }
 
 
     public GameController(String difficulty) {
@@ -97,6 +101,7 @@ public class GameController {
                 towerOption("Tower3", 200),
                 towerOption("Tower4", 300)
         ));
+
         aimChoice.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
         CustomMenuItem aimItem = new CustomMenuItem(aimChoice);
         aimItem.setHideOnClick(false);
@@ -113,53 +118,18 @@ public class GameController {
             String match = value.replaceAll(".*\\((\\d+)\\).*", "$1");
             int cost = Integer.parseInt(match);
 
+            buildTower(cost, selected);
 
-            if (game.getMoney() < cost) {
-                System.out.println("Not enough money!");
-                showNoMoney();
-                return;
-            }
-
-            game.addMoney(-cost);
-
-            Image selectedImage = switch (selected) {
-                case "Tower1" -> tower1Img;
-                case "Tower2" -> tower2Img;
-                case "Tower3" -> tower3Img;
-                case "Tower4" -> tower4Img;
-                default -> null;
-            };
-
-            if (selectedImage == null) return;
-
-            Tower tower = new Tower(game, selectedImage);
-
-
-            game.addTower(tower);
-            ImageView view = tower.getView();
-            view.setLayoutX(selectedSpot.getX() - 32);
-            view.setLayoutY(selectedSpot.getY() - 32);
-
-            towerMap.put(selectedSpot, tower);
-            usedSpots.add(selectedSpot);
-
-            root.getChildren().add(tower.getRangeCircle());
-
-            root.getChildren().add(view);
-            towerChoice.setVisible(false);
-            towerChoice.hide();
-
-
-            System.out.println("Tower gebaut: " + selected);
         });
 
         aimChoice.setOnAction(e -> {
             if (selectedTower == null) return;
 
             String selected = aimChoice.getValue();
-            if (selected == null) return;
-            selectedTower.getTarget(selected);
 
+            System.out.println("aim clicked");
+            if (selected == null) return;
+            selectedTower.getAim(selected);
             System.out.println("Target: " + selected);
 
         });
@@ -167,35 +137,40 @@ public class GameController {
         // problems, problems, PROBLEMS EVERYWHERE.
         for (Point2D p : buildSpots) {
 
-            // is practicly impossible to implement, at least with the 700kb image
-            /*
-            ImageView spot = new ImageView(buildSpotImg);
-            spot.setFitWidth(64);
-            spot.setFitHeight(64);
-             */
-
             Rectangle spot = new Rectangle(64, 64);
             spot.setFill(Color.BLACK);
             spot.setLayoutX(p.getX() - 32);
             spot.setLayoutY(p.getY() - 32);
 
+            ImageView spotImage = new ImageView(buildSpotImg);
+            spotImage.setFitWidth(64);
+            spotImage.setFitHeight(64);
+            spotImage.setLayoutX(p.getX() - 32);
+            spotImage.setLayoutY(p.getY() - 32);
+            spotImage.setMouseTransparent(true);
+            spotImage.toFront();
+            System.out.println(buildSpotImg);
+            System.out.println(tower1Img);
+
             spot.setUserData(p);
 
             spot.setOnMouseClicked(e -> {
+                System.out.println(drag);
+                if (drag) {return;}
                 selectedSpot = (Point2D) spot.getUserData();
                 Tower tower = towerMap.get(selectedSpot);
 
-                if (e.getButton() == (MouseButton.PRIMARY)) {
+                if (e.getButton() == (javafx.scene.input.MouseButton.PRIMARY)) {
 
                     if (tower == null) {
                         towerChoice.setVisible(true);
                         buildMenu.show(spot, e.getScreenX(), e.getScreenY());
                     } else {
                         selectedTower = tower;
-                        upgradeVboxToMousePosition(e.getSceneX(), e.getSceneY(), selectedTower);
+                        upgradeHboxToMousePosition(e.getSceneX(), e.getSceneY(), selectedTower);
                     }
 
-                } else if (e.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
+                } else if (e.getButton() == (javafx.scene.input.MouseButton.SECONDARY)) {
 
                     if (tower != null) {
                         aimMenu.show(spot, e.getScreenX(), e.getScreenY());
@@ -210,6 +185,8 @@ public class GameController {
             });
 
             root.getChildren().add(spot);
+            // root.getChildren().add(spotImage);
+            // JavaFX cant handle some/many images and/or images are too big. Line above is proof.
         }
 
         // Game
@@ -492,17 +469,15 @@ public class GameController {
         return "+ " + name + " (" + cost + ")";
     }
 
-    private void upgradeVboxToMousePosition(double x, double y, Tower tower) {
+    private void upgradeHboxToMousePosition(double x, double y, Tower tower) {
         upgradeHBox.getChildren().clear();
 
-
-
-        Button dmg = new Button(upgradeOption("Damage +", cost));
-        Button spd = new Button(upgradeOption("Speed +", cost));
-        Button rng = new Button(upgradeOption("Range +", cost));
+        Button dmg = new Button(upgradeOption("Damage +", tower.getUpgradeCost()));
+        Button spd = new Button(upgradeOption("Speed +", tower.getUpgradeCost()));
+        Button rng = new Button(upgradeOption("Range +", tower.getUpgradeCost()));
 
         dmg.setOnAction(e -> {
-            cost += 25;
+            tower.addUpgradeCost(25);
             if (game.getMoney() < 50) {
                 showNoMoney();
                 return;
@@ -513,7 +488,7 @@ public class GameController {
         });
 
         spd.setOnAction(e -> {
-            cost += 25;
+            tower.addUpgradeCost(25);
             if (game.getMoney() < 75) {
                 showNoMoney();
                 return;
@@ -524,7 +499,7 @@ public class GameController {
         });
 
         rng.setOnAction(e -> {
-            cost += 25;
+            tower.addUpgradeCost(25);
             if (game.getMoney() < 100) {
                 showNoMoney();
                 return;
@@ -542,17 +517,104 @@ public class GameController {
         upgradeHBox.setVisible(true);
     }
 
+    private void buildTower(int cost, String selected) {
+
+        if (game.getMoney() < cost) {
+            System.out.println("Not enough money!");
+            showNoMoney();
+            return;
+        }
+
+        game.addMoney(-cost);
+
+        Image selectedImage = switch (selected) {
+            case "Tower1" -> tower1Img;
+            case "Tower2" -> tower2Img;
+            case "Tower3" -> tower3Img;
+            case "Tower4" -> tower4Img;
+            default -> null;
+        };
+
+        if (selectedImage == null) return;
+
+        Tower tower = new Tower(game, selectedImage);
+
+        game.addTower(tower);
+        ImageView view = tower.getView();
+        view.setLayoutX(selectedSpot.getX() - 32);
+        view.setLayoutY(selectedSpot.getY() - 32);
+
+        towerMap.put(selectedSpot, tower);
+        usedSpots.add(selectedSpot);
+
+        root.getChildren().add(tower.getRangeCircle());
+
+        root.getChildren().add(view);
+        towerChoice.setVisible(false);
+        towerChoice.hide();
+
+        System.out.println("Tower gebaut: " + selected);
+    }
+
+    /*
+    private void towerSelectionHBox(double x, double y, Tower tower) {
+        HBox.getChildren().clear();
+
+        Button dmg = new Button(upgradeOption("Damage +", tower.getUpgradeCost()));
+        Button spd = new Button(upgradeOption("Speed +", tower.getUpgradeCost()));
+        Button rng = new Button(upgradeOption("Range +", tower.getUpgradeCost()));
+
+        dmg.setOnAction(e -> {
+            tower.addUpgradeCost(25);
+            if (game.getMoney() < 50) {
+                showNoMoney();
+                return;
+            }
+            game.addMoney(-50);
+            tower.upgradeDamage();
+            upgradeHBox.setVisible(true);
+        });
+
+        spd.setOnAction(e -> {
+            tower.addUpgradeCost(25);
+            if (game.getMoney() < 75) {
+                showNoMoney();
+                return;
+            }
+            game.addMoney(-75);
+            tower.upgradeSpeed();
+            upgradeHBox.setVisible(false);
+        });
+
+        rng.setOnAction(e -> {
+            tower.addUpgradeCost(25);
+            if (game.getMoney() < 100) {
+                showNoMoney();
+                return;
+            }
+            game.addMoney(-100);
+            tower.upgradeRange();
+            tower.getRangeCircle().setRadius(tower.getRangeCircle().getRadius() + 10);
+            upgradeHBox.setVisible(false);
+        });
+
+        upgradeHBox.getChildren().addAll(dmg, spd, rng);
+        upgradeHBox.setLayoutX(x - 100);
+        upgradeHBox.setLayoutY(y);
+        upgradeHBox.toFront();
+        upgradeHBox.setVisible(true);
+    }
+
+     */
+
 
     private void spawnTower(MouseEvent event, Image selectedImage) {
 
         Tower tower = new Tower(game, selectedImage);
         ImageView view = tower.getView();
-
         root.getChildren().add(view);
-
         view.setLayoutX(event.getX() - 32);
         view.setLayoutY(event.getY() - 32);
-
         final boolean[] dragging = {true};
 
         root.setOnMouseMoved(e -> {
@@ -562,41 +624,46 @@ public class GameController {
             }
         });
 
-        view.setOnMouseReleased(e -> {
-            dragging[0] = false;
+        root.setOnMouseClicked(e -> {
+            if (drag) {
+                dragging[0] = false;
+                Point2D towerCenter = new Point2D(
+                        view.getLayoutX() + 32,
+                        view.getLayoutY() + 32
+                );
 
-            Point2D towerCenter = new Point2D(
-                    view.getLayoutX() + 32,
-                    view.getLayoutY() + 32
-            );
+                Point2D closestSpot = new Point2D(2,2);
+                double closestDistance = Double.MAX_VALUE;
 
-            Point2D closestSpot = null;
-            double closestDistance = Double.MAX_VALUE;
+                for (Point2D spot : buildSpots) {
+                    double distance = towerCenter.distance(spot);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestSpot = spot;
+                        System.out.println("--");
+                    }
+                }
 
-            for (Point2D spot : buildSpots) {
-                double distance = towerCenter.distance(spot);
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestSpot = spot;
+                selectedSpot = closestSpot;
+                System.out.println(selectedSpot);
+
+                if (closestSpot != null && closestDistance < 100 && !usedSpots.contains(closestSpot)) {
+                    buildTower(100, "tower1");
+                    view.setLayoutX(closestSpot.getX() - 32);
+                    view.setLayoutY(closestSpot.getY() - 32);
+                    view.toFront();
+                    usedSpots.add(closestSpot);
+                    root.setOnMouseMoved(null);
+                    drag = false;
+                    System.out.println("Tower placed");
+                } else {
+                    root.getChildren().remove(view);
+                    root.setOnMouseMoved(null);
+                    drag = false;
+                    System.out.println("Invalid placement");
                 }
             }
-
-            if (closestSpot != null && closestDistance < 50 && !usedSpots.contains(closestSpot)) {
-
-                view.setLayoutX(closestSpot.getX() - 32);
-                view.setLayoutY(closestSpot.getY() - 32);
-
-                usedSpots.add(closestSpot);
-
-                root.setOnMouseMoved(null);
-
-                //System.out.println("Tower placed");
-
-            } else {
-                root.getChildren().remove(view);
-                System.out.println("Invalid placement");
-                root.setOnMouseMoved(null);
-            }
+            drag = true;
         });
     }
 

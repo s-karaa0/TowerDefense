@@ -14,7 +14,7 @@ public class Game {
     private final List<Tower> towers = new ArrayList<>();
     private final List<Projectile> projectiles = new ArrayList<>();
     private int hp = 20; // hp = health pOiNTS weil des so kheat
-    private int money = 200;
+    private int money = 500;
 
     public int getHp() {return hp;}
     public int getMoney() {return money;}
@@ -53,7 +53,7 @@ public class Game {
             Enemy enemy = iterator.next();
             enemy.update(dt, path);
 
-            if (enemy.getHealth() <= 0 || !enemy.getLifeStatus())   {
+            if (enemy.getHealth() <= 0)   {
                 iterator.remove();
                 enemy.getView().setVisible(false);
                 money = money + enemy.getMoneyDropped();

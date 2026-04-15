@@ -111,6 +111,36 @@ public class PathFactory {
                                 new Point2D(400, 400),
                                 new Point2D(200, 100),
                                 new Point2D(400, 100)
+                        ),
+                        new GamePath.BezierSegment(
+                                new Point2D(400, 100),
+                                new Point2D(600, 100),
+                                new Point2D(400, 700),
+                                new Point2D(600, 700)
+                        ),
+                        new GamePath.BezierSegment(
+                                new Point2D(600, 700),
+                                new Point2D(600, 700),
+                                new Point2D(800, 700),
+                                new Point2D(800, 700)
+                        ),
+                        new GamePath.BezierSegment(
+                                new Point2D(800, 700),
+                                new Point2D(900, 700),
+                                new Point2D(900, 700),
+                                new Point2D(900, 500)
+                        ),
+                        new GamePath.BezierSegment(
+                                new Point2D(900, 500),
+                                new Point2D(900, 350),
+                                new Point2D(700, 350),
+                                new Point2D(700, 500)
+                        ),
+                        new GamePath.BezierSegment(
+                                new Point2D(700, 500),
+                                new Point2D(700, 620),
+                                new Point2D(800, 600),
+                                new Point2D(1000, 600)
                         )
                 );
                 break;

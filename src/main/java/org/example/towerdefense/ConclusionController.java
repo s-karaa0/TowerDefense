@@ -43,7 +43,6 @@ public class ConclusionController {
     // not in use
     public void onRestartClicked(ActionEvent actionEvent) throws IOException {
         difficulty = gameApp.getDifficulty();
-        System.out.println("difficulty in ConclusionScene" + difficulty);
         gameApp.setDifficulty(difficulty);
         gameApp.switchScene("game", "game");
         gameApp.resumeGame();

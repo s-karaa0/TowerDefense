@@ -1,11 +1,6 @@
 package org.example.towerdefense;
 
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import org.example.towerdefense.Enemy;
-import org.example.towerdefense.Game;
 
 import java.util.Comparator;
 import java.util.List;
@@ -14,7 +9,7 @@ public class TowerShooter {
     private final Game game;
     private final ImageView towerView;
     private double damage;
-    private String aim;
+    private Tower tower;
 
     private Enemy target;
     private double attackTimer = 0;
@@ -22,11 +17,11 @@ public class TowerShooter {
     private double range;
     private double projectileSpeed;
 
-    public TowerShooter(Game game, ImageView towerView, double damage, String aim, double attackCooldown, double range,  double projectileSpeed) {
+    public TowerShooter(Game game, ImageView towerView, double damage, Tower tower, double attackCooldown, double range,  double projectileSpeed) {
         this.game = game;
         this.towerView = towerView;
         this.damage = damage;
-        this.aim = aim;
+        this.tower = tower;
         this.attackCooldown = attackCooldown;
         this.range = range;
         this.projectileSpeed = projectileSpeed;
@@ -54,7 +49,7 @@ public class TowerShooter {
         if (enemies.isEmpty()) { target = null; return; }
 
 
-        String mode = aim;
+        String mode = tower.setAim();
 
         target = switch (mode) {
             case "erster"      -> enemies.stream().max(Comparator.comparingDouble(Enemy::getDistance)).orElse(null);
@@ -75,10 +70,6 @@ public class TowerShooter {
         double dx = (e.getView().getLayoutX() + e.getView().getFitWidth()/2) - (towerView.getLayoutX() + 32);
         double dy = (e.getView().getLayoutY() + e.getView().getFitHeight()/2) - (towerView.getLayoutY() + 32);
         return Math.sqrt(dx*dx + dy*dy) <= range;
-    }
-
-    public void getTarget(String aim) {
-        this.aim = aim;
     }
 
     public void setRange(double range) {

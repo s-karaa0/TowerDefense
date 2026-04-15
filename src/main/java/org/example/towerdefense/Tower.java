@@ -1,24 +1,16 @@
 package org.example.towerdefense;
 
-import javafx.collections.FXCollections;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
 
 public class Tower {
     private int damage = 5;
     private double range = 150.0;
     private double cooldown = 1.0;
     private int buildCost;
-    private int upgradeCost;
+    private int upgradeCost = 25;
     private String aim = "erster";
     protected ImageView imageView;
     protected Game game;
@@ -44,7 +36,7 @@ public class Tower {
     }
 
     protected TowerShooter createShooter(int damage, double range, double cooldown) {
-        return new TowerShooter(game, imageView, damage, aim, cooldown, range, 500);
+        return new TowerShooter(game, imageView, damage, this, cooldown, range, 500);
     }
 
     public void update(double dt) {
@@ -56,7 +48,11 @@ public class Tower {
 
     public ImageView getView() { return imageView; }
 
-    public void getTarget(String aim) {
+    public String setAim() {
+        return aim;
+    }
+
+    public void getAim(String aim) {
         this.aim = aim;
     }
 
@@ -79,8 +75,17 @@ public class Tower {
         return buildCost;
     }
 
+    public int getUpgradeCost() {
+        return upgradeCost;
+    }
+
+    public void addUpgradeCost(int upgradeCost) {
+        upgradeCost = upgradeCost + 25;
+        this.upgradeCost = upgradeCost;
+    }
 
     public Circle getRangeCircle() {
         return rangeCircle;
     }
+
 }
