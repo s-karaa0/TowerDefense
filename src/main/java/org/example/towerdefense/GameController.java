@@ -71,8 +71,8 @@ public class GameController {
     private Tower selectedTower;
 
     private final Button stopButton = new Button("Stop");
-    private final Button resumeButton = new Button("Resume");
-    private final Button restartButton = new Button("Restart");
+    //private final Button resumeButton = new Button("Resume");
+    //private final Button restartButton = new Button("Restart");
     private final Button normalSpeedButton = new Button("1x");
     private final Button doubleSpeedButton = new Button("2x");
     private final Button quadroupleSpeedButton = new Button("4x");
@@ -221,13 +221,6 @@ public class GameController {
             }
         });
 
-        resumeButton.setOnAction(e -> {
-            loop.resume();
-        });
-        restartButton.setOnAction(e -> {
-            restartLoop();
-        });
-
         nextWaveButton.setOnAction(e -> {
             waveManager.triggerNextWave();
         });
@@ -257,7 +250,7 @@ public class GameController {
             }
         });
 
-        hBox.getChildren().addAll(stopButton, resumeButton, restartButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedButton);
+        hBox.getChildren().addAll(stopButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedButton);
         root.getChildren().addAll(hp, money);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
