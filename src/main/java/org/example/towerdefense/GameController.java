@@ -1,5 +1,6 @@
 package org.example.towerdefense;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -9,6 +10,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -111,15 +113,17 @@ public class GameController {
         aimMenu.getItems().add(aimItem);
 
         towerChoice.setOnAction(e -> {
-
             String value = towerChoice.getValue();
             if (value == null || selectedSpot == null) return;
             String selected = value.split(" ")[0];
             String match = value.replaceAll(".*\\((\\d+)\\).*", "$1");
             int cost = Integer.parseInt(match);
-
             buildTower(cost, selected);
 
+            Platform.runLater(() -> {
+                buildMenu.hide();
+                towerChoice.getSelectionModel().clearSelection();
+            });
         });
 
         aimChoice.setOnAction(e -> {
@@ -156,7 +160,9 @@ public class GameController {
 
             spot.setOnMouseClicked(e -> {
                 System.out.println(drag);
-                if (drag) {return;}
+                if (drag) {
+                    return;
+                }
                 selectedSpot = (Point2D) spot.getUserData();
                 Tower tower = towerMap.get(selectedSpot);
 
@@ -177,7 +183,7 @@ public class GameController {
                     }
                 }
 
-                if(tower != null) {
+                if (tower != null) {
                     spot.setOnMouseEntered(c -> tower.getRangeCircle().setVisible(true));
                     spot.setOnMouseExited(c -> tower.getRangeCircle().setVisible(false));
                 }
@@ -313,11 +319,11 @@ public class GameController {
         }
 
         enemyHashSet.removeIf(e -> {
-           if (!game.getEnemies().contains(e)) {
-               root.getChildren().remove(e.getView());
-               return true;
-           }
-           return false;
+            if (!game.getEnemies().contains(e)) {
+                root.getChildren().remove(e.getView());
+                return true;
+            }
+            return false;
         });
 
         if (((waveManager.getEndOfAllWaves() && enemyHashSet.isEmpty()) || game.getHp() <= 0) && !endOfGame) {
@@ -336,10 +342,10 @@ public class GameController {
     }
 
     public void endOfGameCheck() throws IOException {
-            endOfGame = true;
-            gameApp.setConclusion(conclusion);
-            stopLoop();
-            gameApp.switchScene("/conclusion-view.fxml", "conclusion");
+        endOfGame = true;
+        gameApp.setConclusion(conclusion);
+        stopLoop();
+        gameApp.switchScene("/conclusion-view.fxml", "conclusion");
     }
 
     private void showNoMoney() {
@@ -411,22 +417,23 @@ public class GameController {
     }
 
     /**
-     private void addTowerMenu(ImageView view, Tower tower) {
-
-        ChoiceBox<Object> targetChoice = tower.getChoiceBox(); // dieselbe CB!
-
-        targetChoice.setItems(FXCollections.observableArrayList(
-                "erster", "letzter", "staerkster", "schnellster"));
-
-        ContextMenu targetMenu = new ContextMenu();
-        CustomMenuItem targetItem = new CustomMenuItem(targetChoice);
-        targetItem.setHideOnClick(false);
-        targetMenu.getItems().add(targetItem);
-
-        view.setOnContextMenuRequested(e ->
-                targetMenu.show(view, e.getScreenX(), e.getScreenY())
-        );
-    }**/
+     * private void addTowerMenu(ImageView view, Tower tower) {
+     * <p>
+     * ChoiceBox<Object> targetChoice = tower.getChoiceBox(); // dieselbe CB!
+     * <p>
+     * targetChoice.setItems(FXCollections.observableArrayList(
+     * "erster", "letzter", "staerkster", "schnellster"));
+     * <p>
+     * ContextMenu targetMenu = new ContextMenu();
+     * CustomMenuItem targetItem = new CustomMenuItem(targetChoice);
+     * targetItem.setHideOnClick(false);
+     * targetMenu.getItems().add(targetItem);
+     * <p>
+     * view.setOnContextMenuRequested(e ->
+     * targetMenu.show(view, e.getScreenX(), e.getScreenY())
+     * );
+     * }
+     **/
 
     public Pane getRoot() {
         return root;
@@ -632,7 +639,7 @@ public class GameController {
                         view.getLayoutY() + 32
                 );
 
-                Point2D closestSpot = new Point2D(2,2);
+                Point2D closestSpot = new Point2D(2, 2);
                 double closestDistance = Double.MAX_VALUE;
 
                 for (Point2D spot : buildSpots) {
