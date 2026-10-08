@@ -46,19 +46,19 @@ public class GameController {
     // FX:
     private ImageView backgroundimageView = new ImageView();
     private final Image buildSpotImg =
-            new Image(getClass().getResourceAsStream("/images/buildspot.png"));
+            new Image(getClass().getResourceAsStream("/images/buildspot_small.png"));
 
     private final Image tower1Img =
-            new Image(getClass().getResourceAsStream("/images/towers/turm-lev1.png"));
+            new Image(getClass().getResourceAsStream("/images/towers/turm-lev1_small.png"));
 
     private final Image tower2Img =
-            new Image(getClass().getResourceAsStream("/images/towers/turm-lev2.png"));
+            new Image(getClass().getResourceAsStream("/images/towers/turm-lev2_small.png"));
 
     private final Image tower3Img =
-            new Image(getClass().getResourceAsStream("/images/towers/turm-lev3.png"));
+            new Image(getClass().getResourceAsStream("/images/towers/turm-lev3_small.png"));
 
     private final Image tower4Img =
-            new Image(getClass().getResourceAsStream("/images/towers/turm-lev4.png"));
+            new Image(getClass().getResourceAsStream("/images/towers/turm-lev4_small.png"));
 
 
     private final ContextMenu buildMenu = new ContextMenu();
@@ -357,28 +357,28 @@ public class GameController {
     }
 
     public void createShop() {
-        Image towerImage1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev1.png")));
+        Image towerImage1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev1_small.png")));
         ImageView towerLev1 = new ImageView(towerImage1);
         towerLev1.setFitWidth(64);
         towerLev1.setFitHeight(64);
         towerLev1.setLayoutX(200);
         towerLev1.setLayoutY(720);
 
-        Image towerImage2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev2.png")));
+        Image towerImage2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev2_small.png")));
         ImageView towerLev2 = new ImageView(towerImage2);
         towerLev2.setFitWidth(64);
         towerLev2.setFitHeight(64);
         towerLev2.setLayoutX(400);
         towerLev2.setLayoutY(720);
 
-        Image towerImage3 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev3.png")));
+        Image towerImage3 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev3_small.png")));
         ImageView towerLev3 = new ImageView(towerImage3);
         towerLev3.setFitWidth(64);
         towerLev3.setFitHeight(64);
         towerLev3.setLayoutX(600);
         towerLev3.setLayoutY(720);
 
-        Image towerImage4 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev4.png")));
+        Image towerImage4 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev4_small.png")));
         ImageView towerLev4 = new ImageView(towerImage4);
         towerLev4.setFitWidth(64);
         towerLev4.setFitHeight(64);
