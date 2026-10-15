@@ -4,19 +4,26 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
-<?scenebuilder-3.0 version="21.0.6"?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.StartController">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" styleClass="start-screen" stylesheets="@style/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.StartController">
    <children>
-      <Button layoutX="273.0" layoutY="267.0" mnemonicParsing="false" onAction="#onStartButtonClicked" text="Start" />
-      <Button layoutX="280.0" layoutY="308.0" mnemonicParsing="false" onAction="#onSettingsButtonClicked" text="⚙" />
-      <Label layoutX="153.0" layoutY="108.0" text="Tower Defense Game">
-         <font>
-            <Font size="30.0" />
-         </font>
-      </Label>
-      <ChoiceBox fx:id="fieldChoiceBox" onAction="#choiceBoxClicked" layoutX="218.0" layoutY="200.0" prefWidth="150.0" />
-      <Label layoutX="251.0" layoutY="174.0" text="select your field:" />
+      <VBox alignment="CENTER" spacing="12.0" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="26.0">
+         <children>
+            <Label styleClass="eyebrow" text="DIE KRONENLAND-CHRONIK" />
+            <Label styleClass="game-title" text="TOWER DEFENSE" />
+            <Label styleClass="game-subtitle" text="Das Schicksal des Reiches ruht auf deinen Schultern" />
+            <Label styleClass="ornament" text="✦   ━━━━━━━━━   ✦" />
+            <VBox alignment="CENTER" maxWidth="390.0" spacing="15.0" styleClass="menu-card">
+               <children>
+                  <Label styleClass="card-heading" text="Wähle dein Schlachtfeld" />
+                  <ChoiceBox fx:id="fieldChoiceBox" onAction="#choiceBoxClicked" prefWidth="280.0" styleClass="difficulty-choice" />
+                  <Button maxWidth="280.0" mnemonicParsing="false" onAction="#onStartButtonClicked" prefHeight="50.0" styleClass="start-button" text="IN DIE SCHLACHT" />
+                  <Button mnemonicParsing="false" onAction="#onSettingsButtonClicked" styleClass="settings-button" text="⚙  EINSTELLUNGEN" />
+               </children>
+            </VBox>
+            <Label styleClass="footer-text" text="SIE ZIEHEN GEGEN DEINE TORE. ZEIG IHNEN, WO IHR GRAB LIEGT." />
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

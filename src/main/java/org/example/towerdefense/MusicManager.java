@@ -12,20 +12,55 @@ public class MusicManager {
     private static int currentIndex = 0;
 
     private static String currentContext = "";
+    private static boolean musicEnabled = true;
 
     public static void playQueue(List<String> tracks, String context) {
-        if (tracks == null || tracks.isEmpty()) return;
-        if (context.equals(currentContext) && isPlaying()) return; // bereits richtige Playlist
+        if (tracks == null || tracks.isEmpty()) {
+            return;
+        }
+        if (context.equals(currentContext)) {
+            if (musicEnabled && currentPlayer == null) {
+                playNext();
+            }
+            return;
+        }
 
         currentContext = context;
         currentTracks = new ArrayList<>(tracks);
         currentIndex = 0;
-        playNext();
+        stop();
+        if (musicEnabled) {
+            playNext();
+        }
     }
 
     public static boolean isPlaying() {
         return currentPlayer != null &&
                 currentPlayer.getStatus() == MediaPlayer.Status.PLAYING;
+    }
+
+    public static boolean isMusicEnabled() {
+        return musicEnabled;
+    }
+
+    public static void setMusicEnabled(boolean enabled) {
+        if (musicEnabled == enabled) {
+            return;
+        }
+        musicEnabled = enabled;
+        if (currentPlayer == null) {
+            if (enabled && currentTracks != null && !currentTracks.isEmpty()) {
+                playNext();
+            }
+        } else if (enabled) {
+            if (currentPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+                currentPlayer.play();
+            } else if (currentPlayer.getStatus() == MediaPlayer.Status.STOPPED) {
+                playNext();
+            }
+        } else {
+            currentPlayer.pause();
+        }
     }
 
     private static void playNext() {
@@ -67,11 +102,12 @@ public class MusicManager {
     public static void skipTrack() {
         if (currentTracks == null || currentTracks.isEmpty()) return;
         currentIndex = (currentIndex + 1) % currentTracks.size();
-        playNext();
+        if (musicEnabled) {
+            playNext();
+        }
     }
 
     public static void resumeContext() {
-        if (currentTracks == null || currentTracks.isEmpty()) return;
-        playNext();
+        setMusicEnabled(true);
     }
 }

@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
@@ -70,16 +71,23 @@ public class GameController {
     private Point2D selectedSpot;
     private Tower selectedTower;
 
-    private final Button stopButton = new Button("Stop");
+    private final Button stopButton = new Button("⚙ Settings");
     //private final Button resumeButton = new Button("Resume");
     //private final Button restartButton = new Button("Restart");
     private final Button normalSpeedButton = new Button("1x");
     private final Button doubleSpeedButton = new Button("2x");
     private final Button quadroupleSpeedButton = new Button("4x");
-    private final Button nextWaveButton = new Button("skip");
-    private Label hp = new Label();
-    private Label money = new Label();
-    private final HBox hBox = new HBox();
+    private final Button nextWaveButton = new Button("Nächste Welle");
+    private final Label hp = new Label();
+    private final ImageView healthHeart =
+            new ImageView(new Image(getClass().getResourceAsStream("/images/hud/bright-red-pixel-heart-design-png.png")));
+    private final HBox healthDisplay = new HBox(8);
+    private final Label money = new Label();
+    private final ImageView coinIcon =
+            new ImageView(new Image(getClass().getResourceAsStream("/images/hud/coins.png")));
+    private final HBox moneyDisplay = new HBox(8);
+    private final HBox resourceBar = new HBox(18);
+    private final HBox hBox = new HBox(6);
     private String difficulty;
     private List<Point2D> buildSpots;
     private HashSet<Point2D> usedSpots = new HashSet<>();
@@ -91,6 +99,7 @@ public class GameController {
 
 
     public GameController(String difficulty) {
+        root.getStylesheets().add(getClass().getResource("/style/style.css").toExternalForm());
 
         // Path
         path = PathFactory.createPath(difficulty);
@@ -251,7 +260,32 @@ public class GameController {
         });
 
         hBox.getChildren().addAll(stopButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedButton);
-        root.getChildren().addAll(hp, money);
+        nextWaveButton.getStyleClass().add("next-wave-button");
+        hBox.getStyleClass().add("game-toolbar");
+        stopButton.getStyleClass().add("settings-game-button");
+        normalSpeedButton.getStyleClass().add("speed-button");
+        doubleSpeedButton.getStyleClass().add("speed-button");
+        quadroupleSpeedButton.getStyleClass().add("speed-button");
+        resourceBar.getStyleClass().add("resource-bar");
+        healthHeart.setFitWidth(28);
+        healthHeart.setFitHeight(28);
+        healthHeart.setPreserveRatio(true);
+        healthDisplay.setAlignment(Pos.CENTER_LEFT);
+        healthDisplay.getChildren().addAll(healthHeart, hp);
+        coinIcon.setFitWidth(28);
+        coinIcon.setFitHeight(28);
+        coinIcon.setPreserveRatio(true);
+        moneyDisplay.setAlignment(Pos.CENTER_LEFT);
+        moneyDisplay.getChildren().addAll(coinIcon, money);
+        resourceBar.setAlignment(Pos.CENTER_LEFT);
+        resourceBar.getChildren().addAll(healthDisplay, moneyDisplay);
+        AnchorPane.setLeftAnchor(resourceBar, 20.0);
+        AnchorPane.setTopAnchor(resourceBar, 20.0);
+        AnchorPane.setRightAnchor(hBox, 20.0);
+        AnchorPane.setTopAnchor(hBox, 20.0);
+        AnchorPane.setLeftAnchor(nextWaveButton, 30.0);
+        AnchorPane.setBottomAnchor(nextWaveButton, 30.0);
+        root.getChildren().add(resourceBar);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
         root.getChildren().addFirst(backgroundimageView);
@@ -270,8 +304,8 @@ public class GameController {
     }
 
     public void updateGUI() {
-        hp.setText(String.valueOf("Health Points: " + game.getHp()));
-        money.setText("Gold: " + game.getMoney());
+        hp.setText(String.valueOf(game.getHp()));
+        money.setText(String.valueOf(game.getMoney()));
         if (!guiSetup) {
             double rootX = root.getLayoutBounds().getWidth();
             double rootY = root.getLayoutBounds().getHeight();
@@ -282,18 +316,12 @@ public class GameController {
             System.out.println(rootX + " " + rootY);
             System.out.println(rootMaxX + " " + rootMaxY);
 
-            nextWaveButton.setLayoutX(30);
-            nextWaveButton.setLayoutY(500);
-
-            hp.setLayoutX(rootMaxX - 160);
             hp.setFont(new Font("Arial", 20));
             hp.setTextAlignment(TextAlignment.LEFT);
             hp.setTextFill(Color.WHITE);
 
-            money.setLayoutX(rootMaxX - 160 - 160);
             money.setFont(new Font("Arial", 20));
             money.setTextFill(Color.WHITE);
-
             upgradeHBox.setVisible(false);
 
             guiSetup = true;
@@ -668,4 +696,3 @@ public class GameController {
     }
 
 }
-
