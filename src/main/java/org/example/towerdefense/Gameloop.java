@@ -60,16 +60,15 @@ public class Gameloop extends AnimationTimer {
         }
 
         // Framerate display in console
+        /**
         frames++;
         if (now - lastFpsTime >= 1_000_000_000.0) {
             fps = frames;
             frames = 0;
             lastFpsTime = now;
-
-
             //System.out.print("----\n" + "Memory: " + Runtime.getRuntime().totalMemory()/1_000_000 + "MB" + "\nFPS: " + fps + "\n" + "----\n");
-
         }
+         **/
 
     }
 }

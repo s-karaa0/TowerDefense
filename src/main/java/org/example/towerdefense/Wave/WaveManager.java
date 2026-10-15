@@ -1,11 +1,9 @@
 package org.example.towerdefense.Wave;
 
 import javafx.scene.image.Image;
-import org.example.towerdefense.Enemy;
 import org.example.towerdefense.Game;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class WaveManager {
@@ -19,22 +17,22 @@ public class WaveManager {
 
     private static final Image NormalEnemy =
             new Image(WaveManager.class
-                    .getResource("/images/Enemies/enemy-lev1.png")
+                    .getResource("/images/Enemies/enemy-lev1_small.png")
                     .toExternalForm());
 
     private static final Image FastEnemy =
             new Image(WaveManager.class
-                    .getResource("/images/Enemies/enemy-lev2.png")
+                    .getResource("/images/Enemies/enemy-lev2_small.png")
                     .toExternalForm());
 
     private static final Image StrongEnemy =
             new Image(WaveManager.class
-                    .getResource("/images/Enemies/enemy-lev3.png")
+                    .getResource("/images/Enemies/enemy-lev3_small.png")
                     .toExternalForm());
 
     private static final Image BossEnemy =
             new Image(WaveManager.class
-                    .getResource("/images/Enemies/enemy-lev4.png")
+                    .getResource("/images/Enemies/enemy-lev4_small.png")
                     .toExternalForm());
 
     private int enemyId = 0;

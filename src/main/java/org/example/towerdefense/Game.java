@@ -1,6 +1,9 @@
 package org.example.towerdefense;
 
 import org.example.towerdefense.Path.GamePath;
+import org.example.towerdefense.Tower.Projectile;
+import org.example.towerdefense.Tower.Tower;
+import org.example.towerdefense.Wave.Enemy;
 
 import java.util.ArrayList;
 import java.util.Iterator;

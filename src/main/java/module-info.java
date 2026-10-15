@@ -13,5 +13,9 @@ module org.example.towerdefense {
     opens org.example.towerdefense.Wave to javafx.fxml;
     exports org.example.towerdefense.Path;
     opens org.example.towerdefense.Path to javafx.fxml;
+    exports org.example.towerdefense.Controllers;
+    opens org.example.towerdefense.Controllers to javafx.fxml;
+    exports org.example.towerdefense.Tower;
+    opens org.example.towerdefense.Tower to javafx.fxml;
 
 }

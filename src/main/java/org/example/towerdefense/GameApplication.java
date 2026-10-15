@@ -5,11 +5,14 @@
     import javafx.scene.Parent;
     import javafx.scene.Scene;
     import javafx.scene.image.Image;
-    import javafx.scene.image.ImageView;
     import javafx.scene.layout.*;
     import javafx.stage.Modality;
     import javafx.stage.Stage;
-    
+    import org.example.towerdefense.Controllers.ConclusionController;
+    import org.example.towerdefense.Controllers.GameController;
+    import org.example.towerdefense.Controllers.SettingsController;
+    import org.example.towerdefense.Controllers.StartController;
+
     import java.io.IOException;
     import java.util.ArrayList;
     import java.util.List;
@@ -102,21 +105,21 @@
     
                             // why not difficulty.equals()? because if null throws nullpointerexception
                             if ("easy".equals(difficulty)) {
-                                bgImage = new Image(getClass().getResource("/images/fields/field-easy.png").toExternalForm());
+                                bgImage = new Image(getClass().getResource("/images/fields/field-easy_small.png").toExternalForm());
                                 MusicManager.playQueue(new ArrayList<>(List.of(
                                         "/music/game-easy2.mp3",
                                         "/music/game-easy3.mp3",
                                         "/music/game-easy4.mp3"
                                 )), "easy");
                             } else if ("normal".equals(difficulty)) {
-                                bgImage = new Image(getClass().getResource("/images/fields/field-normal.png").toExternalForm());
+                                bgImage = new Image(getClass().getResource("/images/fields/field-normal_small.png").toExternalForm());
                                 MusicManager.playQueue(new ArrayList<>(List.of(
                                         "/music/game-normal.mp3",
                                         "/music/game-normal2.mp3",
                                         "/music/game-normal3.mp3"
                                 )), "normal");
                             } else if ("hard".equals(difficulty)) {
-                                bgImage = new Image(getClass().getResource("/images/fields/field-hard.png").toExternalForm());
+                                bgImage = new Image(getClass().getResource("/images/fields/field-hard_small.png").toExternalForm());
                                 MusicManager.playQueue(new ArrayList<>(List.of(
                                         "/music/game-hard.mp3",
                                         "/music/game-hard2.mp3",
