@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" styleClass="settings-screen" stylesheets="@style/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.SettingsController">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" styleClass="settings-screen" stylesheets="@style/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.Controllers.SettingsController">
     <children>
         <VBox alignment="CENTER" spacing="16.0" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="32.0">
             <children>

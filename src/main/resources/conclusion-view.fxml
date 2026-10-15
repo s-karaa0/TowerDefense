@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="resultRoot" prefHeight="500.0" prefWidth="700.0" styleClass="result-screen" stylesheets="@style/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.ConclusionController">
+<AnchorPane fx:id="resultRoot" prefHeight="500.0" prefWidth="700.0" styleClass="result-screen" stylesheets="@style/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.Controllers.ConclusionController">
     <children>
         <VBox alignment="CENTER" spacing="18.0" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="32.0">
             <children>
