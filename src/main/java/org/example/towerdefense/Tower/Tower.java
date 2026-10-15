@@ -93,4 +93,11 @@ public class Tower {
     public Color getDerivedColor() {
         return towerColor.deriveColor(0, 1.0, 1.0, 0.3);
     }
+    public int getDamage() {
+        return damage;
+    }
+
+    public double getCooldown() {
+        return cooldown;
+    }
 }

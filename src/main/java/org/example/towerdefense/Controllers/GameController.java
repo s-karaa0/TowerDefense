@@ -19,6 +19,7 @@ import java.util.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -97,6 +98,11 @@ public class GameController {
     private HashSet<Point2D> usedSpots = new HashSet<>();
     private GamePath path;
 
+    // show tower stats on hover
+    private final VBox hoverStatsBox = new VBox(3); // Abstand 3px
+    private final Label hoverDamageLabel = new Label();
+    private final Label hoverSpeedLabel = new Label();
+
     private Map<Point2D, Rectangle> spotMap = new HashMap<>();
     private Map<Point2D, ImageView> spotImageMap = new HashMap<>();
 
@@ -127,6 +133,13 @@ public class GameController {
         towerItem.setHideOnClick(false);
         buildMenu.getItems().add(towerItem);
         aimMenu.getItems().add(aimItem);
+
+        // init stat vbox
+        hoverStatsBox.setStyle("-fx-background-color: white");
+        hoverStatsBox.getChildren().addAll(hoverDamageLabel, hoverSpeedLabel);
+        hoverStatsBox.setMouseTransparent(true);
+        hoverStatsBox.setVisible(false);
+        root.getChildren().add(hoverStatsBox);
 
         towerChoice.setOnAction(e -> {
             String value = towerChoice.getValue();
@@ -221,7 +234,23 @@ public class GameController {
                 Tower tower = towerMap.get((Point2D) spot.getUserData());
 
                 if (tower != null) {
-                    tower.getRangeCircle().setVisible(false);
+                    spot.setOnMouseEntered(c -> {
+                        tower.getRangeCircle().setVisible(true);
+
+                        // !!! show tower stats
+                        hoverDamageLabel.setText("Damage: " + tower.getDamage());
+                        hoverSpeedLabel.setText("Speed: " + String.format("%.2f", tower.getCooldown()));
+                        // show at mouse pos
+                        hoverStatsBox.setLayoutX(c.getSceneX());
+                        hoverStatsBox.setLayoutY(c.getSceneY());
+                        // move in front of the tower image
+                        hoverStatsBox.toFront();
+                        hoverStatsBox.setVisible(true);
+                    });
+                    spot.setOnMouseExited(c -> {
+                        tower.getRangeCircle().setVisible(false);
+                        hoverStatsBox.setVisible(false);
+                    });
                 }
             });
 
@@ -626,3 +655,4 @@ public class GameController {
 
      */
 }
+
