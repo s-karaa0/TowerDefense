@@ -50,7 +50,7 @@
          </font>
       </Label>
 
-      <ChoiceBox fx:id="fieldChoiceBox" onAction="#choiceBoxClicked" prefWidth="250.0" style="-fx-background-color: #3A5D23; -fx-font-size: 14px; -fx-padding: 5px;" />
+      <ChoiceBox fx:id="fieldChoiceBox" onAction="#choiceBoxClicked" prefWidth="250.0" style="-fx-background-color: #3A5D23; -fx-font-size: 14px; -fx-padding: 5px;" stylesheets="@style/style.css" />
 
       <Button mnemonicParsing="false" onAction="#onStartButtonClicked" prefWidth="250.0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #627F33; -fx-text-fill: #FAE588; -fx-background-radius: 8px; -fx-cursor: hand;" text="Start">
          <VBox.margin>

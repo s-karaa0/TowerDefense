@@ -1,0 +1,41 @@
+/* Main background and arrow color */
+.choice-box {
+    -fx-background-color: black;
+
+    -fx-mark-color: orange; /* Color of the dropdown arrow */
+
+}
+
+/* Text color of the selected item displayed in the box */
+
+.choice-box > .label {
+    -fx-text-fill: white;
+    -fx-text-weight: bold italic;
+
+}
+
+/* Background of the entire dropdown list */
+
+.choice-box .context-menu {
+    -fx-background-color:  #4A5F2F;
+
+}
+
+/* Text color of items in the list */
+
+.choice-box .menu-item > .label {
+    -fx-text-fill: white;
+
+}
+
+/* Highlighted/focused item in the list */
+
+.choice-box .menu-item:focused,
+.choice-box .menu-item:hover {
+    -fx-background-color:  #FAE588;
+}
+
+.choice-box .menu-item:focused > .label,
+.choice-box .menu-item:hover > .label {
+    -fx-text-fill: black;
+}
