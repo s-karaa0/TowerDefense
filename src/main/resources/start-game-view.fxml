@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?scenebuilder-3.0 version="21.0.6"?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.StartController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.Controllers.StartController">
    <children>
       <Button layoutX="273.0" layoutY="267.0" mnemonicParsing="false" onAction="#onStartButtonClicked" text="Start" />
       <Button layoutX="280.0" layoutY="308.0" mnemonicParsing="false" onAction="#onSettingsButtonClicked" text="⚙" />

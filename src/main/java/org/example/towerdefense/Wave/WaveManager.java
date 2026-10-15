@@ -1,11 +1,9 @@
 package org.example.towerdefense.Wave;
 
 import javafx.scene.image.Image;
-import org.example.towerdefense.Enemy;
 import org.example.towerdefense.Game;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class WaveManager {

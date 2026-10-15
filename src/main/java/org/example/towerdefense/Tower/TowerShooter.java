@@ -1,6 +1,8 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Tower;
 
 import javafx.scene.image.ImageView;
+import org.example.towerdefense.Game;
+import org.example.towerdefense.Wave.Enemy;
 
 import java.util.Comparator;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Wave;
 
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
@@ -6,7 +6,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.example.towerdefense.Path.GamePath;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 

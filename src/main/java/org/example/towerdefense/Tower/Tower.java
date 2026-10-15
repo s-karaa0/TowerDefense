@@ -1,9 +1,10 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Tower;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import org.example.towerdefense.Game;
 
 public class Tower {
     private int damage = 5;
@@ -16,9 +17,11 @@ public class Tower {
     protected Game game;
     protected TowerShooter shooter;
     private Circle rangeCircle;
+    private Color towerColor;
 
-    public Tower(Game game, Image image) {
+    public Tower(Game game, Image image, Color color) {
         this.game = game;
+        this.towerColor = color;
 
         imageView = new ImageView(image);
         imageView.setFitWidth(64);
@@ -26,10 +29,7 @@ public class Tower {
         imageView.setMouseTransparent(true);
 
         rangeCircle = new Circle(range);
-        rangeCircle.setFill(Color.rgb(0, 0, 255, 0.3)); // 30% opacity
-        rangeCircle.setStroke(Color.BLUE);
-        rangeCircle.setStrokeWidth(2);
-        rangeCircle.setVisible(false);
+        rangeCircle.setFill(towerColor);
         rangeCircle.setMouseTransparent(true);
 
         shooter = createShooter(damage, range, cooldown);
@@ -58,10 +58,12 @@ public class Tower {
 
     public void upgradeDamage() {
         damage = damage + 10;
+        shooter.setDamage(damage);
     }
 
     public void upgradeSpeed() {
-        cooldown = Math.max(0.05, cooldown * 0.75); // maxx 0.05 weils sunst eh op is
+        cooldown = cooldown / 1.2;
+        shooter.setAttackCooldown(cooldown);
     }
 
     public void upgradeRange() {
@@ -88,4 +90,7 @@ public class Tower {
         return rangeCircle;
     }
 
+    public Color getDerivedColor() {
+        return towerColor.deriveColor(0, 1.0, 1.0, 0.3);
+    }
 }

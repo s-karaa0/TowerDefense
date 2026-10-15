@@ -1,7 +1,8 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Tower;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import org.example.towerdefense.Wave.Enemy;
 
 public class Projectile {
     private double x, y;

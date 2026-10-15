@@ -1,13 +1,12 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.example.towerdefense.GameApplication;
+import org.example.towerdefense.MusicManager;
 
 import java.io.IOException;
 

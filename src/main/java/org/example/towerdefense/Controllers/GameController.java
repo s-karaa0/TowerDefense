@@ -1,5 +1,6 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Controllers;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,12 +19,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import org.example.towerdefense.*;
 import org.example.towerdefense.Path.BuildSpots;
 import org.example.towerdefense.Path.GamePath;
 import org.example.towerdefense.Path.PathFactory;
+import org.example.towerdefense.Tower.Tower;
+import org.example.towerdefense.Wave.Enemy;
 import org.example.towerdefense.Wave.Wave;
 import org.example.towerdefense.Wave.WaveLoader;
 import org.example.towerdefense.Wave.WaveManager;
@@ -85,6 +90,9 @@ public class GameController {
     private HashSet<Point2D> usedSpots = new HashSet<>();
     private GamePath path;
 
+    private Map<Point2D, Rectangle> spotMap = new HashMap<>();
+    private Map<Point2D, ImageView> spotImageMap = new HashMap<>();
+
     public void setApplication(GameApplication gameApp) {
         this.gameApp = gameApp;
     }
@@ -120,6 +128,9 @@ public class GameController {
             int cost = Integer.parseInt(match);
             buildTower(cost, selected);
 
+            if (spotMap.get(selectedSpot) != null) spotMap.get(selectedSpot).setOpacity(0);
+            if (spotImageMap.get(selectedSpot) != null) spotImageMap.get(selectedSpot).setOpacity(0);
+
             Platform.runLater(() -> {
                 buildMenu.hide();
                 towerChoice.getSelectionModel().clearSelection();
@@ -152,48 +163,67 @@ public class GameController {
             spotImage.setLayoutX(p.getX() - 32);
             spotImage.setLayoutY(p.getY() - 32);
             spotImage.setMouseTransparent(true);
-            spotImage.toFront();
-            System.out.println(buildSpotImg);
-            System.out.println(tower1Img);
 
             spot.setUserData(p);
 
+            spotMap.put(p, spot);
+            spotImageMap.put(p, spotImage);
+
+            // Add BOTH to the same parent
+            root.getChildren().addAll(spot, spotImage);
+
+            spotImage.toFront();
+
             spot.setOnMouseClicked(e -> {
                 System.out.println(drag);
+
                 if (drag) {
                     return;
                 }
+
                 selectedSpot = (Point2D) spot.getUserData();
                 Tower tower = towerMap.get(selectedSpot);
 
-                if (e.getButton() == (javafx.scene.input.MouseButton.PRIMARY)) {
+                if (e.getButton() == MouseButton.PRIMARY) {
 
                     if (tower == null) {
                         towerChoice.setVisible(true);
                         buildMenu.show(spot, e.getScreenX(), e.getScreenY());
                     } else {
                         selectedTower = tower;
-                        upgradeHboxToMousePosition(e.getSceneX(), e.getSceneY(), selectedTower);
+                        upgradeHboxToMousePosition(
+                                e.getSceneX(),
+                                e.getSceneY(),
+                                selectedTower
+                        );
                     }
 
-                } else if (e.getButton() == (javafx.scene.input.MouseButton.SECONDARY)) {
+                } else if (e.getButton() == MouseButton.SECONDARY) {
 
                     if (tower != null) {
                         aimMenu.show(spot, e.getScreenX(), e.getScreenY());
                     }
                 }
-
-                if (tower != null) {
-                    spot.setOnMouseEntered(c -> tower.getRangeCircle().setVisible(true));
-                    spot.setOnMouseExited(c -> tower.getRangeCircle().setVisible(false));
-                }
-
             });
 
-            root.getChildren().add(spot);
-            // root.getChildren().add(spotImage);
-            // JavaFX cant handle some/many images and/or images are too big. Line above is proof.
+            spot.setOnMouseEntered(e -> {
+                Tower tower = towerMap.get((Point2D) spot.getUserData());
+
+                if (tower != null) {
+                    tower.getRangeCircle().setVisible(true);
+                }
+            });
+
+            spot.setOnMouseExited(e -> {
+                Tower tower = towerMap.get((Point2D) spot.getUserData());
+
+                if (tower != null) {
+                    tower.getRangeCircle().setVisible(false);
+                }
+            });
+
         }
+
 
         // Game
         game = new Game(path);
@@ -258,15 +288,15 @@ public class GameController {
         // ----------------------------------------------------
 
 
-        // Looop, very important
-        loop = new Gameloop(game, waveManager) {
-            @Override
-            public void handle(long now) {
-                super.handle(now);
-                sync();
-                updateGUI();
-            }
-        };
+            // Looop, very important
+            loop = new Gameloop(game, waveManager) {
+                @Override
+                public void handle(long now) {
+                    super.handle(now);
+                    sync();
+                    updateGUI();
+                }
+            };
     }
 
     public void updateGUI() {
@@ -535,21 +565,41 @@ public class GameController {
             default -> null;
         };
 
+        Color towerColor = switch (selected) {
+            case "Tower1" -> Color.GREEN;
+            case "Tower2" -> Color.BLUE;
+            case "Tower3" -> Color.RED;
+            case "Tower4" -> Color.WHITE;
+            default -> null;
+        };
+
         if (selectedImage == null) return;
 
-        Tower tower = new Tower(game, selectedImage);
+        Tower tower = new Tower(game, selectedImage, towerColor);
 
         game.addTower(tower);
         ImageView view = tower.getView();
         view.setLayoutX(selectedSpot.getX() - 32);
         view.setLayoutY(selectedSpot.getY() - 32);
+        view.setMouseTransparent(true);
+
+        Circle range = tower.getRangeCircle();
+        range.setStroke(Color.BLACK);
+        range.setFill(tower.getDerivedColor());
+        range.setStrokeWidth(2);
+        range.toFront();
+
+        PauseTransition pause = new javafx.animation.PauseTransition(
+                javafx.util.Duration.seconds(1)
+        );
+        pause.setOnFinished(e -> range.setVisible(false));
+        pause.play();
+
 
         towerMap.put(selectedSpot, tower);
         usedSpots.add(selectedSpot);
 
-        root.getChildren().add(tower.getRangeCircle());
-
-        root.getChildren().add(view);
+        root.getChildren().addAll(view, range);
         towerChoice.setVisible(false);
         towerChoice.hide();
 
@@ -610,7 +660,8 @@ public class GameController {
 
     private void spawnTower(MouseEvent event, Image selectedImage) {
 
-        Tower tower = new Tower(game, selectedImage);
+        Color color = Color.BLACK;
+        Tower tower = new Tower(game, selectedImage, color);
         ImageView view = tower.getView();
         root.getChildren().add(view);
         view.setLayoutX(event.getX() - 32);

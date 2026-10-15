@@ -1,8 +1,9 @@
-package org.example.towerdefense;
+package org.example.towerdefense.Controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import org.example.towerdefense.GameApplication;
 
 import java.io.IOException;
 
