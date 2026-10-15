@@ -2,14 +2,17 @@
     
     import javafx.application.Application;
     import javafx.fxml.FXMLLoader;
+    import javafx.geometry.Rectangle2D;
     import javafx.scene.Parent;
     import javafx.scene.Scene;
     import javafx.scene.image.Image;
     import javafx.scene.image.ImageView;
     import javafx.scene.layout.*;
     import javafx.stage.Modality;
+    import javafx.stage.Screen;
     import javafx.stage.Stage;
-    
+    import javafx.stage.StageStyle;
+
     import java.io.IOException;
     import java.util.ArrayList;
     import java.util.List;
@@ -41,9 +44,19 @@
             System.out.println("-----------------");
             stage = primaryStage;
             switchScene("/start-game-view.fxml", "start");
-    
+
+            stage.initStyle(StageStyle.UNDECORATED);
+
             stage.setTitle("Tower Defense");
             stage.show();
+
+
+            Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+
+            stage.setX(bounds.getMinX());
+            stage.setY(bounds.getMinY());
+            stage.setWidth(bounds.getWidth());
+            stage.setHeight(bounds.getHeight());
         }
     
         public void switchScene(String fxml, String layout) throws IOException {

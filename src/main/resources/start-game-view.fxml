@@ -12,6 +12,7 @@
 <VBox alignment="CENTER" prefHeight="720.0" prefWidth="1280.0" spacing="15.0" style="-fx-background-color: #1e1e2e;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.StartController">
 
    <children>
+
       <!-- Titel doppelt übereinander (StackPane) -->
       <StackPane>
          <VBox.margin>
@@ -57,10 +58,18 @@
          </VBox.margin>
       </Button>
 
-      <Button mnemonicParsing="false" onAction="#onSettingsButtonClicked" prefWidth="60.0" style="-fx-font-size: 18px; -fx-background-color: #6D923F; -fx-text-fill: black; -fx-background-radius: 8px; -fx-cursor: hand;" text="⚙" />
+      <Button mnemonicParsing="false" onAction="#onSettingsButtonClicked" prefHeight="40.0" prefWidth="123.0" style="-fx-font-size: 16px; -fx-background-color: #6D923F; -fx-text-fill: #FAE588; -fx-background-radius: 8px; -fx-cursor: hand; -fx-font-weight: bold;" text="Settings">
+         <font>
+            <Font name="System Bold Italic" size="16.0" />
+         </font></Button>
+      <Button alignment="CENTER" mnemonicParsing="false" onAction="#onCloseButtonClicked" prefHeight="32.0" prefWidth="70.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 6px; -fx-cursor: hand;" text="Leave">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Button>
    </children>
 
    <padding>
-      <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+      <Insets bottom="30.0" left="25.0" right="25.0" />
    </padding>
 </VBox>

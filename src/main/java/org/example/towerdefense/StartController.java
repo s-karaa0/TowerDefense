@@ -1,8 +1,13 @@
 package org.example.towerdefense;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
@@ -11,6 +16,29 @@ public class StartController {
     public ChoiceBox<String> fieldChoiceBox;
     public String difficulty;
     public GameApplication gameApp;
+
+    @FXML
+    private void onCloseButtonClicked(ActionEvent event) {
+        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.millis(15), e -> {
+                    double currentOpacity = stage.getOpacity();
+                    if (currentOpacity > 0.05) {
+                        stage.setOpacity(currentOpacity - 0.05);
+                    } else {
+                        stage.setOpacity(0.0);
+                    }
+                })
+        );
+
+        timeline.setCycleCount(20); // 20 Durchläufe (20 * 15ms = 300ms)
+
+        // Wenn die Animation fertig ist, das Fenster komplett schließen
+        timeline.setOnFinished(e -> stage.close());
+
+        timeline.play();
+    }
 
     public enum Difficulty {
         EASY, MEDIUM, HARD
