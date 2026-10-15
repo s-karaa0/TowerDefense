@@ -15,6 +15,7 @@ public class SettingsController {
 
     private final AnchorPane root = new AnchorPane();
     public Button skipButton;
+    public Button saveButton;
     private GameApplication gameApp;
     @FXML
     public Button closeButton;
