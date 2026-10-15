@@ -1,5 +1,6 @@
 package org.example.towerdefense;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -9,6 +10,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -44,19 +46,19 @@ public class GameController {
     // FX:
     private ImageView backgroundimageView = new ImageView();
     private final Image buildSpotImg =
-            new Image(getClass().getResourceAsStream("/images/buildspot.png"));
+            new Image(getClass().getResourceAsStream("/images/buildspot_small.png"));
 
     private final Image tower1Img =
-            new Image(getClass().getResourceAsStream("/images/towers/turm-lev1.png"));
+            new Image(getClass().getResourceAsStream("/images/towers/turm-lev1_small.png"));
 
     private final Image tower2Img =
-            new Image(getClass().getResourceAsStream("/images/towers/turm-lev2.png"));
+            new Image(getClass().getResourceAsStream("/images/towers/turm-lev2_small.png"));
 
     private final Image tower3Img =
-            new Image(getClass().getResourceAsStream("/images/towers/turm-lev3.png"));
+            new Image(getClass().getResourceAsStream("/images/towers/turm-lev3_small.png"));
 
     private final Image tower4Img =
-            new Image(getClass().getResourceAsStream("/images/towers/turm-lev4.png"));
+            new Image(getClass().getResourceAsStream("/images/towers/turm-lev4_small.png"));
 
 
     private final ContextMenu buildMenu = new ContextMenu();
@@ -69,8 +71,8 @@ public class GameController {
     private Tower selectedTower;
 
     private final Button stopButton = new Button("Stop");
-    private final Button resumeButton = new Button("Resume");
-    private final Button restartButton = new Button("Restart");
+    //private final Button resumeButton = new Button("Resume");
+    //private final Button restartButton = new Button("Restart");
     private final Button normalSpeedButton = new Button("1x");
     private final Button doubleSpeedButton = new Button("2x");
     private final Button quadroupleSpeedButton = new Button("4x");
@@ -112,15 +114,17 @@ public class GameController {
         aimMenu.getItems().add(aimItem);
 
         towerChoice.setOnAction(e -> {
-
             String value = towerChoice.getValue();
             if (value == null || selectedSpot == null) return;
             String selected = value.split(" ")[0];
             String match = value.replaceAll(".*\\((\\d+)\\).*", "$1");
             int cost = Integer.parseInt(match);
-
             buildTower(cost, selected);
 
+            Platform.runLater(() -> {
+                buildMenu.hide();
+                towerChoice.getSelectionModel().clearSelection();
+            });
         });
 
         aimChoice.setOnAction(e -> {
@@ -157,7 +161,9 @@ public class GameController {
 
             spot.setOnMouseClicked(e -> {
                 System.out.println(drag);
-                if (drag) {return;}
+                if (drag) {
+                    return;
+                }
                 selectedSpot = (Point2D) spot.getUserData();
                 Tower tower = towerMap.get(selectedSpot);
 
@@ -178,7 +184,7 @@ public class GameController {
                     }
                 }
 
-                if(tower != null) {
+                if (tower != null) {
                     spot.setOnMouseEntered(c -> tower.getRangeCircle().setVisible(true));
                     spot.setOnMouseExited(c -> tower.getRangeCircle().setVisible(false));
                 }
@@ -216,13 +222,6 @@ public class GameController {
             }
         });
 
-        resumeButton.setOnAction(e -> {
-            loop.resume();
-        });
-        restartButton.setOnAction(e -> {
-            restartLoop();
-        });
-
         nextWaveButton.setOnAction(e -> {
             waveManager.triggerNextWave();
         });
@@ -251,7 +250,7 @@ public class GameController {
             }
         });
 
-        hBox.getChildren().addAll(stopButton, resumeButton, restartButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedButton);
+        hBox.getChildren().addAll(stopButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedButton);
         root.getChildren().addAll(hp, money);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
@@ -321,11 +320,11 @@ public class GameController {
         }
 
         enemyHashSet.removeIf(e -> {
-           if (!game.getEnemies().contains(e)) {
-               root.getChildren().remove(e.getView());
-               return true;
-           }
-           return false;
+            if (!game.getEnemies().contains(e)) {
+                root.getChildren().remove(e.getView());
+                return true;
+            }
+            return false;
         });
 
         if (((waveManager.getEndOfAllWaves() && enemyHashSet.isEmpty()) || game.getHp() <= 0) && !endOfGame) {
@@ -344,10 +343,10 @@ public class GameController {
     }
 
     public void endOfGameCheck() throws IOException {
-            endOfGame = true;
-            gameApp.setConclusion(conclusion);
-            stopLoop();
-            gameApp.switchScene("/conclusion-view.fxml", "conclusion");
+        endOfGame = true;
+        gameApp.setConclusion(conclusion);
+        stopLoop();
+        gameApp.switchScene("/conclusion-view.fxml", "conclusion");
     }
 
     private void showNoMoney() {
@@ -366,28 +365,28 @@ public class GameController {
     }
 
     public void createShop() {
-        Image towerImage1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev1.png")));
+        Image towerImage1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev1_small.png")));
         ImageView towerLev1 = new ImageView(towerImage1);
         towerLev1.setFitWidth(64);
         towerLev1.setFitHeight(64);
         towerLev1.setLayoutX(200);
         towerLev1.setLayoutY(720);
 
-        Image towerImage2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev2.png")));
+        Image towerImage2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev2_small.png")));
         ImageView towerLev2 = new ImageView(towerImage2);
         towerLev2.setFitWidth(64);
         towerLev2.setFitHeight(64);
         towerLev2.setLayoutX(400);
         towerLev2.setLayoutY(720);
 
-        Image towerImage3 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev3.png")));
+        Image towerImage3 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev3_small.png")));
         ImageView towerLev3 = new ImageView(towerImage3);
         towerLev3.setFitWidth(64);
         towerLev3.setFitHeight(64);
         towerLev3.setLayoutX(600);
         towerLev3.setLayoutY(720);
 
-        Image towerImage4 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev4.png")));
+        Image towerImage4 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev4_small.png")));
         ImageView towerLev4 = new ImageView(towerImage4);
         towerLev4.setFitWidth(64);
         towerLev4.setFitHeight(64);
@@ -419,22 +418,23 @@ public class GameController {
     }
 
     /**
-     private void addTowerMenu(ImageView view, Tower tower) {
-
-        ChoiceBox<Object> targetChoice = tower.getChoiceBox(); // dieselbe CB!
-
-        targetChoice.setItems(FXCollections.observableArrayList(
-                "erster", "letzter", "staerkster", "schnellster"));
-
-        ContextMenu targetMenu = new ContextMenu();
-        CustomMenuItem targetItem = new CustomMenuItem(targetChoice);
-        targetItem.setHideOnClick(false);
-        targetMenu.getItems().add(targetItem);
-
-        view.setOnContextMenuRequested(e ->
-                targetMenu.show(view, e.getScreenX(), e.getScreenY())
-        );
-    }**/
+     * private void addTowerMenu(ImageView view, Tower tower) {
+     * <p>
+     * ChoiceBox<Object> targetChoice = tower.getChoiceBox(); // dieselbe CB!
+     * <p>
+     * targetChoice.setItems(FXCollections.observableArrayList(
+     * "erster", "letzter", "staerkster", "schnellster"));
+     * <p>
+     * ContextMenu targetMenu = new ContextMenu();
+     * CustomMenuItem targetItem = new CustomMenuItem(targetChoice);
+     * targetItem.setHideOnClick(false);
+     * targetMenu.getItems().add(targetItem);
+     * <p>
+     * view.setOnContextMenuRequested(e ->
+     * targetMenu.show(view, e.getScreenX(), e.getScreenY())
+     * );
+     * }
+     **/
 
     public Pane getRoot() {
         return root;
@@ -642,7 +642,7 @@ public class GameController {
                         view.getLayoutY() + 32
                 );
 
-                Point2D closestSpot = new Point2D(2,2);
+                Point2D closestSpot = new Point2D(2, 2);
                 double closestDistance = Double.MAX_VALUE;
 
                 for (Point2D spot : buildSpots) {

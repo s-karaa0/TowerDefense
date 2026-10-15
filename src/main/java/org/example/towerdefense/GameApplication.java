@@ -102,21 +102,21 @@
     
                             // why not difficulty.equals()? because if null throws nullpointerexception
                             if ("easy".equals(difficulty)) {
-                                bgImage = new Image(getClass().getResource("/images/fields/field-easy.png").toExternalForm());
+                                bgImage = new Image(getClass().getResource("/images/fields/field-easy_small.png").toExternalForm());
                                 MusicManager.playQueue(new ArrayList<>(List.of(
                                         "/music/game-easy2.mp3",
                                         "/music/game-easy3.mp3",
                                         "/music/game-easy4.mp3"
                                 )), "easy");
                             } else if ("normal".equals(difficulty)) {
-                                bgImage = new Image(getClass().getResource("/images/fields/field-normal.png").toExternalForm());
+                                bgImage = new Image(getClass().getResource("/images/fields/field-normal_small.png").toExternalForm());
                                 MusicManager.playQueue(new ArrayList<>(List.of(
                                         "/music/game-normal.mp3",
                                         "/music/game-normal2.mp3",
                                         "/music/game-normal3.mp3"
                                 )), "normal");
                             } else if ("hard".equals(difficulty)) {
-                                bgImage = new Image(getClass().getResource("/images/fields/field-hard.png").toExternalForm());
+                                bgImage = new Image(getClass().getResource("/images/fields/field-hard_small.png").toExternalForm());
                                 MusicManager.playQueue(new ArrayList<>(List.of(
                                         "/music/game-hard.mp3",
                                         "/music/game-hard2.mp3",
