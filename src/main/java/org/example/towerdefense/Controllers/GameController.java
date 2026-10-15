@@ -87,6 +87,7 @@ public class GameController {
     private final Button doubleSpeedButton = new Button("2x");
     private final Button quadroupleSpeedButton = new Button("4x");
     private final Button nextWaveButton = new Button("Nächste Welle");
+    private boolean next=false;
     private final Label hp = new Label();
     private final ImageView healthHeart =
             new ImageView(new Image(getClass().getResourceAsStream("/images/hud/bright-red-pixel-heart-design-png.png")));
@@ -305,7 +306,6 @@ public class GameController {
         nextWaveButton.setOnAction(e -> {
             waveManager.triggerNextWave();
         });
-
         // speedButtons to change GameLoop-Speed
         normalSpeedButton.setOnAction(e -> {
             loop.setSpeed(1);
@@ -363,6 +363,8 @@ public class GameController {
         root.getChildren().add(resourceBar);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
+        nextWaveButton.setVisible(next);
+        root.getChildren().addFirst(backgroundimageView);
         // ----------------------------------------------------
 
 
@@ -411,6 +413,13 @@ public class GameController {
                 enemyHashSet.add(e);
                 // System.out.println("enemy " + e.getId() + "|" + e.getGroupID() + " added");
             }
+
+            if(game.getNumberOfSpawnedEnemies()>= waveManager.waveEnemyCount()*0.7){
+                next=true;
+            }else {
+                next=false;
+            }
+            nextWaveButton.setVisible(next);
         }
 
         enemyHashSet.removeIf(e -> {
@@ -500,6 +509,8 @@ public class GameController {
         game.resetGame();
         waveManager.resetAllWaves();
         waveManager.startNextWave();
+        next=false;
+        game.resetNumberOfSpawnedEnemies();
         loop.start();
         loop.resume();
         upgradeHBox.setVisible(false);
