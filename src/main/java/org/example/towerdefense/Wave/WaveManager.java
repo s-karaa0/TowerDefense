@@ -97,7 +97,6 @@ public class WaveManager {
                 for(int i=0; i<activeWaves.size(); i++) {
                     Wave wave = activeWaves.get(i);
                     List<Enemy> enemyList = game.getEnemies();
-
                     wave.setSpawnTimer(wave.getSpawnTimer() + dt);
                     // -> quasi: spawnTimer += dt;
                     // spawning enemies in game
@@ -175,6 +174,14 @@ public class WaveManager {
     public boolean getEndOfAllWaves() {
         return endOfAllWaves;
     }
+    public int waveEnemyCount() {
 
+        Wave wave = null;
+        for (int i = 0; i < activeWaves.size(); i++) {
+            wave = activeWaves.get(i);
+        }
+        return wave.getEnemyCount();
+
+    }
 
 }
