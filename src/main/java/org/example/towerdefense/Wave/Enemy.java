@@ -22,7 +22,7 @@ public class Enemy {
     private double distance = 0;
     private boolean finished = false;
     private ImageView view;
-    private static final Map<String, Image> imageCache = new HashMap<>();
+    //private static final Map<String, Image> imageCache = new HashMap<>();
 
     public boolean getFinished(){return finished;}
     public float getHealth() {
