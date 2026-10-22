@@ -7,7 +7,7 @@
         <enemyCount>10</enemyCount>
         <spawnInterval>0.5</spawnInterval>
         <health>5</health>
-        <speed>40</speed>
+        <speed>80</speed>
         <money>10</money>
         <attack>2</attack>
         <type>NormalEnemy</type>
@@ -53,10 +53,10 @@
     <wave id="5">
         <group>3</group>
         <waveID>5</waveID>
-        <enemyCount>1</enemyCount>
+        <enemyCount>3</enemyCount>
         <spawnInterval>1.5</spawnInterval>
-        <health>400</health>
-        <speed>30</speed>
+        <health>200</health>
+        <speed>50</speed>
         <money>200</money>
         <attack>5</attack>
         <type>BossEnemy</type>
@@ -75,14 +75,14 @@
     </wave>
 
     <wave id="7">
-        <group>5</group>
+        <group>4</group>
         <waveID>7</waveID>
-        <enemyCount>1</enemyCount>
-        <spawnInterval>1.5</spawnInterval>
-        <health>550</health>
-        <speed>30</speed>
-        <money>300</money>
-        <attack>5</attack>
+        <enemyCount>4</enemyCount>
+        <spawnInterval>0.2</spawnInterval>
+        <health>1</health>
+        <speed>80</speed>
+        <money>15</money>
+        <attack>3</attack>
         <type>BossEnemy</type>
     </wave>
 
