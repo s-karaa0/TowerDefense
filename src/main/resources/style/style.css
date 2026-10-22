@@ -358,3 +358,19 @@
 .result-secondary-button:hover {
     -fx-background-color: rgba(140, 104, 53, 0.15);
 }
+
+#hover-stats-box {
+    -fx-padding: 8px 12px;
+    -fx-background-color: rgba(24, 35, 29, 0.88);
+    -fx-background-radius: 5px;
+    -fx-border-color: #b08a4c;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0.2, 0, 3);
+}
+
+#hover-stats-box Label {
+    -fx-font-family: "Georgia";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}

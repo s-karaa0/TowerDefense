@@ -135,7 +135,7 @@ public class GameController {
         aimMenu.getItems().add(aimItem);
 
         // init stat vbox
-        hoverStatsBox.setStyle("-fx-background-color: white");
+        hoverStatsBox.setId("hover-stats-box");
         hoverStatsBox.getChildren().addAll(hoverDamageLabel, hoverSpeedLabel);
         hoverStatsBox.setMouseTransparent(true);
         hoverStatsBox.setVisible(false);
