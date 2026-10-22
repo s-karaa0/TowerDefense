@@ -51,6 +51,13 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- json parsing -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.14.0</version>
+        </dependency>
     </dependencies>
 
     <build>

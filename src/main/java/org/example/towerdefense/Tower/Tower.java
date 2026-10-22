@@ -1,10 +1,17 @@
 package org.example.towerdefense.Tower;
 
+import com.google.gson.Gson;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.example.towerdefense.Game;
+import org.example.towerdefense.Model.TowerConfig;
+import org.example.towerdefense.Model.TowerData;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Tower {
     private int damage = 5;
@@ -33,6 +40,37 @@ public class Tower {
         rangeCircle.setMouseTransparent(true);
 
         shooter = createShooter(damage, range, cooldown);
+    }
+
+    /**
+     * use after constructor so old code doesnt break
+     *
+     * @param id cur 0 - 3
+     */
+    public void overwriteToType(int id) {
+        try (
+                BufferedReader reader = new BufferedReader(
+                new FileReader("src/main/resources/json/towers_conf.json"))
+        ) {
+            TowerConfig conf = new Gson().fromJson(reader, TowerConfig.class);
+            TowerData confData = conf.getTowersAsMap().get(id);
+
+            if (confData == null) {
+                System.out.println(this + " | no TowerConfig for id " + id);
+                return;
+            }
+
+            this.aim = confData.getAim();
+            this.range = confData.getRange();
+            this.damage = confData.getDamage();
+            this.cooldown = confData.getCooldown();
+            this.buildCost = confData.getBuildCost();
+            this.upgradeCost = confData.getUpgradeCost();
+
+            System.out.println(this + " | configured with id " + id);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected TowerShooter createShooter(int damage, double range, double cooldown) {

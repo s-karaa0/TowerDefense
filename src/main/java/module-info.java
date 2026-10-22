@@ -5,7 +5,9 @@ module org.example.towerdefense {
     requires java.desktop;
     requires javafx.graphics;
     requires javafx.media;
+    requires com.google.gson;
 
+    opens org.example.towerdefense.Model to com.google.gson;
 
     opens org.example.towerdefense to javafx.fxml;
     exports org.example.towerdefense;

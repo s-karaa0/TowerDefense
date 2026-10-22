@@ -546,15 +546,14 @@ public class GameController {
     }
 
     private void buildTower(int cost, String selected) {
+        int id = switch (selected) {
+            case "Tower2" -> 1;
+            case "Tower3" -> 2;
+            case "Tower4" -> 3;
+            default -> 0; // Tower1 is also 0
+        };
 
-        if (game.getMoney() < cost) {
-            System.out.println("Not enough money!");
-            showNoMoney();
-            return;
-        }
-
-        game.addMoney(-cost);
-
+        // maybe move to conf
         Image selectedImage = switch (selected) {
             case "Tower1" -> tower1Img;
             case "Tower2" -> tower2Img;
@@ -574,6 +573,16 @@ public class GameController {
         if (selectedImage == null) return;
 
         Tower tower = new Tower(game, selectedImage, towerColor);
+        // load tower specific config
+        tower.overwriteToType(id);
+
+        if (game.getMoney() < tower.getBuildCost()) {
+            System.out.println("Not enough money!");
+            showNoMoney();
+            return;
+        }
+
+        game.addMoney(-tower.getBuildCost());
 
         game.addTower(tower);
         ImageView view = tower.getView();
