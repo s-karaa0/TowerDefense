@@ -57,7 +57,7 @@ public class WaveManager {
 
         // Iterate all waves, then add to active waves if same group
         for (Wave wave : waves) {
-            if (wave.getGroup() == group) {
+            if (wave.getWaveGroup() == group) {
                 activeWaves.add(wave);
                 wave.setSpawned(0);
                 wave.setSpawnTimer(0);
