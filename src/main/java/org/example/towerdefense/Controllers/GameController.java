@@ -264,6 +264,7 @@ public class GameController {
         nextWaveButton.setOnAction(e -> {
             waveManager.triggerNextWave();
         });
+
         // speedButtons to change GameLoop-Speed
         normalSpeedButton.setOnAction(e -> {
             loop.setSpeed(1);
@@ -347,12 +348,18 @@ public class GameController {
             System.out.println(rootX + " " + rootY);
             System.out.println(rootMaxX + " " + rootMaxY);
 
+            nextWaveButton.setLayoutX(30);
+            nextWaveButton.setLayoutY(500);
+
+            hp.setLayoutX(rootMaxX - 160);
             hp.setFont(new Font("Arial", 20));
             hp.setTextAlignment(TextAlignment.LEFT);
             hp.setTextFill(Color.WHITE);
 
+            money.setLayoutX(rootMaxX - 160 - 160);
             money.setFont(new Font("Arial", 20));
             money.setTextFill(Color.WHITE);
+
             upgradeHBox.setVisible(false);
 
             guiSetup = true;
