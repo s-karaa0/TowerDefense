@@ -7,7 +7,7 @@
         <enemyCount>10</enemyCount>
         <spawnInterval>0.5</spawnInterval>
         <health>5</health>
-        <speed>100</speed>
+        <speed>80</speed>
         <money>10</money>
         <attack>2</attack>
         <type>NormalEnemy</type>
@@ -16,7 +16,7 @@
     <wave id="2">
         <group>2</group>
         <waveID>2</waveID>
-        <enemyCount>10</enemyCount>
+        <enemyCount>4</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <health>4</health>
         <speed>80</speed>
@@ -28,10 +28,10 @@
     <wave id="3">
         <group>2</group>
         <waveID>3</waveID>
-        <enemyCount>10</enemyCount>
+        <enemyCount>7</enemyCount>
         <spawnInterval>0.6</spawnInterval>
         <health>7</health>
-        <speed>100</speed>
+        <speed>60</speed>
         <money>15</money>
         <attack>4</attack>
         <type>StrongEnemy</type>
@@ -40,19 +40,32 @@
     <wave id="4">
         <group>3</group>
         <waveID>4</waveID>
-        <enemyCount>10</enemyCount>
+        <enemyCount>9</enemyCount>
         <spawnInterval>0.9</spawnInterval>
         <health>20</health>
-        <speed>200</speed>
+        <speed>100</speed>
         <money>60</money>
         <attack>5</attack>
         <type>NormalEnemy</type>
     </wave>
 
+    // that is a boss wave
     <wave id="5">
-        <group>4</group>
+        <group>3</group>
         <waveID>5</waveID>
-        <enemyCount>10</enemyCount>
+        <enemyCount>3</enemyCount>
+        <spawnInterval>1.5</spawnInterval>
+        <health>200</health>
+        <speed>50</speed>
+        <money>200</money>
+        <attack>5</attack>
+        <type>BossEnemy</type>
+    </wave>
+
+    <wave id="6">
+        <group>4</group>
+        <waveID>6</waveID>
+        <enemyCount>20</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <health>1</health>
         <speed>80</speed>
@@ -61,10 +74,10 @@
         <type>FastEnemy</type>
     </wave>
 
-    <wave id="6">
+    <wave id="7">
         <group>4</group>
-        <waveID>6</waveID>
-        <enemyCount>10</enemyCount>
+        <waveID>7</waveID>
+        <enemyCount>4</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <health>1</health>
         <speed>80</speed>
