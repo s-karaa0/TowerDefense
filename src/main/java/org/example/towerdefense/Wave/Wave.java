@@ -35,14 +35,18 @@ public class Wave {
         this.type = type;
     }
 
-
-    public int getGroup() { return group; }
+    // Tells which groups belong together - needed for pointing out enemy groups within a wave
+    public int getWaveGroup() { return group; }
     public int getWaveID() {return waveID;}
+
+    // for the amount of enemys that are going to get spawned
     public int getEnemyCount() { return enemyCount; }
     public double getSpawnInterval() { return spawnInterval; }
     public float getHealth() { return health; }
     public float getSpeed() { return speed; }
+
     public int getMoney() { return money; }
+    // how much damage you get when he goes past the finish
     public float getAttack() { return attack; }
     public void setSpawned(int spawned) {this.spawned = spawned;}
     public void setSpawnTimer(double spawnTimer) {this.spawnTimer = spawnTimer;}
@@ -52,12 +56,13 @@ public class Wave {
     public boolean isFinished() {
         return isFinished;
     }
-
     public void setFinished(boolean finished) {
         isFinished = finished;
     }
+
     public int getActiveEnemies() {return activeEnemies;}
     public void setActiveEnemies(int activeEnemies) {this.activeEnemies = activeEnemies;}
+
     public String getType() {
         return type;
     }
