@@ -1,6 +1,7 @@
 package org.example.towerdefense.Tower;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import org.example.towerdefense.Game;
 import org.example.towerdefense.Wave.Enemy;
 
@@ -18,8 +19,9 @@ public class TowerShooter {
     private double attackCooldown;
     private double range;
     private double projectileSpeed;
+    private Color color;
 
-    public TowerShooter(Game game, ImageView towerView, double damage, Tower tower, double attackCooldown, double range,  double projectileSpeed) {
+    public TowerShooter(Game game, ImageView towerView, double damage, Tower tower, double attackCooldown, double range,  double projectileSpeed, Color color) {
         this.game = game;
         this.towerView = towerView;
         this.damage = damage;
@@ -27,6 +29,7 @@ public class TowerShooter {
         this.attackCooldown = attackCooldown;
         this.range = range;
         this.projectileSpeed = projectileSpeed;
+        this.color = color;
 
     }
 
@@ -65,7 +68,7 @@ public class TowerShooter {
     private void shoot() {
         double cx = towerView.getLayoutX() + 32;
         double cy = towerView.getLayoutY() + 32;
-        game.spawnProjectile(new Projectile(cx, cy, projectileSpeed, target, damage));
+        game.spawnProjectile(new Projectile(cx, cy, projectileSpeed, target, damage, color));
     }
 
     private boolean isInRange(Enemy e) {

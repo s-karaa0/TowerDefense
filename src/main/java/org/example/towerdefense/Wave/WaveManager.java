@@ -3,6 +3,7 @@ package org.example.towerdefense.Wave;
 import javafx.scene.image.Image;
 import org.example.towerdefense.Game;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,8 @@ public class WaveManager {
     private final Game game;
     private List<Wave> waves = new ArrayList<>();
     private List<Wave> activeWaves = new ArrayList<>();
+    private Array[][] activeEnemies;
+    private Array[][] maxEnemies;
 
     private int waveIndex = 0;
     private int group = 0;
@@ -84,7 +87,6 @@ public class WaveManager {
                         wave.setImage(BossEnemy);
                         break;
                     }
-
                 }
 
                 wave.setFinished(false);
@@ -170,17 +172,35 @@ public class WaveManager {
         return enemyId;
     }
 
-
     public boolean getEndOfAllWaves() {
         return endOfAllWaves;
     }
-    public int waveEnemyCount() {
 
+    public int groupEnemyCount() {
         Wave wave = null;
-        for (int i = 0; i < activeWaves.size(); i++) {
+        int groupEnemyCount = 0;
+        for(int i=0; i<activeWaves.size(); i++){
             wave = activeWaves.get(i);
+            if (wave.getGroup() == group){
+                for (int j = 0; j < wave.getEnemyCount(); j++){
+                    groupEnemyCount++;
+                }
+            }
         }
-        return wave.getEnemyCount();
+        return  groupEnemyCount;
+    }
+
+    public int waveEnemyCount() {
+        Wave wave = null;
+        int currentEnemyCount = 0;
+        for(int i=0; i<activeWaves.size(); i++){
+            wave = activeWaves.get(i);
+            if (wave.getGroup() == group){
+                currentEnemyCount += wave.getSpawned();
+            }
+        }
+
+        return currentEnemyCount;
 
     }
 
