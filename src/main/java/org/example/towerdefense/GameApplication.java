@@ -148,9 +148,8 @@
 
                             controller.getBackgroundImage(bgImage);
     
-                            Scene scene = new Scene(root, 1000, 800);
+                            Scene scene = new Scene(root);
                             stage.setScene(scene);
-                            stage.centerOnScreen();
                             stage.setTitle("Tower Defense Game");
                             controller.startLoop();
     
