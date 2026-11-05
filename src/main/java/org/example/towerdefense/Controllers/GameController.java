@@ -457,8 +457,16 @@ public class GameController {
 
     public void getBackgroundImage(Image backgroundimg) {
         backgroundimageView.setImage(backgroundimg);
-        backgroundimageView.setFitWidth(1000);
-        backgroundimageView.setFitHeight(800);
+        backgroundimageView.setPreserveRatio(true);
+
+        root.heightProperty().addListener((obs, oldHeight, newHeight) -> {
+
+            double height = newHeight.doubleValue();
+            double width = height * (500.0 / 400.0);
+
+            backgroundimageView.setFitHeight(height);
+            backgroundimageView.setFitWidth(width);
+        });
     }
 
     private String towerOption(String name, int cost) {
