@@ -247,6 +247,7 @@ public class GameController {
             loop.pause();
             System.out.println("speed: " + loop.getSpeed());
             try {
+
                 gameApp.switchScene("/settings-view.fxml", "settings");
             } catch (IOException ex) {
                 throw new RuntimeException(ex);

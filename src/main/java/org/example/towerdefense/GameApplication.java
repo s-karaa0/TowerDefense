@@ -2,17 +2,21 @@
     
     import javafx.application.Application;
     import javafx.fxml.FXMLLoader;
+    import javafx.geometry.Rectangle2D;
     import javafx.scene.Parent;
     import javafx.scene.Scene;
     import javafx.scene.image.Image;
     import javafx.scene.layout.*;
     import javafx.stage.Modality;
+    import javafx.stage.Screen;
     import javafx.stage.Stage;
+    import javafx.stage.StageStyle;
     import org.example.towerdefense.Controllers.ConclusionController;
     import org.example.towerdefense.Controllers.GameController;
     import org.example.towerdefense.Controllers.SettingsController;
     import org.example.towerdefense.Controllers.StartController;
 
+    import java.awt.*;
     import java.io.IOException;
     import java.util.ArrayList;
     import java.util.List;
@@ -40,10 +44,17 @@
         }
     
         public void start(Stage primaryStage) throws IOException {
+
+            Screen screen = Screen.getPrimary();
+            Rectangle2D bounds = screen.getVisualBounds();
     
             System.out.println("-----------------");
             stage = primaryStage;
             switchScene("/start-game-view.fxml", "start");
+
+            stage.setHeight(bounds.getHeight());
+            stage.setWidth(bounds.getWidth());
+            stage.initStyle(StageStyle.UNDECORATED);
     
             stage.setTitle("Tower Defense");
             stage.show();
@@ -66,6 +77,7 @@
                         settingsController.setApplication(this);
     
                         settingsStage.setTitle("Settings");
+                        settingsStage.initStyle(StageStyle.UNDECORATED);
                         settingsStage.centerOnScreen();
                         settingsStage.show();
     
