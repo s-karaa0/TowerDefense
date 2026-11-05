@@ -27,6 +27,29 @@
     -fx-text-fill: #d0d5c4;
 }
 
+.close-button {
+    -fx-background-color: linear-gradient(to bottom, #a94438, #702820);
+    -fx-background-radius: 3px;
+    -fx-border-color: #d09a65;
+    -fx-border-radius: 3px;
+    -fx-border-width: 1.5px;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fff2d3;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0.2, 0, 2);
+}
+
+.close-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #d35445, #922f25);
+    -fx-border-color: #f2dfaa;
+}
+
+.close-button:pressed {
+    -fx-background-color: #572019;
+}
+
 .ornament {
     -fx-font-size: 13px;
     -fx-text-fill: #c5a25b;
