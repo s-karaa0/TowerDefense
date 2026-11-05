@@ -10,6 +10,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.Group;
+import javafx.scene.transform.Scale;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
 
@@ -36,6 +38,8 @@ import org.example.towerdefense.Wave.WaveManager;
 
 public class GameController {
     private final AnchorPane root = new AnchorPane();
+    private final Group gameWorld = new Group();
+    private final Scale worldScale = new Scale(1, 1, 0, 0);
     private GameApplication gameApp;
     private Game game;
     private Gameloop loop;
@@ -108,6 +112,17 @@ public class GameController {
     public GameController(String difficulty) {
         root.getStylesheets().add(getClass().getResource("/style/style.css").toExternalForm());
 
+        // Alle Elemente des eigentlichen Spielfeldes werden gemeinsam skaliert.
+        gameWorld.getTransforms().add(worldScale);
+        gameWorld.getChildren().add(backgroundimageView);
+
+        // Die Basisgroesse der Map ist 1000 x 800.
+        root.heightProperty().addListener((obs, oldHeight, newHeight) -> {
+            double scale = newHeight.doubleValue() / 800.0;
+            worldScale.setX(scale);
+            worldScale.setY(scale);
+        });
+
         // Path
         path = PathFactory.createPath(difficulty);
 
@@ -178,7 +193,7 @@ public class GameController {
             spotImageMap.put(p, spotImage);
 
             // Add BOTH to the same parent
-            root.getChildren().addAll(spot, spotImage);
+            gameWorld.getChildren().addAll(spot, spotImage);
 
             spotImage.toFront();
 
@@ -230,8 +245,8 @@ public class GameController {
 
         // Game
         game = new Game(path);
-        game.setOnProjectileSpawned(p -> root.getChildren().add(p.getView()));
-        game.setOnProjectileRemoved(p -> root.getChildren().remove(p.getView()));
+        game.setOnProjectileSpawned(p -> gameWorld.getChildren().add(p.getView()));
+        game.setOnProjectileRemoved(p -> gameWorld.getChildren().remove(p.getView()));
 
         // XML
         List<Wave> waves = WaveLoader.loadWaves();
@@ -309,22 +324,22 @@ public class GameController {
         AnchorPane.setTopAnchor(hBox, 20.0);
         AnchorPane.setLeftAnchor(nextWaveButton, 30.0);
         AnchorPane.setBottomAnchor(nextWaveButton, 30.0);
+        root.getChildren().add(gameWorld);
         root.getChildren().add(resourceBar);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
-        root.getChildren().addFirst(backgroundimageView);
         // ----------------------------------------------------
 
 
-            // Looop, very important
-            loop = new Gameloop(game, waveManager) {
-                @Override
-                public void handle(long now) {
-                    super.handle(now);
-                    sync();
-                    updateGUI();
-                }
-            };
+        // Looop, very important
+        loop = new Gameloop(game, waveManager) {
+            @Override
+            public void handle(long now) {
+                super.handle(now);
+                sync();
+                updateGUI();
+            }
+        };
     }
 
     public void updateGUI() {
@@ -357,7 +372,7 @@ public class GameController {
         // add enemies, to the Set
         for (Enemy e : game.getEnemies()) {
             if (!enemyHashSet.contains(e)) {
-                root.getChildren().add(e.getView());
+                gameWorld.getChildren().add(e.getView());
                 enemyHashSet.add(e);
                 // System.out.println("enemy " + e.getId() + "|" + e.getGroupID() + " added");
             }
@@ -365,7 +380,7 @@ public class GameController {
 
         enemyHashSet.removeIf(e -> {
             if (!game.getEnemies().contains(e)) {
-                root.getChildren().remove(e.getView());
+                gameWorld.getChildren().remove(e.getView());
                 return true;
             }
             return false;
@@ -404,7 +419,7 @@ public class GameController {
 
     public void deleteAllEnemies() {
         for (Enemy e : game.getEnemies()) {
-            root.getChildren().remove(e.getView());
+            gameWorld.getChildren().remove(e.getView());
         }
     }
 
@@ -457,16 +472,9 @@ public class GameController {
 
     public void getBackgroundImage(Image backgroundimg) {
         backgroundimageView.setImage(backgroundimg);
-        backgroundimageView.setPreserveRatio(true);
-
-        root.heightProperty().addListener((obs, oldHeight, newHeight) -> {
-
-            double height = newHeight.doubleValue();
-            double width = height * (500.0 / 400.0);
-
-            backgroundimageView.setFitHeight(height);
-            backgroundimageView.setFitWidth(width);
-        });
+        backgroundimageView.setFitWidth(1000);
+        backgroundimageView.setFitHeight(800);
+        backgroundimageView.setPreserveRatio(false);
     }
 
     private String towerOption(String name, int cost) {
@@ -577,7 +585,7 @@ public class GameController {
         towerMap.put(selectedSpot, tower);
         usedSpots.add(selectedSpot);
 
-        root.getChildren().addAll(view, range);
+        gameWorld.getChildren().addAll(view, range);
         towerChoice.setVisible(false);
         towerChoice.hide();
 
@@ -635,3 +643,4 @@ public class GameController {
 
      */
 }
+
