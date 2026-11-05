@@ -212,8 +212,7 @@
 }
 
 .settings-game-button,
-.speed-button,
-.tower-choice-box {
+.speed-button {
     -fx-min-height: 36px;
     -fx-background-color: linear-gradient(to bottom, #ead9ae, #cdb987);
     -fx-background-radius: 3px;
@@ -235,14 +234,12 @@
 }
 
 .settings-game-button:hover,
-.speed-button:hover,
-.tower-choice-box:hover {
+.speed-button:hover {
     -fx-background-color: linear-gradient(to bottom, #f2e5c5, #dfc995);
 }
 
 .settings-game-button:pressed,
-.speed-button:pressed,
-.tower-choice-box:pressed {
+.speed-button:pressed {
     -fx-background-color: #b68b42;
 }
 
@@ -375,6 +372,7 @@
 .tower-choice-box .menu-item {
     -fx-background-color: transparent;
     -fx-padding: 8px 12px;
+    -fx-min-width: 180px;
 }
 
 /* Text der Auswahloptionen */
@@ -387,4 +385,44 @@
 /* Hover auf einer Auswahloption */
 .tower-choice-box .menu-item:hover {
     -fx-background-color: #cdb987;
+}
+
+.tower-choice-box:hover {
+    -fx-background-color: linear-gradient(to bottom, #f2e5c5, #dfc995);
+}
+
+.tower-choice-box:pressed {
+    -fx-background-color: #b68b42;
+}
+
+.tower-choice-box {
+    -fx-min-height: 36px;
+    -fx-background-color: linear-gradient(to bottom, #ead9ae, #cdb987);
+    -fx-background-radius: 3px;
+    -fx-border-color: #80602d;
+    -fx-border-radius: 3px;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #352b1d;
+    -fx-cursor: hand;
+}
+
+.tower-choice-box:focused,
+.tower-choice-box:showing {
+    -fx-background-color: linear-gradient(to bottom, #ead9ae, #cdb987);
+    -fx-background-insets: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.context-menu,
+.tower-choice-box .context-menu {
+    -fx-effect: null;
+    -fx-background-insets: 0;
+}
+
+.tower-choice-box .context-menu {
+    -fx-padding: 1px;
+    -fx-translate-y: -10px;
 }
