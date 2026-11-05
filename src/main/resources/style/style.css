@@ -212,7 +212,8 @@
 }
 
 .settings-game-button,
-.speed-button {
+.speed-button,
+.tower-choice-box {
     -fx-min-height: 36px;
     -fx-background-color: linear-gradient(to bottom, #ead9ae, #cdb987);
     -fx-background-radius: 3px;
@@ -234,12 +235,14 @@
 }
 
 .settings-game-button:hover,
-.speed-button:hover {
+.speed-button:hover,
+.tower-choice-box:hover {
     -fx-background-color: linear-gradient(to bottom, #f2e5c5, #dfc995);
 }
 
 .settings-game-button:pressed,
-.speed-button:pressed {
+.speed-button:pressed,
+.tower-choice-box:pressed {
     -fx-background-color: #b68b42;
 }
 
@@ -357,4 +360,31 @@
 
 .result-secondary-button:hover {
     -fx-background-color: rgba(140, 104, 53, 0.15);
+}
+
+/* Das aufgeklappte Auswahlmenü */
+.tower-choice-box .context-menu {
+    -fx-background-color: #ead9ae;
+    -fx-background-radius: 4px;
+    -fx-border-color: #80602d;
+    -fx-border-radius: 4px;
+    -fx-padding: 4px;
+}
+
+/* Einzelne Auswahloptionen */
+.tower-choice-box .menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 8px 12px;
+}
+
+/* Text der Auswahloptionen */
+.tower-choice-box .menu-item .label {
+    -fx-text-fill: #352b1d;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 13px;
+}
+
+/* Hover auf einer Auswahloption */
+.tower-choice-box .menu-item:hover {
+    -fx-background-color: #cdb987;
 }

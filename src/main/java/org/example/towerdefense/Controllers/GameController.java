@@ -123,8 +123,12 @@ public class GameController {
         aimChoice.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
         CustomMenuItem aimItem = new CustomMenuItem(aimChoice);
         aimItem.setHideOnClick(false);
+        buildMenu.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
+
         CustomMenuItem towerItem = new CustomMenuItem(towerChoice);
         towerItem.setHideOnClick(false);
+        towerItem.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
+
         buildMenu.getItems().add(towerItem);
         aimMenu.getItems().add(aimItem);
 
@@ -286,6 +290,8 @@ public class GameController {
         nextWaveButton.getStyleClass().add("next-wave-button");
         hBox.getStyleClass().add("game-toolbar");
         stopButton.getStyleClass().add("settings-game-button");
+        towerChoice.getStyleClass().add("tower-choice-box");
+        towerChoice.getStylesheets().add(getClass().getResource("/style/style.css").toExternalForm());
         normalSpeedButton.getStyleClass().add("speed-button");
         doubleSpeedButton.getStyleClass().add("speed-button");
         quadroupleSpeedButton.getStyleClass().add("speed-button");
