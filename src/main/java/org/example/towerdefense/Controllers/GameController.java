@@ -19,6 +19,7 @@ import java.util.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -97,6 +98,11 @@ public class GameController {
     private HashSet<Point2D> usedSpots = new HashSet<>();
     private GamePath path;
 
+    // show tower stats on hover
+    private final VBox hoverStatsBox = new VBox(3); // Abstand 3px
+    private final Label hoverDamageLabel = new Label();
+    private final Label hoverSpeedLabel = new Label();
+
     private Map<Point2D, Rectangle> spotMap = new HashMap<>();
     private Map<Point2D, ImageView> spotImageMap = new HashMap<>();
 
@@ -131,6 +137,13 @@ public class GameController {
 
         buildMenu.getItems().add(towerItem);
         aimMenu.getItems().add(aimItem);
+
+        // init stat vbox
+        hoverStatsBox.setId("hover-stats-box");
+        hoverStatsBox.getChildren().addAll(hoverDamageLabel, hoverSpeedLabel);
+        hoverStatsBox.setMouseTransparent(true);
+        hoverStatsBox.setVisible(false);
+        root.getChildren().add(hoverStatsBox);
 
         towerChoice.setOnAction(e -> {
             String value = towerChoice.getValue();
@@ -225,7 +238,23 @@ public class GameController {
                 Tower tower = towerMap.get((Point2D) spot.getUserData());
 
                 if (tower != null) {
-                    tower.getRangeCircle().setVisible(false);
+                    spot.setOnMouseEntered(c -> {
+                        tower.getRangeCircle().setVisible(true);
+
+                        // !!! show tower stats
+                        hoverDamageLabel.setText("Damage: " + tower.getDamage());
+                        hoverSpeedLabel.setText("Speed: " + String.format("%.2f", tower.getCooldown()));
+                        // show at mouse pos
+                        hoverStatsBox.setLayoutX(c.getSceneX());
+                        hoverStatsBox.setLayoutY(c.getSceneY());
+                        // move in front of the tower image
+                        hoverStatsBox.toFront();
+                        hoverStatsBox.setVisible(true);
+                    });
+                    spot.setOnMouseExited(c -> {
+                        tower.getRangeCircle().setVisible(false);
+                        hoverStatsBox.setVisible(false);
+                    });
                 }
             });
 
@@ -524,15 +553,14 @@ public class GameController {
     }
 
     private void buildTower(int cost, String selected) {
+        int id = switch (selected) {
+            case "Tower2" -> 1;
+            case "Tower3" -> 2;
+            case "Tower4" -> 3;
+            default -> 0; // Tower1 is also 0
+        };
 
-        if (game.getMoney() < cost) {
-            System.out.println("Not enough money!");
-            showNoMoney();
-            return;
-        }
-
-        game.addMoney(-cost);
-
+        // maybe move to conf
         Image selectedImage = switch (selected) {
             case "Tower1" -> tower1Img;
             case "Tower2" -> tower2Img;
@@ -552,6 +580,16 @@ public class GameController {
         if (selectedImage == null) return;
 
         Tower tower = new Tower(game, selectedImage, towerColor);
+        // load tower specific config
+        tower.overwriteToType(id);
+
+        if (game.getMoney() < tower.getBuildCost()) {
+            System.out.println("Not enough money!");
+            showNoMoney();
+            return;
+        }
+
+        game.addMoney(-tower.getBuildCost());
 
         game.addTower(tower);
         ImageView view = tower.getView();
@@ -633,3 +671,4 @@ public class GameController {
 
      */
 }
+
