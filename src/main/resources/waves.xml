@@ -7,7 +7,7 @@
         <enemyCount>10</enemyCount>
         <spawnInterval>0.5</spawnInterval>
         <health>5</health>
-        <speed>80</speed>
+        <speed>40</speed>
         <money>10</money>
         <attack>2</attack>
         <type>NormalEnemy</type>
@@ -53,10 +53,10 @@
     <wave id="5">
         <group>3</group>
         <waveID>5</waveID>
-        <enemyCount>3</enemyCount>
+        <enemyCount>1</enemyCount>
         <spawnInterval>1.5</spawnInterval>
-        <health>200</health>
-        <speed>50</speed>
+        <health>400</health>
+        <speed>30</speed>
         <money>200</money>
         <attack>5</attack>
         <type>BossEnemy</type>
