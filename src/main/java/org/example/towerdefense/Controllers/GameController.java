@@ -410,8 +410,10 @@ public class GameController {
             hp.setTextAlignment(TextAlignment.LEFT);
             hp.setTextFill(Color.WHITE);
 
+            money.setLayoutX(rootMaxX - 160 - 160);
             money.setFont(new Font("Arial", 20));
             money.setTextFill(Color.WHITE);
+
             upgradeHBox.setVisible(false);
 
             guiSetup = true;
