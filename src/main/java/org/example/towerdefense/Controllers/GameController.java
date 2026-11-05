@@ -144,11 +144,26 @@ public class GameController {
         aimChoice.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
         CustomMenuItem aimItem = new CustomMenuItem(aimChoice);
         aimItem.setHideOnClick(false);
-        buildMenu.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
 
         CustomMenuItem towerItem = new CustomMenuItem(towerChoice);
         towerItem.setHideOnClick(false);
-        towerItem.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
+
+        String noBlue = "-fx-background-color: transparent;"
+                + " -fx-padding: 0;"
+                + "-fx-focus-color: transparent;"
+                + " -fx-faint-focus-color: transparent;"
+                + "-fx-selection-bar: transparent;"
+                + " -fx-accent: transparent;";
+
+        buildMenu.setStyle(noBlue);
+        aimMenu.setStyle(noBlue);
+        towerItem.setStyle(noBlue);
+        aimItem.setStyle(noBlue);
+
+        towerChoice.setPrefWidth(150);
+        towerChoice.setMinWidth(150);
+        aimChoice.setPrefWidth(150);
+        aimChoice.setMinWidth(150);
 
         buildMenu.getItems().add(towerItem);
         aimMenu.getItems().add(aimItem);
@@ -222,6 +237,9 @@ public class GameController {
                 if (e.getButton() == MouseButton.PRIMARY) {
 
                     if (tower == null) {
+                        aimMenu.hide();
+                        buildMenu.hide();
+                        towerChoice.hide();
                         towerChoice.setVisible(true);
                         buildMenu.show(spot, e.getScreenX(), e.getScreenY());
                     } else {
@@ -236,6 +254,9 @@ public class GameController {
                 } else if (e.getButton() == MouseButton.SECONDARY) {
 
                     if (tower != null) {
+                        buildMenu.hide();
+                        aimMenu.hide();
+                        aimChoice.hide();
                         aimMenu.show(spot, e.getScreenX(), e.getScreenY());
                     }
                 }
@@ -335,6 +356,7 @@ public class GameController {
         nextWaveButton.getStyleClass().add("next-wave-button");
         hBox.getStyleClass().add("game-toolbar");
         stopButton.getStyleClass().add("settings-game-button");
+        aimChoice.getStyleClass().add("tower-choice-box");
         towerChoice.getStyleClass().add("tower-choice-box");
         towerChoice.getStylesheets().add(getClass().getResource("/style/style.css").toExternalForm());
         normalSpeedButton.getStyleClass().add("speed-button");
