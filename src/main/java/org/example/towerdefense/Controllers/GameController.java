@@ -133,9 +133,17 @@ public class GameController {
         towerChoice.setOnAction(e -> {
             String value = towerChoice.getValue();
             if (value == null || selectedSpot == null) return;
+
             String selected = value.split(" ")[0];
             String match = value.replaceAll(".*\\((\\d+)\\).*", "$1");
             int cost = Integer.parseInt(match);
+            if (game.getMoney() < cost) {
+                System.out.println("Not enough money!");
+                showNoMoney();
+                return;
+            }
+
+            game.addMoney(-cost);
             buildTower(cost, selected);
 
             if (spotMap.get(selectedSpot) != null) spotMap.get(selectedSpot).setOpacity(0);
@@ -263,6 +271,7 @@ public class GameController {
 
         nextWaveButton.setOnAction(e -> {
             waveManager.triggerNextWave();
+            next = false;
         });
 
         // speedButtons to change GameLoop-Speed
@@ -319,7 +328,6 @@ public class GameController {
         root.getChildren().add(resourceBar);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
-        nextWaveButton.setVisible(next);
         root.getChildren().addFirst(backgroundimageView);
         // ----------------------------------------------------
 
@@ -338,6 +346,7 @@ public class GameController {
     public void updateGUI() {
         hp.setText(String.valueOf(game.getHp()));
         money.setText(String.valueOf(game.getMoney()));
+        nextWaveButton.setVisible(next);
         if (!guiSetup) {
             double rootX = root.getLayoutBounds().getWidth();
             double rootY = root.getLayoutBounds().getHeight();
@@ -350,6 +359,7 @@ public class GameController {
 
             nextWaveButton.setLayoutX(30);
             nextWaveButton.setLayoutY(500);
+            nextWaveButton.setVisible(next);
 
             hp.setLayoutX(rootMaxX - 160);
             hp.setFont(new Font("Arial", 20));
@@ -375,13 +385,14 @@ public class GameController {
                 enemyHashSet.add(e);
                 // System.out.println("enemy " + e.getId() + "|" + e.getGroupID() + " added");
             }
+        }
 
-            if(game.getNumberOfSpawnedEnemies()>= waveManager.waveEnemyCount()*0.7){
-                next=true;
-            }else {
-                next=false;
-            }
-            nextWaveButton.setVisible(next);
+
+
+        if((waveManager.groupEnemyCount() * 0.8) <= waveManager.waveEnemyCount()){
+            next=true;
+        }else {
+            next=false;
         }
 
         enemyHashSet.removeIf(e -> {
@@ -392,13 +403,12 @@ public class GameController {
             return false;
         });
 
-        if (((waveManager.getEndOfAllWaves() && enemyHashSet.isEmpty()) || game.getHp() <= 0) && !endOfGame) {
+        if ((((waveManager.getEndOfAllWaves() && enemyHashSet.isEmpty())) || game.getHp() <= 0) && !endOfGame) {
             if (waveManager.getEndOfAllWaves()) {
                 conclusion = true; // is a win
             } else if (game.getHp() <= 0) {
                 conclusion = false; // is a loss
             }
-
             try {
                 endOfGameCheck();
             } catch (IOException e) {
@@ -593,15 +603,6 @@ public class GameController {
     }
 
     private void buildTower(int cost, String selected) {
-
-        if (game.getMoney() < cost) {
-            System.out.println("Not enough money!");
-            showNoMoney();
-            return;
-        }
-
-        game.addMoney(-cost);
-
         Image selectedImage = switch (selected) {
             case "Tower1" -> tower1Img;
             case "Tower2" -> tower2Img;
