@@ -80,7 +80,7 @@
         <enemyCount>4</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <health>650</health>
-        <speed>40</speed>
+        <speed>80</speed>
         <money>15</money>
         <attack>3</attack>
         <type>BossEnemy</type>
