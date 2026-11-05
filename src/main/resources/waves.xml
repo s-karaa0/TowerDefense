@@ -75,14 +75,14 @@
     </wave>
 
     <wave id="7">
-        <group>4</group>
+        <group>5</group>
         <waveID>7</waveID>
-        <enemyCount>4</enemyCount>
-        <spawnInterval>0.2</spawnInterval>
-        <health>650</health>
-        <speed>80</speed>
-        <money>15</money>
-        <attack>3</attack>
+        <enemyCount>1</enemyCount>
+        <spawnInterval>1.5</spawnInterval>
+        <health>550</health>
+        <speed>30</speed>
+        <money>300</money>
+        <attack>5</attack>
         <type>BossEnemy</type>
     </wave>
 
