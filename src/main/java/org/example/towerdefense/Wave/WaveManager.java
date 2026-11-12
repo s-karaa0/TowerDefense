@@ -6,6 +6,7 @@ import org.example.towerdefense.Game;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class WaveManager {
     private final Game game;
@@ -18,24 +19,22 @@ public class WaveManager {
     private int group = 0;
     private boolean endOfAllWaves = false;
 
+    private static final List <Image> BossEnemy = new ArrayList<>();
+    private int bossindex = 0;
+
     private static final Image NormalEnemy =
-            new Image(WaveManager.class
-                    .getResource("/images/Enemies/enemy-lev1_small.png")
+            new Image(Objects.requireNonNull(WaveManager.class
+                            .getResource("/images/Enemies/red_enemy.png"))
                     .toExternalForm());
 
     private static final Image FastEnemy =
-            new Image(WaveManager.class
-                    .getResource("/images/Enemies/enemy-lev2_small.png")
+            new Image(Objects.requireNonNull(WaveManager.class
+                            .getResource("/images/Enemies/enemy-lev2_small.png"))
                     .toExternalForm());
 
     private static final Image StrongEnemy =
-            new Image(WaveManager.class
-                    .getResource("/images/Enemies/enemy-lev3_small.png")
-                    .toExternalForm());
-
-    private static final Image BossEnemy =
-            new Image(WaveManager.class
-                    .getResource("/images/Enemies/enemy-lev4_small.png")
+            new Image(Objects.requireNonNull(WaveManager.class
+                            .getResource("/images/Enemies/enemy-lev3_small.png"))
                     .toExternalForm());
 
     private int enemyId = 0;
@@ -43,6 +42,13 @@ public class WaveManager {
     public WaveManager(Game game, List<Wave> waves) {
         this.game = game;
         this.waves = waves;
+
+        BossEnemy.add(new Image(Objects.requireNonNull(WaveManager.class
+                        .getResource("/images/bosses/kiwi-boss.png"))
+                .toExternalForm()));
+        BossEnemy.add(new Image(Objects.requireNonNull(WaveManager.class
+                        .getResource("/images/bosses/slime-boss.png"))
+                .toExternalForm()));
     }
 
     public void triggerNextWave(){
@@ -84,7 +90,8 @@ public class WaveManager {
                     }
 
                     case "BossEnemy": {
-                        wave.setImage(BossEnemy);
+                        wave.setImage(BossEnemy.get(bossindex));
+                        ++bossindex;
                         break;
                     }
                 }
