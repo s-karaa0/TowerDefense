@@ -1,8 +1,10 @@
 package org.example.towerdefense.Controllers;
 
 import javafx.event.ActionEvent;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.example.towerdefense.GameApplication;
 import org.example.towerdefense.MusicManager;
@@ -19,9 +21,13 @@ public class SettingsController {
     private Button continueButton;
     @FXML
     private Button musicButton;
+    @FXML
+    private Label currentTrackLabel;
 
     public void setApplication(GameApplication gameApp) {
         this.gameApp = gameApp;
+        currentTrackLabel.textProperty().bind(
+                Bindings.concat("Die Barden spielen: ", MusicManager.currentTrackTitleProperty()));
         boolean inStartMenu = gameApp != null && gameApp.isStartState();
         if (inStartMenu) {
             continueButton.setDisable(true);
