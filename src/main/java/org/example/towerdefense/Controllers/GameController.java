@@ -545,42 +545,43 @@ public class GameController {
     private void upgradeHboxToMousePosition(double x, double y, Tower tower) {
         upgradeHBox.getChildren().clear();
 
-        Button dmg = new Button(upgradeOption("Damage +", tower.getUpgradeCost()));
-        Button spd = new Button(upgradeOption("Speed +", tower.getUpgradeCost()));
-        Button rng = new Button(upgradeOption("Range +", tower.getUpgradeCost()));
+        Button dmg = new Button();
+        Button spd = new Button();
+        Button rng = new Button();
+
+        Runnable refreshLabels = () -> {
+            dmg.setText(upgradeOption("Damage +", tower.getDamageCost()));
+            spd.setText(upgradeOption("Speed +", tower.getSpeedCost()));
+            rng.setText(upgradeOption("Range +", tower.getRangeCost()));
+        };
+        refreshLabels.run();
 
         dmg.setOnAction(e -> {
-            tower.addUpgradeCost(25);
-            if (game.getMoney() < 50) {
-                showNoMoney();
+            if (!pay(tower.getDamageCost())) {
                 return;
             }
-            game.addMoney(-50);
             tower.upgradeDamage();
-            upgradeHBox.setVisible(true);
+            tower.raiseDamageCost();
+            refreshLabels.run();
         });
 
         spd.setOnAction(e -> {
-            tower.addUpgradeCost(25);
-            if (game.getMoney() < 75) {
-                showNoMoney();
+            if (!pay(tower.getSpeedCost())) {
                 return;
-            }
-            game.addMoney(-75);
+            };
             tower.upgradeSpeed();
-            upgradeHBox.setVisible(false);
+            tower.raiseSpeedCost();
+            refreshLabels.run();
         });
 
         rng.setOnAction(e -> {
-            tower.addUpgradeCost(25);
-            if (game.getMoney() < 100) {
-                showNoMoney();
+            if (!pay(tower.getRangeCost())) {
                 return;
             }
-            game.addMoney(-100);
             tower.upgradeRange();
             tower.getRangeCircle().setRadius(tower.getRangeCircle().getRadius() + 10);
-            upgradeHBox.setVisible(false);
+            tower.raiseRangeCost();
+            refreshLabels.run();
         });
 
         upgradeHBox.getChildren().addAll(dmg, spd, rng);
@@ -588,6 +589,15 @@ public class GameController {
         upgradeHBox.setLayoutY(y);
         upgradeHBox.toFront();
         upgradeHBox.setVisible(true);
+    }
+
+    private boolean pay(int cost) {
+        if (game.getMoney() < cost) {
+            showNoMoney();
+            return false;
+        }
+        game.addMoney(-cost);
+        return true;
     }
 
     private void buildTower(int cost, String selected) {
