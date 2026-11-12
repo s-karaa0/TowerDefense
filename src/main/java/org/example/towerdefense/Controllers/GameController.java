@@ -13,11 +13,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.Group;
 import javafx.scene.transform.Scale;
 import javafx.scene.layout.HBox;
-import javafx.scene.input.MouseEvent;
-
 import java.io.IOException;
 import java.util.*;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -41,6 +38,9 @@ public class GameController {
     private final AnchorPane root = new AnchorPane();
     private final Group gameWorld = new Group();
     private final Scale worldScale = new Scale(1, 1, 0, 0);
+
+    // Bildbereich rechts neben dem Spielfeld (Bild später setzen!!)
+    private final ImageView sideImageView = new ImageView();
     private GameApplication gameApp;
     private Game game;
     private Gameloop loop;
@@ -123,11 +123,12 @@ public class GameController {
         gameWorld.getChildren().add(backgroundimageView);
 
         // Die Basisgroesse der Map ist 1000 x 800.
-        root.heightProperty().addListener((obs, oldHeight, newHeight) -> {
-            double scale = newHeight.doubleValue() / 800.0;
-            worldScale.setX(scale);
-            worldScale.setY(scale);
-        });
+        root.heightProperty().addListener((obs, oldHeight, newHeight) -> updateWorldAndSideImage());
+        root.widthProperty().addListener((obs, oldWidth, newWidth) -> updateWorldAndSideImage());
+
+        sideImageView.setPreserveRatio(false);
+        sideImageView.setSmooth(true);
+        sideImageView.setMouseTransparent(true);
 
         // Path
         path = PathFactory.createPath(difficulty);
@@ -352,6 +353,10 @@ public class GameController {
             }
         });
 
+//        testing side image with a Picture
+//        Image img = new Image(getClass().getResourceAsStream("/images/hud/coins.png"));
+//        setSideImage(img);
+
         hBox.getChildren().addAll(stopButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedButton);
         nextWaveButton.getStyleClass().add("next-wave-button");
         hBox.getStyleClass().add("game-toolbar");
@@ -381,7 +386,7 @@ public class GameController {
         AnchorPane.setTopAnchor(hBox, 20.0);
         AnchorPane.setLeftAnchor(nextWaveButton, 30.0);
         AnchorPane.setBottomAnchor(nextWaveButton, 30.0);
-        root.getChildren().add(gameWorld);
+        root.getChildren().addAll(gameWorld, sideImageView);
         root.getChildren().add(resourceBar);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
@@ -532,6 +537,30 @@ public class GameController {
         backgroundimageView.setFitWidth(1000);
         backgroundimageView.setFitHeight(800);
         backgroundimageView.setPreserveRatio(false);
+    }
+
+    public void setSideImage(Image image) {
+        sideImageView.setImage(image);
+        updateWorldAndSideImage();
+    }
+
+    // Hält Spielfeld und rechtes Bild bei jeder Fenstergrößenänderung passend.
+    private void updateWorldAndSideImage() {
+        double height = root.getHeight();
+        double width = root.getWidth();
+        if (height <= 0) return;
+
+        double scale = height / 800.0;
+        worldScale.setX(scale);
+        worldScale.setY(scale);
+
+        double mapWidth = 1000.0 * scale;
+        double remainingWidth = Math.max(0, width - mapWidth);
+
+        sideImageView.setLayoutX(mapWidth);
+        sideImageView.setLayoutY(0);
+        sideImageView.setFitWidth(remainingWidth);
+        sideImageView.setFitHeight(height);
     }
 
     private String towerOption(String name, int cost) {
@@ -709,4 +738,3 @@ public class GameController {
 
      */
 }
-
