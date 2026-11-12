@@ -25,6 +25,9 @@ public class Tower {
     protected TowerShooter shooter;
     private Circle rangeCircle;
     private Color towerColor;
+    private int damageCost = 50;
+    private int speedCost  = 75;
+    private int rangeCost  = 100;
 
     public Tower(Game game, Image image, Color color) {
         this.game = game;
@@ -115,15 +118,6 @@ public class Tower {
         return buildCost;
     }
 
-    public int getUpgradeCost() {
-        return upgradeCost;
-    }
-
-    public void addUpgradeCost(int upgradeCost) {
-        upgradeCost = upgradeCost + 25;
-        this.upgradeCost = upgradeCost;
-    }
-
     public Circle getRangeCircle() {
         return rangeCircle;
     }
@@ -138,4 +132,12 @@ public class Tower {
     public double getCooldown() {
         return cooldown;
     }
+
+    public int getDamageCost() { return damageCost; }
+    public int getSpeedCost()  { return speedCost; }
+    public int getRangeCost()  { return rangeCost; }
+
+    public void raiseDamageCost() { damageCost += 50; }
+    public void raiseSpeedCost()  { speedCost  += 75; }
+    public void raiseRangeCost()  { rangeCost  += 100; }
 }
