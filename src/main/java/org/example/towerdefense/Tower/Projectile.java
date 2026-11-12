@@ -9,18 +9,16 @@ public class Projectile {
     private double speed;
     private Enemy target;
     private boolean active = true;
-    private final double damage;
-    private Color color;
+    private final double damage ;
 
     private final Circle view = new Circle(10, Color.RED);
 
-    public Projectile(double x, double y, double speed, Enemy target, double damage, Color color) {
+    public Projectile(double x, double y, double speed, Enemy target, double damage) {
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.target = target;
         this.damage = damage;
-        this.color = color;
         updateView();
     }
 
@@ -57,7 +55,6 @@ public class Projectile {
     }
 
     private void updateView() {
-        view.setFill(color);
         view.setTranslateX(x);
         view.setTranslateY(y);
     }

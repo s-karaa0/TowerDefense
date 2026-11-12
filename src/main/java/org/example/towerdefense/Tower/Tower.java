@@ -39,7 +39,7 @@ public class Tower {
         rangeCircle.setFill(towerColor);
         rangeCircle.setMouseTransparent(true);
 
-        shooter = createShooter(damage, range, cooldown, color);
+        shooter = createShooter(damage, range, cooldown);
     }
 
     /**
@@ -73,8 +73,8 @@ public class Tower {
         }
     }
 
-    protected TowerShooter createShooter(int damage, double range, double cooldown, Color color) {
-        return new TowerShooter(game, imageView, damage, this, cooldown, range, 500, color);
+    protected TowerShooter createShooter(int damage, double range, double cooldown) {
+        return new TowerShooter(game, imageView, damage, this, cooldown, range, 500);
     }
 
     public void update(double dt) {
