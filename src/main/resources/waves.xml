@@ -16,7 +16,7 @@
     <wave id="2">
         <group>2</group>
         <waveID>2</waveID>
-        <enemyCount>4</enemyCount>
+        <enemyCount>10</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <health>4</health>
         <speed>80</speed>
@@ -28,7 +28,7 @@
     <wave id="3">
         <group>2</group>
         <waveID>3</waveID>
-        <enemyCount>7</enemyCount>
+        <enemyCount>10</enemyCount>
         <spawnInterval>0.6</spawnInterval>
         <health>7</health>
         <speed>100</speed>
@@ -40,7 +40,7 @@
     <wave id="4">
         <group>3</group>
         <waveID>4</waveID>
-        <enemyCount>9</enemyCount>
+        <enemyCount>10</enemyCount>
         <spawnInterval>0.9</spawnInterval>
         <health>20</health>
         <speed>200</speed>
@@ -52,7 +52,7 @@
     <wave id="5">
         <group>4</group>
         <waveID>5</waveID>
-        <enemyCount>20</enemyCount>
+        <enemyCount>10</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <health>1</health>
         <speed>80</speed>
@@ -64,7 +64,7 @@
     <wave id="6">
         <group>4</group>
         <waveID>6</waveID>
-        <enemyCount>4</enemyCount>
+        <enemyCount>10</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <health>1</health>
         <speed>80</speed>
