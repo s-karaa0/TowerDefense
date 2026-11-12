@@ -18,8 +18,6 @@ public class Game {
     private final List<Projectile> projectiles = new ArrayList<>();
     private int hp = 20; // hp = health pOiNTS weil des so kheat
     private int money = 500;
-    private int numberOfSpawnedEnemies=0;
-    public int activeWaveGroup;
 
     public int getHp() {return hp;}
     public int getMoney() {return money;}
@@ -33,7 +31,6 @@ public class Game {
 
     public void addEnemy(Enemy e) {
         enemies.add(e);
-        numberOfSpawnedEnemies=numberOfSpawnedEnemies+1;
     }
 
     public List<Enemy> getEnemies() {
@@ -111,18 +108,8 @@ public class Game {
     public List<Projectile> getProjectiles() {
         return projectiles;
     }
-    public int getNumberOfSpawnedEnemies() {
-        return numberOfSpawnedEnemies;
-    }
-    public void resetNumberOfSpawnedEnemies(){
-        numberOfSpawnedEnemies=0;
-    }
-    public int getActiveWaveGroup(){
-        return activeWaveGroup;
-    }
-    public void setActiveWaveGroup(int group){
-        this.activeWaveGroup = group;
-    }
+
+
 }
 
 
