@@ -6,9 +6,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import org.example.towerdefense.Path.GamePath;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Enemy {
     private float health;
     private float speed;
@@ -43,8 +40,7 @@ public class Enemy {
     public void setMoneyDropped(int moneyDropped) {
         this.moneyDropped = moneyDropped;
     }
-    private static final Image ENEMY_IMG =
-            new Image(Enemy.class.getResourceAsStream("/images/enemies/enemy-lev1.png"));
+
 
 
     public void update(double dt, GamePath path){
