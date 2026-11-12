@@ -443,13 +443,12 @@ public class GameController {
             return false;
         });
 
-        if (((waveManager.getEndOfAllWaves() && enemyHashSet.isEmpty()) || game.getHp() <= 0) && !endOfGame) {
+        if ((((waveManager.getEndOfAllWaves() && enemyHashSet.isEmpty())) || game.getHp() <= 0) && !endOfGame) {
             if (waveManager.getEndOfAllWaves()) {
                 conclusion = true; // is a win
             } else if (game.getHp() <= 0) {
                 conclusion = false; // is a loss
             }
-
             try {
                 endOfGameCheck();
             } catch (IOException e) {
