@@ -65,6 +65,18 @@ public class GameController {
     private final Image tower4Img =
             new Image(getClass().getResourceAsStream("/images/towers/turm-lev4_small.png"));
 
+    private final Image projectileTower1Img =
+            new Image(getClass().getResourceAsStream("/images/projectiles/projectile-tower1.png"));
+
+    private final Image projectileTower2Img =
+            new Image(getClass().getResourceAsStream("/images/projectiles/projectile-tower2.png"));
+
+    private final Image projectileTower3Img =
+            new Image(getClass().getResourceAsStream("/images/projectiles/projectile-tower3.png"));
+
+    private final Image projectileTower4Img =
+            new Image(getClass().getResourceAsStream("/images/projectiles/projectile4.png"));
+
 
     private final ContextMenu buildMenu = new ContextMenu();
     private final ContextMenu aimMenu = new ContextMenu();
@@ -534,6 +546,14 @@ public class GameController {
             default -> null;
         };
 
+        Image projectileImage = switch (selected) {
+            case "Tower1" -> projectileTower1Img;
+            case "Tower2" -> projectileTower2Img;
+            case "Tower3" -> projectileTower3Img;
+            case "Tower4" -> projectileTower4Img;
+            default -> null;
+        };
+
         Color towerColor = switch (selected) {
             case "Tower1" -> Color.GREEN;
             case "Tower2" -> Color.BLUE;
@@ -542,9 +562,9 @@ public class GameController {
             default -> null;
         };
 
-        if (selectedImage == null) return;
+        if (selectedImage == null || projectileImage == null) return;
 
-        Tower tower = new Tower(game, selectedImage, towerColor);
+        Tower tower = new Tower(game, selectedImage, projectileImage, towerColor);
 
         game.addTower(tower);
         ImageView view = tower.getView();
