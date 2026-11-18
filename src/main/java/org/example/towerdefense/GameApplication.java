@@ -16,11 +16,10 @@
     import org.example.towerdefense.Controllers.SettingsController;
     import org.example.towerdefense.Controllers.StartController;
 
-    import java.awt.*;
     import java.io.IOException;
     import java.util.ArrayList;
     import java.util.List;
-    
+
     public class GameApplication extends Application {
         private static Stage stage;
         private static boolean isRunning = false;
@@ -44,12 +43,13 @@
         }
     
         public void start(Stage primaryStage) throws IOException {
+            stage = primaryStage;
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon.png")));
 
             Screen screen = Screen.getPrimary();
             Rectangle2D bounds = screen.getVisualBounds();
     
             System.out.println("-----------------");
-            stage = primaryStage;
             switchScene("/start-game-view.fxml", "start");
 
             stage.setHeight(bounds.getHeight());
