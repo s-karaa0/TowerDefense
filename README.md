@@ -3,7 +3,7 @@
 Tower Defense is a video game written in JavaFX. The game was mostly inspired by Bloons TD.
 The goal of this game is to defeat all waves before they reach the right corner of the screen (the "base").
 
-# 📸 Preview
+# Preview
 
 <img src="/docs/img/preview.png">
 
@@ -36,7 +36,7 @@ mvn javafx:run
 - Java
 - Gson
 
-# :sunglasses: Authors
+# Authors
 <ul>
 <li><a href="https://github.com/s-karaa0">Sena Kara</a></li>
 <li><a href="https://github.com/dlehner1">David Lehner</a></li>
