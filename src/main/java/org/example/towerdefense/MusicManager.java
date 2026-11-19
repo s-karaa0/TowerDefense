@@ -1,7 +1,11 @@
 package org.example.towerdefense;
 
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.MapChangeListener;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +17,12 @@ public class MusicManager {
 
     private static String currentContext = "";
     private static boolean musicEnabled = true;
+    private static final SimpleStringProperty currentTrackTitle =
+            new SimpleStringProperty("Keine Musik");
+
+    public static ReadOnlyStringProperty currentTrackTitleProperty() {
+        return currentTrackTitle;
+    }
 
     public static void playQueue(List<String> tracks, String context) {
         if (tracks == null || tracks.isEmpty()) {
@@ -67,23 +77,40 @@ public class MusicManager {
         if (currentTracks == null || currentTracks.isEmpty()) return;
         stop();
         String track = currentTracks.get(currentIndex);
-        String url = MusicManager.class.getResource(track).toExternalForm();
-        Media media = new Media(url);
-        currentPlayer = new MediaPlayer(media);
-        currentPlayer.setOnEndOfMedia(() -> {
+        Media media = new Media(MusicManager.class.getResource(track).toExternalForm());
+        MediaPlayer player = new MediaPlayer(media);
+        currentPlayer = player;
+        listenForMetadataTitle(media, player);
+        player.setOnEndOfMedia(() -> {
             currentIndex = (currentIndex + 1) % currentTracks.size();
             playNext();
         });
-        currentPlayer.play();
+        player.play();
     }
 
     public static void play(String resourcePath) {
         stop();
-        String url = MusicManager.class.getResource(resourcePath).toExternalForm();
-        Media media = new Media(url);
-        currentPlayer = new MediaPlayer(media);
-        currentPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        currentPlayer.play();
+        Media media = new Media(MusicManager.class.getResource(resourcePath).toExternalForm());
+        MediaPlayer player = new MediaPlayer(media);
+        currentPlayer = player;
+        listenForMetadataTitle(media, player);
+        player.setCycleCount(MediaPlayer.INDEFINITE);
+        player.play();
+    }
+
+    private static void listenForMetadataTitle(Media media, MediaPlayer player) {
+        media.getMetadata().addListener((MapChangeListener<String, Object>) change -> {
+            if ("title".equalsIgnoreCase(change.getKey()) && currentPlayer == player) {
+                setMetadataTitle(change.getValueAdded());
+            }
+        });
+        setMetadataTitle(media.getMetadata().get("title"));
+    }
+
+    private static void setMetadataTitle(Object title) {
+        if (title != null && !title.toString().isBlank()) {
+            currentTrackTitle.set(title.toString());
+        }
     }
 
     public static void stop() {
@@ -91,6 +118,7 @@ public class MusicManager {
             currentPlayer.stop();
             currentPlayer = null;
         }
+        currentTrackTitle.set("Keine Musik");
     }
 
     public static void setVolume(double volume) {

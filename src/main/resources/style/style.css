@@ -27,6 +27,29 @@
     -fx-text-fill: #d0d5c4;
 }
 
+.close-button {
+    -fx-background-color: linear-gradient(to bottom, #a94438, #702820);
+    -fx-background-radius: 3px;
+    -fx-border-color: #d09a65;
+    -fx-border-radius: 3px;
+    -fx-border-width: 1.5px;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fff2d3;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0.2, 0, 2);
+}
+
+.close-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #d35445, #922f25);
+    -fx-border-color: #f2dfaa;
+}
+
+.close-button:pressed {
+    -fx-background-color: #572019;
+}
+
 .ornament {
     -fx-font-size: 13px;
     -fx-text-fill: #c5a25b;
@@ -212,7 +235,8 @@
 }
 
 .settings-game-button,
-.speed-button {
+.speed-button,
+.tower-choice-box {
     -fx-min-height: 36px;
     -fx-background-color: linear-gradient(to bottom, #ead9ae, #cdb987);
     -fx-background-radius: 3px;
@@ -417,4 +441,87 @@
 .choice-box .menu-item:focused .label,
 .choice-box .menu-item:hover .label {
     -fx-text-fill: #ffffff;                 /* Reines Weiß beim Hover für bessere Lesbarkeit */
+}
+/* Das aufgeklappte Auswahlmenü */
+.tower-choice-box .context-menu {
+    -fx-background-color: #ead9ae;
+    -fx-background-radius: 4px;
+    -fx-border-color: #80602d;
+    -fx-border-radius: 4px;
+    -fx-padding: 4px;
+}
+
+/* Einzelne Auswahloptionen */
+.tower-choice-box .menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 8px 12px;
+    -fx-min-width: 180px;
+}
+
+/* Text der Auswahloptionen */
+.tower-choice-box .menu-item .label {
+    -fx-text-fill: #352b1d;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 13px;
+}
+
+/* Hover auf einer Auswahloption */
+.tower-choice-box .menu-item:hover {
+    -fx-background-color: #cdb987;
+}
+
+#hover-stats-box {
+    -fx-padding: 8px 12px;
+    -fx-background-color: rgba(24, 35, 29, 0.88);
+    -fx-background-radius: 5px;
+    -fx-border-color: #b08a4c;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0.2, 0, 3);
+}
+
+#hover-stats-box Label {
+    -fx-font-family: "Georgia";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.tower-choice-box:hover {
+    -fx-background-color: linear-gradient(to bottom, #f2e5c5, #dfc995);
+}
+
+.tower-choice-box:pressed {
+    -fx-background-color: #b68b42;
+}
+
+.tower-choice-box {
+    -fx-min-height: 36px;
+    -fx-background-color: linear-gradient(to bottom, #ead9ae, #cdb987);
+    -fx-background-radius: 3px;
+    -fx-border-color: #80602d;
+    -fx-border-radius: 3px;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #352b1d;
+    -fx-cursor: hand;
+}
+
+.tower-choice-box:focused,
+.tower-choice-box:showing {
+    -fx-background-color: linear-gradient(to bottom, #ead9ae, #cdb987);
+    -fx-background-insets: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.context-menu,
+.tower-choice-box .context-menu {
+    -fx-effect: null;
+    -fx-background-insets: 0;
+}
+
+.tower-choice-box .context-menu {
+    -fx-padding: 1px;
+    -fx-translate-y: -10px;
 }

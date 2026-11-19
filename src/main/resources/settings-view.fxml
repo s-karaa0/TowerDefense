@@ -22,7 +22,7 @@
                                 <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                                     <children>
                                         <Label styleClass="settings-label" text="Hintergrundmusik" />
-                                        <Label styleClass="settings-description" text="Musik im Menü und während der Schlacht" />
+                                        <Label fx:id="currentTrackLabel" styleClass="settings-description" text="Die Barden spielen: Keine Musik" />
                                     </children>
                                 </VBox>
                                 <Button fx:id="musicButton" mnemonicParsing="false" onAction="#onMusicButtonClicked" styleClass="settings-toggle" text="MUSIK: AN" />

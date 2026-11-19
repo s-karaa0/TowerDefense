@@ -10,6 +10,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.Group;
+import javafx.scene.transform.Scale;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
 
@@ -19,6 +21,7 @@ import java.util.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -36,6 +39,8 @@ import org.example.towerdefense.Wave.WaveManager;
 
 public class GameController {
     private final AnchorPane root = new AnchorPane();
+    private final Group gameWorld = new Group();
+    private final Scale worldScale = new Scale(1, 1, 0, 0);
     private GameApplication gameApp;
     private Game game;
     private Gameloop loop;
@@ -109,6 +114,11 @@ public class GameController {
     private HashSet<Point2D> usedSpots = new HashSet<>();
     private GamePath path;
 
+    // show tower stats on hover
+    private final VBox hoverStatsBox = new VBox(3); // Abstand 3px
+    private final Label hoverDamageLabel = new Label();
+    private final Label hoverSpeedLabel = new Label();
+
     private Map<Point2D, Rectangle> spotMap = new HashMap<>();
     private Map<Point2D, ImageView> spotImageMap = new HashMap<>();
 
@@ -119,6 +129,17 @@ public class GameController {
 
     public GameController(String difficulty) {
         root.getStylesheets().add(getClass().getResource("/style/style.css").toExternalForm());
+
+        // Alle Elemente des eigentlichen Spielfeldes werden gemeinsam skaliert.
+        gameWorld.getTransforms().add(worldScale);
+        gameWorld.getChildren().add(backgroundimageView);
+
+        // Die Basisgroesse der Map ist 1000 x 800.
+        root.heightProperty().addListener((obs, oldHeight, newHeight) -> {
+            double scale = newHeight.doubleValue() / 800.0;
+            worldScale.setX(scale);
+            worldScale.setY(scale);
+        });
 
         // Path
         path = PathFactory.createPath(difficulty);
@@ -135,10 +156,36 @@ public class GameController {
         aimChoice.setItems(FXCollections.observableArrayList("erster", "letzter", "staerkster", "schnellster"));
         CustomMenuItem aimItem = new CustomMenuItem(aimChoice);
         aimItem.setHideOnClick(false);
+
         CustomMenuItem towerItem = new CustomMenuItem(towerChoice);
         towerItem.setHideOnClick(false);
+
+        String noBlue = "-fx-background-color: transparent;"
+                + " -fx-padding: 0;"
+                + "-fx-focus-color: transparent;"
+                + " -fx-faint-focus-color: transparent;"
+                + "-fx-selection-bar: transparent;"
+                + " -fx-accent: transparent;";
+
+        buildMenu.setStyle(noBlue);
+        aimMenu.setStyle(noBlue);
+        towerItem.setStyle(noBlue);
+        aimItem.setStyle(noBlue);
+
+        towerChoice.setPrefWidth(150);
+        towerChoice.setMinWidth(150);
+        aimChoice.setPrefWidth(150);
+        aimChoice.setMinWidth(150);
+
         buildMenu.getItems().add(towerItem);
         aimMenu.getItems().add(aimItem);
+
+        // init stat vbox
+        hoverStatsBox.setId("hover-stats-box");
+        hoverStatsBox.getChildren().addAll(hoverDamageLabel, hoverSpeedLabel);
+        hoverStatsBox.setMouseTransparent(true);
+        hoverStatsBox.setVisible(false);
+        root.getChildren().add(hoverStatsBox);
 
         towerChoice.setOnAction(e -> {
             String value = towerChoice.getValue();
@@ -190,7 +237,7 @@ public class GameController {
             spotImageMap.put(p, spotImage);
 
             // Add BOTH to the same parent
-            root.getChildren().addAll(spot, spotImage);
+            gameWorld.getChildren().addAll(spot, spotImage);
 
             spotImage.toFront();
 
@@ -202,6 +249,9 @@ public class GameController {
                 if (e.getButton() == MouseButton.PRIMARY) {
 
                     if (tower == null) {
+                        aimMenu.hide();
+                        buildMenu.hide();
+                        towerChoice.hide();
                         towerChoice.setVisible(true);
                         buildMenu.show(spot, e.getScreenX(), e.getScreenY());
                     } else {
@@ -216,6 +266,9 @@ public class GameController {
                 } else if (e.getButton() == MouseButton.SECONDARY) {
 
                     if (tower != null) {
+                        buildMenu.hide();
+                        aimMenu.hide();
+                        aimChoice.hide();
                         aimMenu.show(spot, e.getScreenX(), e.getScreenY());
                     }
                 }
@@ -233,7 +286,23 @@ public class GameController {
                 Tower tower = towerMap.get((Point2D) spot.getUserData());
 
                 if (tower != null) {
-                    tower.getRangeCircle().setVisible(false);
+                    spot.setOnMouseEntered(c -> {
+                        tower.getRangeCircle().setVisible(true);
+
+                        // !!! show tower stats
+                        hoverDamageLabel.setText("Damage: " + tower.getDamage());
+                        hoverSpeedLabel.setText("Speed: " + String.format("%.2f", tower.getCooldown()));
+                        // show at mouse pos
+                        hoverStatsBox.setLayoutX(c.getSceneX());
+                        hoverStatsBox.setLayoutY(c.getSceneY());
+                        // move in front of the tower image
+                        hoverStatsBox.toFront();
+                        hoverStatsBox.setVisible(true);
+                    });
+                    spot.setOnMouseExited(c -> {
+                        tower.getRangeCircle().setVisible(false);
+                        hoverStatsBox.setVisible(false);
+                    });
                 }
             });
 
@@ -242,8 +311,8 @@ public class GameController {
 
         // Game
         game = new Game(path);
-        game.setOnProjectileSpawned(p -> root.getChildren().add(p.getView()));
-        game.setOnProjectileRemoved(p -> root.getChildren().remove(p.getView()));
+        game.setOnProjectileSpawned(p -> gameWorld.getChildren().add(p.getView()));
+        game.setOnProjectileRemoved(p -> gameWorld.getChildren().remove(p.getView()));
 
         // XML
         List<Wave> waves = WaveLoader.loadWaves();
@@ -259,6 +328,7 @@ public class GameController {
             loop.pause();
             System.out.println("speed: " + loop.getSpeed());
             try {
+
                 gameApp.switchScene("/settings-view.fxml", "settings");
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -298,6 +368,9 @@ public class GameController {
         nextWaveButton.getStyleClass().add("next-wave-button");
         hBox.getStyleClass().add("game-toolbar");
         stopButton.getStyleClass().add("settings-game-button");
+        aimChoice.getStyleClass().add("tower-choice-box");
+        towerChoice.getStyleClass().add("tower-choice-box");
+        towerChoice.getStylesheets().add(getClass().getResource("/style/style.css").toExternalForm());
         normalSpeedButton.getStyleClass().add("speed-button");
         doubleSpeedButton.getStyleClass().add("speed-button");
         quadroupleSpeedButton.getStyleClass().add("speed-button");
@@ -320,22 +393,22 @@ public class GameController {
         AnchorPane.setTopAnchor(hBox, 20.0);
         AnchorPane.setLeftAnchor(nextWaveButton, 30.0);
         AnchorPane.setBottomAnchor(nextWaveButton, 30.0);
+        root.getChildren().add(gameWorld);
         root.getChildren().add(resourceBar);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
-        root.getChildren().addFirst(backgroundimageView);
         // ----------------------------------------------------
 
 
-            // Looop, very important
-            loop = new Gameloop(game, waveManager) {
-                @Override
-                public void handle(long now) {
-                    super.handle(now);
-                    sync();
-                    updateGUI();
-                }
-            };
+        // Looop, very important
+        loop = new Gameloop(game, waveManager) {
+            @Override
+            public void handle(long now) {
+                super.handle(now);
+                sync();
+                updateGUI();
+            }
+        };
     }
 
     public void updateGUI() {
@@ -368,7 +441,7 @@ public class GameController {
         // add enemies, to the Set
         for (Enemy e : game.getEnemies()) {
             if (!enemyHashSet.contains(e)) {
-                root.getChildren().add(e.getView());
+                gameWorld.getChildren().add(e.getView());
                 enemyHashSet.add(e);
                 // System.out.println("enemy " + e.getId() + "|" + e.getGroupID() + " added");
             }
@@ -376,7 +449,7 @@ public class GameController {
 
         enemyHashSet.removeIf(e -> {
             if (!game.getEnemies().contains(e)) {
-                root.getChildren().remove(e.getView());
+                gameWorld.getChildren().remove(e.getView());
                 return true;
             }
             return false;
@@ -415,7 +488,7 @@ public class GameController {
 
     public void deleteAllEnemies() {
         for (Enemy e : game.getEnemies()) {
-            root.getChildren().remove(e.getView());
+            gameWorld.getChildren().remove(e.getView());
         }
     }
 
@@ -470,6 +543,7 @@ public class GameController {
         backgroundimageView.setImage(backgroundimg);
         backgroundimageView.setFitWidth(1000);
         backgroundimageView.setFitHeight(800);
+        backgroundimageView.setPreserveRatio(false);
     }
 
     private String towerOption(String name, int cost) {
@@ -483,42 +557,43 @@ public class GameController {
     private void upgradeHboxToMousePosition(double x, double y, Tower tower) {
         upgradeHBox.getChildren().clear();
 
-        Button dmg = new Button(upgradeOption("Damage +", tower.getUpgradeCost()));
-        Button spd = new Button(upgradeOption("Speed +", tower.getUpgradeCost()));
-        Button rng = new Button(upgradeOption("Range +", tower.getUpgradeCost()));
+        Button dmg = new Button();
+        Button spd = new Button();
+        Button rng = new Button();
+
+        Runnable refreshLabels = () -> {
+            dmg.setText(upgradeOption("Damage +", tower.getDamageCost()));
+            spd.setText(upgradeOption("Speed +", tower.getSpeedCost()));
+            rng.setText(upgradeOption("Range +", tower.getRangeCost()));
+        };
+        refreshLabels.run();
 
         dmg.setOnAction(e -> {
-            tower.addUpgradeCost(25);
-            if (game.getMoney() < 50) {
-                showNoMoney();
+            if (!pay(tower.getDamageCost())) {
                 return;
             }
-            game.addMoney(-50);
             tower.upgradeDamage();
-            upgradeHBox.setVisible(true);
+            tower.raiseDamageCost();
+            refreshLabels.run();
         });
 
         spd.setOnAction(e -> {
-            tower.addUpgradeCost(25);
-            if (game.getMoney() < 75) {
-                showNoMoney();
+            if (!pay(tower.getSpeedCost())) {
                 return;
-            }
-            game.addMoney(-75);
+            };
             tower.upgradeSpeed();
-            upgradeHBox.setVisible(false);
+            tower.raiseSpeedCost();
+            refreshLabels.run();
         });
 
         rng.setOnAction(e -> {
-            tower.addUpgradeCost(25);
-            if (game.getMoney() < 100) {
-                showNoMoney();
+            if (!pay(tower.getRangeCost())) {
                 return;
             }
-            game.addMoney(-100);
             tower.upgradeRange();
             tower.getRangeCircle().setRadius(tower.getRangeCircle().getRadius() + 10);
-            upgradeHBox.setVisible(false);
+            tower.raiseRangeCost();
+            refreshLabels.run();
         });
 
         upgradeHBox.getChildren().addAll(dmg, spd, rng);
@@ -528,16 +603,24 @@ public class GameController {
         upgradeHBox.setVisible(true);
     }
 
-    private void buildTower(int cost, String selected) {
-
+    private boolean pay(int cost) {
         if (game.getMoney() < cost) {
-            System.out.println("Not enough money!");
             showNoMoney();
-            return;
+            return false;
         }
-
         game.addMoney(-cost);
+        return true;
+    }
 
+    private void buildTower(int cost, String selected) {
+        int id = switch (selected) {
+            case "Tower2" -> 1;
+            case "Tower3" -> 2;
+            case "Tower4" -> 3;
+            default -> 0; // Tower1 is also 0
+        };
+
+        // maybe move to conf
         Image selectedImage = switch (selected) {
             case "Tower1" -> tower1Img;
             case "Tower2" -> tower2Img;
@@ -566,6 +649,17 @@ public class GameController {
 
         Tower tower = new Tower(game, selectedImage, projectileImage, towerColor);
 
+        // load tower specific config
+        tower.overwriteToType(id);
+
+        if (game.getMoney() < tower.getBuildCost()) {
+            System.out.println("Not enough money!");
+            showNoMoney();
+            return;
+        }
+
+        game.addMoney(-tower.getBuildCost());
+
         game.addTower(tower);
         ImageView view = tower.getView();
         view.setLayoutX(selectedSpot.getX() - 32);
@@ -588,7 +682,7 @@ public class GameController {
         towerMap.put(selectedSpot, tower);
         usedSpots.add(selectedSpot);
 
-        root.getChildren().addAll(view, range);
+        gameWorld.getChildren().addAll(view, range);
         towerChoice.setVisible(false);
         towerChoice.hide();
 
@@ -646,3 +740,4 @@ public class GameController {
 
      */
 }
+

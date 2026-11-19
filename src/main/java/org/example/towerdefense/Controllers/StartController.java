@@ -1,5 +1,6 @@
 package org.example.towerdefense.Controllers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -12,6 +13,10 @@ public class StartController {
     public ChoiceBox<String> fieldChoiceBox;
     public String difficulty;
     public GameApplication gameApp;
+
+    public void onCloseButtonClicked(ActionEvent actionEvent) {
+        Platform.exit();
+    }
 
     public enum Difficulty {
         EASY, MEDIUM, HARD

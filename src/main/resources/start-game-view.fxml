@@ -6,24 +6,46 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" styleClass="start-screen" stylesheets="@style/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.towerdefense.Controllers.StartController">
-   <children>
-      <VBox alignment="CENTER" spacing="12.0" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="26.0">
-         <children>
-            <Label styleClass="eyebrow" text="DIE KRONENLAND-CHRONIK" />
-            <Label styleClass="game-title" text="TOWER DEFENSE" />
-            <Label styleClass="game-subtitle" text="Das Schicksal des Reiches ruht auf deinen Schultern" />
-            <Label styleClass="ornament" text="✦   ━━━━━━━━━   ✦" />
-            <VBox alignment="CENTER" maxWidth="390.0" spacing="15.0" styleClass="menu-card">
-               <children>
-                  <Label styleClass="card-heading" text="Wähle dein Schlachtfeld" />
-                  <ChoiceBox fx:id="fieldChoiceBox" onAction="#choiceBoxClicked" prefWidth="280.0" styleClass="difficulty-choice" />
-                  <Button maxWidth="280.0" mnemonicParsing="false" onAction="#onStartButtonClicked" prefHeight="50.0" styleClass="start-button" text="IN DIE SCHLACHT" />
-                  <Button mnemonicParsing="false" onAction="#onSettingsButtonClicked" styleClass="settings-button" text="⚙  EINSTELLUNGEN" />
-               </children>
-            </VBox>
-            <Label styleClass="footer-text" text="SIE ZIEHEN GEGEN DEINE TORE. ZEIG IHNEN, WO IHR GRAB LIEGT." />
-         </children>
-      </VBox>
-   </children>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0"
+            styleClass="start-screen"
+            stylesheets="@style/style.css"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.towerdefense.Controllers.StartController">
+
+    <children>
+        <VBox alignment="CENTER" spacing="12.0"
+              AnchorPane.bottomAnchor="26.0"
+              AnchorPane.leftAnchor="20.0"
+              AnchorPane.rightAnchor="20.0"
+              AnchorPane.topAnchor="26.0">
+            <children>
+                <Label styleClass="eyebrow" text="DIE KRONENLAND-CHRONIK"/>
+                <Label styleClass="game-title" text="TOWER DEFENSE"/>
+                <Label styleClass="game-subtitle" text="Das Schicksal des Reiches ruht auf deinen Schultern"/>
+                <Label styleClass="ornament" text="✦   ━━━━━━━━━   ✦"/>
+                <VBox alignment="CENTER" maxWidth="390.0" spacing="15.0" styleClass="menu-card">
+                    <children>
+                        <Label styleClass="card-heading" text="Wähle dein Schlachtfeld"/>
+                        <ChoiceBox fx:id="fieldChoiceBox" onAction="#choiceBoxClicked" prefWidth="280.0"
+                                   styleClass="difficulty-choice"/>
+                        <Button maxWidth="280.0" mnemonicParsing="false" onAction="#onStartButtonClicked"
+                                prefHeight="50.0" styleClass="start-button" text="IN DIE SCHLACHT"/>
+                        <Button mnemonicParsing="false" onAction="#onSettingsButtonClicked" styleClass="settings-button"
+                                text="⚙  EINSTELLUNGEN"/>
+                    </children>
+                </VBox>
+                <Label styleClass="footer-text" text="SIE ZIEHEN GEGEN DEINE TORE. ZEIG IHNEN, WO IHR GRAB LIEGT."/>
+            </children>
+        </VBox>
+        <Button text="x"
+                onAction="#onCloseButtonClicked"
+                styleClass="close-button"
+                prefWidth="38.0"
+                prefHeight="38.0"
+                AnchorPane.topAnchor="15.0"
+                AnchorPane.rightAnchor="15.0"/>
+
+    </children>
 </AnchorPane>

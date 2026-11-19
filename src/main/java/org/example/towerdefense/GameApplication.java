@@ -2,12 +2,15 @@
     
     import javafx.application.Application;
     import javafx.fxml.FXMLLoader;
+    import javafx.geometry.Rectangle2D;
     import javafx.scene.Parent;
     import javafx.scene.Scene;
     import javafx.scene.image.Image;
     import javafx.scene.layout.*;
     import javafx.stage.Modality;
+    import javafx.stage.Screen;
     import javafx.stage.Stage;
+    import javafx.stage.StageStyle;
     import org.example.towerdefense.Controllers.ConclusionController;
     import org.example.towerdefense.Controllers.GameController;
     import org.example.towerdefense.Controllers.SettingsController;
@@ -16,7 +19,7 @@
     import java.io.IOException;
     import java.util.ArrayList;
     import java.util.List;
-    
+
     public class GameApplication extends Application {
         private static Stage stage;
         private static boolean isRunning = false;
@@ -40,10 +43,18 @@
         }
     
         public void start(Stage primaryStage) throws IOException {
+            stage = primaryStage;
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon.png")));
+
+            Screen screen = Screen.getPrimary();
+            Rectangle2D bounds = screen.getVisualBounds();
     
             System.out.println("-----------------");
-            stage = primaryStage;
             switchScene("/start-game-view.fxml", "start");
+
+            stage.setHeight(bounds.getHeight());
+            stage.setWidth(bounds.getWidth());
+            stage.initStyle(StageStyle.UNDECORATED);
     
             stage.setTitle("Tower Defense");
             stage.show();
@@ -66,6 +77,7 @@
                         settingsController.setApplication(this);
     
                         settingsStage.setTitle("Settings");
+                        settingsStage.initStyle(StageStyle.UNDECORATED);
                         settingsStage.centerOnScreen();
                         settingsStage.show();
     
@@ -136,9 +148,8 @@
 
                             controller.getBackgroundImage(bgImage);
     
-                            Scene scene = new Scene(root, 1000, 800);
+                            Scene scene = new Scene(root);
                             stage.setScene(scene);
-                            stage.centerOnScreen();
                             stage.setTitle("Tower Defense Game");
                             controller.startLoop();
     
