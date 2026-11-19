@@ -228,10 +228,12 @@ public class GameController {
             String selected = value.split(" ")[0];
             String match = value.replaceAll(".*\\((\\d+)\\).*", "$1");
             int cost = Integer.parseInt(match);
-            buildTower(cost, selected);
+            boolean built = buildTower(cost, selected);
 
-            if (spotMap.get(selectedSpot) != null) spotMap.get(selectedSpot).setOpacity(0);
-            if (spotImageMap.get(selectedSpot) != null) spotImageMap.get(selectedSpot).setOpacity(0);
+            if (built) {
+                if (spotMap.get(selectedSpot) != null) spotMap.get(selectedSpot).setOpacity(0);
+                if (spotImageMap.get(selectedSpot) != null) spotImageMap.get(selectedSpot).setOpacity(0);
+            }
 
             Platform.runLater(() -> {
                 buildMenu.hide();
@@ -733,7 +735,7 @@ public class GameController {
         return true;
     }
 
-    private void buildTower(int cost, String selected) {
+    private boolean buildTower(int cost, String selected) {
         int id = switch (selected) {
             case "Tower2" -> 1;
             case "Tower3" -> 2;
@@ -766,17 +768,15 @@ public class GameController {
             default -> null;
         };
 
-        if (selectedImage == null || projectileImage == null) return;
+        if (selectedImage == null) return false;
 
-        Tower tower = new Tower(game, selectedImage, projectileImage, towerColor);
-
-        // load tower specific config
+        Tower tower = new Tower(game, selectedImage, selectedImage, towerColor);
         tower.overwriteToType(id);
 
         if (game.getMoney() < tower.getBuildCost()) {
             System.out.println("Not enough money!");
             showNoMoney();
-            return;
+            return false;
         }
 
         game.addMoney(-tower.getBuildCost());
@@ -808,6 +808,7 @@ public class GameController {
         towerChoice.hide();
 
         System.out.println("Tower gebaut: " + selected);
+        return true;
     }
 
     public void spawnLoadedTower(Point2D spot, int id, int dmg, double range, double speed) {
