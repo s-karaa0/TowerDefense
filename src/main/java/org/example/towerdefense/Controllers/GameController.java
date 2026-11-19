@@ -456,6 +456,8 @@ public class GameController {
         }
 
         return gameController;
+    }
+
     private void updateSideImage() {
 
         double scale = root.getHeight() / 800.0;
@@ -825,7 +827,7 @@ public class GameController {
 
         if (selectedImage == null || spot == null) return;
 
-        Tower tower = new Tower(game, selectedImage, towerColor);
+        Tower tower = new Tower(game, selectedImage, selectedImage, towerColor);
         tower.overwriteToType(id);
 
         // after overwrite set the new range, speed etc. from the towers
@@ -885,6 +887,8 @@ public class GameController {
         }
 
         upgradeHBox.setVisible(false);
+    }
+
     /**
      * Source: Stack Overflow
      * https://stackoverflow.com/questions/16089304/javafx-imageview-without-any-smoothing
