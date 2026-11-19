@@ -8,18 +8,15 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.Group;
 import javafx.scene.transform.Scale;
 import javafx.scene.layout.HBox;
-import javafx.scene.input.MouseEvent;
-
 import java.io.IOException;
 import java.util.*;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -42,6 +39,9 @@ public class GameController {
     private final AnchorPane root = new AnchorPane();
     private final Group gameWorld = new Group();
     private final Scale worldScale = new Scale(1, 1, 0, 0);
+
+    // Bildbereich rechts neben dem Spielfeld (Bild später setzen!!)
+    private final ImageView sideImageView = new ImageView();
     private GameApplication gameApp;
     private Game game;
     private Gameloop loop;
@@ -73,6 +73,18 @@ public class GameController {
     private final Image tower4Img =
             new Image(getClass().getResourceAsStream("/images/towers/turm-lev4_small.png"));
 
+    private final Image projectileTower1Img =
+            new Image(getClass().getResourceAsStream("/images/projectiles/projectile-tower1.png"));
+
+    private final Image projectileTower2Img =
+            new Image(getClass().getResourceAsStream("/images/projectiles/projectile-tower2.png"));
+
+    private final Image projectileTower3Img =
+            new Image(getClass().getResourceAsStream("/images/projectiles/projectile-tower3.png"));
+
+    private final Image projectileTower4Img =
+            new Image(getClass().getResourceAsStream("/images/projectiles/projectile4.png"));
+
 
     private final ContextMenu buildMenu = new ContextMenu();
     private final ContextMenu aimMenu = new ContextMenu();
@@ -84,8 +96,6 @@ public class GameController {
     private Tower selectedTower;
 
     private final Button stopButton = new Button("⚙ Settings");
-    //private final Button resumeButton = new Button("Resume");
-    //private final Button restartButton = new Button("Restart");
     private final Button normalSpeedButton = new Button("1x");
     private final Button doubleSpeedButton = new Button("2x");
     private final Button quadroupleSpeedButton = new Button("4x");
@@ -142,6 +152,8 @@ public class GameController {
     private Map<Point2D, Rectangle> spotMap = new HashMap<>();
     private Map<Point2D, ImageView> spotImageMap = new HashMap<>();
 
+    private Image sideImage;
+
     public void setApplication(GameApplication gameApp) {
         this.gameApp = gameApp;
     }
@@ -157,11 +169,12 @@ public class GameController {
         gameWorld.getChildren().add(backgroundimageView);
 
         // Die Basisgroesse der Map ist 1000 x 800.
-        root.heightProperty().addListener((obs, oldHeight, newHeight) -> {
-            double scale = newHeight.doubleValue() / 800.0;
-            worldScale.setX(scale);
-            worldScale.setY(scale);
-        });
+        root.heightProperty().addListener((obs, oldHeight, newHeight) -> updateWorldAndSideImage());
+        root.widthProperty().addListener((obs, oldWidth, newWidth) -> updateWorldAndSideImage());
+
+        sideImageView.setPreserveRatio(false);
+        sideImageView.setSmooth(true);
+        sideImageView.setMouseTransparent(true);
 
         // Path
         path = PathFactory.createPath(difficulty);
@@ -328,6 +341,13 @@ public class GameController {
         game.setOnProjectileSpawned(p -> gameWorld.getChildren().add(p.getView()));
         game.setOnProjectileRemoved(p -> gameWorld.getChildren().remove(p.getView()));
 
+
+        sideImageView.setSmooth(false);
+        sideImageView.setPreserveRatio(false);
+
+        root.widthProperty().addListener((obs, oldVal, newVal) -> updateSideImage());
+        root.heightProperty().addListener((obs, oldVal, newVal) -> updateSideImage());
+
         // XML
         List<Wave> waves = WaveLoader.loadWaves();
         System.out.println("load waves: " + waves.size());
@@ -378,6 +398,10 @@ public class GameController {
             }
         });
 
+//        testing side image with a Picture
+//        Image img = new Image(getClass().getResourceAsStream("/images/hud/coins.png"));
+//        setSideImage(img);
+
         hBox.getChildren().addAll(stopButton, normalSpeedButton, doubleSpeedButton, quadroupleSpeedButton);
         nextWaveButton.getStyleClass().add("next-wave-button");
         hBox.getStyleClass().add("game-toolbar");
@@ -407,7 +431,7 @@ public class GameController {
         AnchorPane.setTopAnchor(hBox, 20.0);
         AnchorPane.setLeftAnchor(nextWaveButton, 30.0);
         AnchorPane.setBottomAnchor(nextWaveButton, 30.0);
-        root.getChildren().add(gameWorld);
+        root.getChildren().addAll(gameWorld, sideImageView);
         root.getChildren().add(resourceBar);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
@@ -432,6 +456,34 @@ public class GameController {
         }
 
         return gameController;
+    private void updateSideImage() {
+
+        double scale = root.getHeight() / 800.0;
+
+        double gameWidth = 1000 * scale;
+        double availableWidth = root.getWidth() - gameWidth;
+        double availableHeight = root.getHeight();
+
+        if (availableWidth <= 0 || availableHeight <= 0) {
+            sideImageView.setVisible(false);
+            return;
+        }
+
+        Image scaledImage = resampleToFill(
+                sideImage,
+                availableWidth,
+                availableHeight
+        );
+
+        sideImageView.setImage(scaledImage);
+
+        sideImageView.setFitWidth(availableWidth);
+        sideImageView.setFitHeight(availableHeight);
+
+        sideImageView.setLayoutX(gameWidth);
+        sideImageView.setLayoutY(0);
+
+        sideImageView.setVisible(true);
     }
 
     public void updateGUI() {
@@ -563,11 +615,38 @@ public class GameController {
         upgradeHBox.setVisible(false);
     }
 
-    public void getBackgroundImage(Image backgroundimg) {
+    public void setBackgroundImage(Image backgroundimg) {
         backgroundimageView.setImage(backgroundimg);
         backgroundimageView.setFitWidth(1000);
         backgroundimageView.setFitHeight(800);
         backgroundimageView.setPreserveRatio(false);
+        sideImageView.setSmooth(false);
+    }
+
+    public void setSideImage(Image image) {
+        this.sideImage = image;
+        sideImageView.setImage(image);
+        sideImageView.setSmooth(true);
+        updateWorldAndSideImage();
+    }
+
+    // Hält Spielfeld und rechtes Bild bei jeder Fenstergrößenänderung passend.
+    private void updateWorldAndSideImage() {
+        double height = root.getHeight();
+        double width = root.getWidth();
+        if (height <= 0) return;
+
+        double scale = height / 800.0;
+        worldScale.setX(scale);
+        worldScale.setY(scale);
+
+        double mapWidth = 1000.0 * scale;
+        double remainingWidth = Math.max(0, width - mapWidth);
+
+        sideImageView.setLayoutX(mapWidth);
+        sideImageView.setLayoutY(0);
+        sideImageView.setFitWidth(remainingWidth);
+        sideImageView.setFitHeight(height);
     }
 
     private String towerOption(String name, int cost) {
@@ -575,7 +654,7 @@ public class GameController {
     }
 
     private String upgradeOption(String name, int cost) {
-        return "+ " + name + " (" + cost + ")";
+        return name + " (" + cost + ")";
     }
 
     private void upgradeHboxToMousePosition(double x, double y, Tower tower) {
@@ -584,6 +663,10 @@ public class GameController {
         Button dmg = new Button();
         Button spd = new Button();
         Button rng = new Button();
+
+        dmg.getStyleClass().add("upgrade-box");
+        spd.getStyleClass().add("upgrade-box");
+        rng.getStyleClass().add("upgrade-box");
 
         Runnable refreshLabels = () -> {
             dmg.setText(upgradeOption("Damage +", tower.getDamageCost()));
@@ -622,10 +705,21 @@ public class GameController {
         });
 
         upgradeHBox.getChildren().addAll(dmg, spd, rng);
-        upgradeHBox.setLayoutX(x - 100);
-        upgradeHBox.setLayoutY(y);
-        upgradeHBox.toFront();
+        upgradeHBox.setSpacing(2);
+        upgradeHBox.setAlignment(Pos.CENTER);
+
+        Point2D towerInRoot = gameWorld.localToParent(selectedSpot.getX(), selectedSpot.getY());
+        double scale = worldScale.getX();
+
         upgradeHBox.setVisible(true);
+        upgradeHBox.toFront();
+
+        upgradeHBox.applyCss();
+        upgradeHBox.autosize();
+
+        double w = upgradeHBox.prefWidth(-1);
+        upgradeHBox.setLayoutX(towerInRoot.getX() - w / 2.0);
+        upgradeHBox.setLayoutY(towerInRoot.getY() + 32 * scale + 4);
     }
 
     private boolean pay(int cost) {
@@ -654,6 +748,14 @@ public class GameController {
             default -> null;
         };
 
+        Image projectileImage = switch (selected) {
+            case "Tower1" -> projectileTower1Img;
+            case "Tower2" -> projectileTower2Img;
+            case "Tower3" -> projectileTower3Img;
+            case "Tower4" -> projectileTower4Img;
+            default -> null;
+        };
+
         Color towerColor = switch (selected) {
             case "Tower1" -> Color.GREEN;
             case "Tower2" -> Color.BLUE;
@@ -662,9 +764,10 @@ public class GameController {
             default -> null;
         };
 
-        if (selectedImage == null) return;
+        if (selectedImage == null || projectileImage == null) return;
 
-        Tower tower = new Tower(game, selectedImage, towerColor);
+        Tower tower = new Tower(game, selectedImage, projectileImage, towerColor);
+
         // load tower specific config
         tower.overwriteToType(id);
 
@@ -782,6 +885,53 @@ public class GameController {
         }
 
         upgradeHBox.setVisible(false);
+    /**
+     * Source: Stack Overflow
+     * https://stackoverflow.com/questions/16089304/javafx-imageview-without-any-smoothing
+     */
+    private Image resampleToFill(Image input, double targetWidth, double targetHeight) {
+
+        int sourceWidth = (int) input.getWidth();
+        int sourceHeight = (int) input.getHeight();
+
+        int outputWidth = (int) Math.ceil(targetWidth);
+        int outputHeight = (int) Math.ceil(targetHeight);
+
+        WritableImage output = new WritableImage(outputWidth, outputHeight);
+
+        PixelReader reader = input.getPixelReader();
+        PixelWriter writer = output.getPixelWriter();
+
+        // Automatischen Skalierungsfaktor berechnen
+        double scale = Math.max(
+                (double) outputWidth / sourceWidth,
+                (double) outputHeight / sourceHeight
+        );
+
+        double visibleWidth = outputWidth / scale;
+        double visibleHeight = outputHeight / scale;
+
+        double offsetX = (sourceWidth - visibleWidth) / 2;
+        double offsetY = (sourceHeight - visibleHeight) / 2;
+
+        for (int y = 0; y < outputHeight; y++) {
+            for (int x = 0; x < outputWidth; x++) {
+
+                int sourceX = (int) (offsetX + x / scale);
+                int sourceY = (int) (offsetY + y / scale);
+
+                sourceX = Math.min(sourceX, sourceWidth - 1);
+                sourceY = Math.min(sourceY, sourceHeight - 1);
+
+                writer.setArgb(
+                        x,
+                        y,
+                        reader.getArgb(sourceX, sourceY)
+                );
+            }
+        }
+
+        return output;
     }
 
     /*
@@ -835,4 +985,3 @@ public class GameController {
 
      */
 }
-
