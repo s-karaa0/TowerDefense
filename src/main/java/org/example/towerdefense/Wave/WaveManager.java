@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class WaveManager {
-    private final Game game;
-    private List<Wave> waves = new ArrayList<>();
+    private static Game game;
+    private static List<Wave> waves = new ArrayList<>();
     private List<Wave> activeWaves = new ArrayList<>();
 
     private int waveIndex = 0;
@@ -18,6 +18,12 @@ public class WaveManager {
 
     private static final List <Image> BossEnemy = new ArrayList<>();
     private int bossindex = 0;
+
+    private static WaveManager waveManager;
+
+    private WaveManager(){
+        waveManager = this;
+    }
 
     private static final Image NormalEnemy =
             new Image(Objects.requireNonNull(WaveManager.class
@@ -48,7 +54,15 @@ public class WaveManager {
                 .toExternalForm()));
     }
 
-    public void triggerNextWave(){
+    public static WaveManager getInstance() {
+        if (waveManager == null) {
+            waveManager = new WaveManager(game, waves);
+        }
+
+        return waveManager;
+    }
+
+    public void triggerNextWave() {
         startNextWave();
     }
 
@@ -100,62 +114,62 @@ public class WaveManager {
     }
 
     public void update(double dt) {
-            if(!endOfAllWaves) {
-                for(int i=0; i<activeWaves.size(); i++) {
-                    Wave wave = activeWaves.get(i);
-                    List<Enemy> enemyList = game.getEnemies();
+        if (!endOfAllWaves) {
+            for (int i = 0; i < activeWaves.size(); i++) {
+                Wave wave = activeWaves.get(i);
+                List<Enemy> enemyList = game.getEnemies();
 
-                    wave.setSpawnTimer(wave.getSpawnTimer() + dt);
-                    // -> quasi: spawnTimer += dt;
-                    // spawning enemies in game
-                    if ((wave.getSpawnTimer() >= wave.getSpawnInterval()
-                            && wave.getSpawned() < wave.getEnemyCount())) {
-                        wave.setSpawnTimer(wave.getSpawnTimer() - wave.getSpawnInterval());
-                        Enemy enemy = new Enemy(
-                                wave.getHealth(),
-                                wave.getSpeed(),
-                                wave.getMoney(),
-                                wave.getAttack(),
-                                getEnemyId(),
-                                group,
-                                wave.getWaveID()
-                        );
+                wave.setSpawnTimer(wave.getSpawnTimer() + dt);
+                // -> quasi: spawnTimer += dt;
+                // spawning enemies in game
+                if ((wave.getSpawnTimer() >= wave.getSpawnInterval()
+                        && wave.getSpawned() < wave.getEnemyCount())) {
+                    wave.setSpawnTimer(wave.getSpawnTimer() - wave.getSpawnInterval());
+                    Enemy enemy = new Enemy(
+                            wave.getHealth(),
+                            wave.getSpeed(),
+                            wave.getMoney(),
+                            wave.getAttack(),
+                            getEnemyId(),
+                            group,
+                            wave.getWaveID()
+                    );
 
-                        enemy.setImageView(wave.getImage());
-                        enemy.getView().setLayoutX(-100);
-                        enemy.getView().setLayoutY(-100);
+                    enemy.setImageView(wave.getImage());
+                    enemy.getView().setLayoutX(-100);
+                    enemy.getView().setLayoutY(-100);
 
-                        game.addEnemy(enemy);
-                        enemy.getView().setLayoutX(0);
-                        enemy.getView().setLayoutY(0);
-                        wave.setSpawned(wave.getSpawned() + 1);
-                    }
+                    game.addEnemy(enemy);
+                    enemy.getView().setLayoutX(0);
+                    enemy.getView().setLayoutY(0);
+                    wave.setSpawned(wave.getSpawned() + 1);
+                }
 
-                    // iterates all existing enemies, and if those enemies are dead, gives the info to the wave
-                    for (Enemy e : enemyList) {
-                        if (e.getWaveID() == wave.getWaveID() && !e.getLifeStatus()) {
-                            wave.setActiveEnemies(wave.getActiveEnemies() - 1);
-                        }
-                    }
-                    // if the wave now has no enemies left, sets end of wave
-                    if (wave.getActiveEnemies() == 0) {
-                        wave.setFinished(true);
-                    }
-
-                    if (wave.getSpawned() >= wave.getEnemyCount() && wave.isFinished())  {
-                        activeWaves.remove(wave);
-
-                        System.out.println("end of " + wave.getWaveID() + "th wave");
-                        System.out.println("---*---");
-                        System.out.println(" ");
-                        System.out.println(" ");
-                    }
-
-                    if (activeWaves.isEmpty()) {
-                        startNextWave();
+                // iterates all existing enemies, and if those enemies are dead, gives the info to the wave
+                for (Enemy e : enemyList) {
+                    if (e.getWaveID() == wave.getWaveID() && !e.getLifeStatus()) {
+                        wave.setActiveEnemies(wave.getActiveEnemies() - 1);
                     }
                 }
+                // if the wave now has no enemies left, sets end of wave
+                if (wave.getActiveEnemies() == 0) {
+                    wave.setFinished(true);
+                }
+
+                if (wave.getSpawned() >= wave.getEnemyCount() && wave.isFinished()) {
+                    activeWaves.remove(wave);
+
+                    System.out.println("end of " + wave.getWaveID() + "th wave");
+                    System.out.println("---*---");
+                    System.out.println(" ");
+                    System.out.println(" ");
+                }
+
+                if (activeWaves.isEmpty()) {
+                    startNextWave();
+                }
             }
+        }
     }
 
     public void resetAllWaves() {
@@ -183,5 +197,60 @@ public class WaveManager {
         return endOfAllWaves;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
+    public List<Wave> getWaves() {
+        return waves;
+    }
+
+    public void setWaves(List<Wave> waves) {
+        this.waves = waves;
+    }
+
+    public List<Wave> getActiveWaves() {
+        return activeWaves;
+    }
+
+    public void setActiveWaves(List<Wave> activeWaves) {
+        this.activeWaves = activeWaves;
+    }
+
+    public int getWaveIndex() {
+        return waveIndex;
+    }
+
+    public void setWaveIndex(int waveIndex) {
+        this.waveIndex = waveIndex;
+    }
+
+    public int getGroup() {
+        return group;
+    }
+
+    public void setGroup(int group) {
+        this.group = group;
+    }
+
+    public boolean isEndOfAllWaves() {
+        return endOfAllWaves;
+    }
+
+    public void setEndOfAllWaves(boolean endOfAllWaves) {
+        this.endOfAllWaves = endOfAllWaves;
+    }
+
+    public static WaveManager getWaveManager() {
+        return waveManager;
+    }
+
+    public static void setWaveManager(WaveManager waveManager) {
+        WaveManager.waveManager = waveManager;
+    }
+
+    public void setEnemyId(int enemyId) {
+        this.enemyId = enemyId;
+    }
 
 }

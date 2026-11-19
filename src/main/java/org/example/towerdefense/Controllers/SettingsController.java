@@ -8,11 +8,15 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.example.towerdefense.GameApplication;
 import org.example.towerdefense.MusicManager;
+import org.example.towerdefense.SaveState;
+import org.example.towerdefense.Wave.WaveManager;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class SettingsController {
 
+    public Button saveButton;
     private GameApplication gameApp;
 
     @FXML
@@ -23,6 +27,8 @@ public class SettingsController {
     private Button musicButton;
     @FXML
     private Label currentTrackLabel;
+
+    SaveState state = SaveState.getInstance();
 
     public void setApplication(GameApplication gameApp) {
         this.gameApp = gameApp;
@@ -73,5 +79,20 @@ public class SettingsController {
     private void closeSettingsWindow() {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
+    }
+
+    public void onSaveClicked(ActionEvent actionEvent) throws IOException {
+        state.saveStateOfGame(WaveManager.getInstance(), GameController.getInstance());
+    }
+
+    public void onLoadClick(ActionEvent actionEvent) throws IOException {
+        SaveState.getInstance().loadState(WaveManager.getInstance(),GameController.getInstance());
+
+        // switch back to the game scene after loading
+
+        //@ToDO Error Meldung, wenn savestate.txt leer ist
+        gameApp.switchScene("game", "game");
+        gameApp.resumeGame();
+        closeSettingsWindow();
     }
 }
