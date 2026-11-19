@@ -650,6 +650,7 @@ public class GameController {
         if (game.getMoney() < tower.getBuildCost()) {
             System.out.println("Not enough money!");
             showNoMoney();
+
             return false;
         }
 
