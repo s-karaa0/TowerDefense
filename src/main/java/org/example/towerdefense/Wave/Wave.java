@@ -19,6 +19,8 @@ public class Wave {
     private final String type;
     private Image image;
 
+    private static Wave wave;
+
     public Wave(int group, int waveID, int enemyCount, double spawnInterval,
                 float health, float speed,
                 int money, float attack, String type) {
@@ -35,6 +37,9 @@ public class Wave {
         this.type = type;
     }
 
+    public int getGroup() {
+        return group;
+    }
     // Tells which groups belong together - needed for pointing out enemy groups within a wave
     public int getWaveGroup() { return group; }
     public int getWaveID() {return waveID;}
@@ -66,7 +71,8 @@ public class Wave {
     public String getType() {
         return type;
     }
-    public Image getImage(){
+
+    public Image getImage() {
         return image;
     }
     public void setImage(Image img){

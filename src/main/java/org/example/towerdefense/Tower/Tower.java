@@ -25,11 +25,12 @@ public class Tower {
     protected TowerShooter shooter;
     private Circle rangeCircle;
     private Color towerColor;
+    private int id;
     private int damageCost = 50;
-    private int speedCost  = 75;
-    private int rangeCost  = 100;
+    private int speedCost = 75;
+    private int rangeCost = 100;
 
-    public Tower(Game game, Image image, Color color) {
+    public Tower(Game game, Image image, Image projectileImage, Color color) {
         this.game = game;
         this.towerColor = color;
 
@@ -42,8 +43,9 @@ public class Tower {
         rangeCircle.setFill(towerColor);
         rangeCircle.setMouseTransparent(true);
 
-        shooter = createShooter(damage, range, cooldown);
+        shooter = createShooter(damage, range, cooldown, projectileImage);
     }
+
 
     /**
      * use after constructor so old code doesnt break
@@ -53,7 +55,7 @@ public class Tower {
     public void overwriteToType(int id) {
         try (
                 BufferedReader reader = new BufferedReader(
-                new FileReader("src/main/resources/json/towers_conf.json"))
+                        new FileReader("src/main/resources/json/towers_conf.json"))
         ) {
             TowerConfig conf = new Gson().fromJson(reader, TowerConfig.class);
             TowerData confData = conf.getTowersAsMap().get(id);
@@ -63,6 +65,7 @@ public class Tower {
                 return;
             }
 
+            this.id = id;
             this.aim = confData.getAim();
             this.range = confData.getRange();
             this.damage = confData.getDamage();
@@ -76,10 +79,9 @@ public class Tower {
         }
     }
 
-    protected TowerShooter createShooter(int damage, double range, double cooldown) {
-        return new TowerShooter(game, imageView, damage, this, cooldown, range, 500);
-    }
-
+    protected TowerShooter createShooter(int damage, double range, double cooldown, Image projectileImage) {
+        return new TowerShooter(game, imageView, damage, this, cooldown, range, 500, projectileImage);
+}
     public void update(double dt) {
         shooter.update(dt); //
 
@@ -87,7 +89,9 @@ public class Tower {
         rangeCircle.setCenterY(imageView.getLayoutY() + 32);
     }
 
-    public ImageView getView() { return imageView; }
+    public ImageView getView() {
+        return imageView;
+    }
 
     public String setAim() {
         return aim;
@@ -118,6 +122,15 @@ public class Tower {
         return buildCost;
     }
 
+    public int getUpgradeCost() {
+        return upgradeCost;
+    }
+
+    public void addUpgradeCost(int upgradeCost) {
+        upgradeCost = upgradeCost + 25;
+        this.upgradeCost = upgradeCost;
+    }
+
     public Circle getRangeCircle() {
         return rangeCircle;
     }
@@ -125,6 +138,7 @@ public class Tower {
     public Color getDerivedColor() {
         return towerColor.deriveColor(0, 1.0, 1.0, 0.3);
     }
+
     public int getDamage() {
         return damage;
     }
@@ -133,11 +147,47 @@ public class Tower {
         return cooldown;
     }
 
-    public int getDamageCost() { return damageCost; }
-    public int getSpeedCost()  { return speedCost; }
-    public int getRangeCost()  { return rangeCost; }
+    public int getId() {
+        return id;
+    }
 
-    public void raiseDamageCost() { damageCost += 50; }
-    public void raiseSpeedCost()  { speedCost  += 75; }
-    public void raiseRangeCost()  { rangeCost  += 100; }
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public double getRange() {
+        return range;
+    }
+
+    public void setRange(double range) {
+        this.range = range;
+    }
+
+    public void setCooldown(double cooldown) {
+        this.cooldown = cooldown;
+    }
+
+    public int getDamageCost() {
+        return damageCost;
+    }
+
+    public int getSpeedCost() {
+        return speedCost;
+    }
+
+    public int getRangeCost() {
+        return rangeCost;
+    }
+
+    public void raiseDamageCost() {
+        damageCost += 50;
+    }
+
+    public void raiseSpeedCost() {
+        speedCost += 75;
+    }
+
+    public void raiseRangeCost() {
+        rangeCost += 100;
+    }
 }
