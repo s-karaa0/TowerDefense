@@ -19,8 +19,22 @@ public class Game {
     private int hp = 20; // hp = health pOiNTS weil des so kheat
     private int money = 500;
 
-    public int getHp() {return hp;}
-    public int getMoney() {return money;}
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
     public void addMoney(int money) {
         this.money += money;
     }
@@ -36,15 +50,19 @@ public class Game {
     public List<Enemy> getEnemies() {
         return enemies;
     }
-    public List<Enemy> getDeadEnemies() {return deadEnemies;}
+
+    public List<Enemy> getDeadEnemies() {
+        return deadEnemies;
+    }
 
     public void resetGame() {
         enemies.clear();
+        towers.clear();
+        deadEnemies.clear();
         money = 200;
-
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return enemies.isEmpty();
     }
 
@@ -56,7 +74,7 @@ public class Game {
             Enemy enemy = iterator.next();
             enemy.update(dt, path);
 
-            if (enemy.getHealth() <= 0)   {
+            if (enemy.getHealth() <= 0) {
                 iterator.remove();
                 enemy.getView().setVisible(false);
                 money = money + enemy.getMoneyDropped();
@@ -99,12 +117,15 @@ public class Game {
 
     private Consumer<Projectile> onProjectileSpawned; // Funktion die ein Projectile bekommt und etwas damit macht (kein Rückgabewert)
     private Consumer<Projectile> onProjectileRemoved;
+
     public void setOnProjectileSpawned(Consumer<Projectile> callback) {
         this.onProjectileSpawned = callback;
     }
+
     public void setOnProjectileRemoved(Consumer<Projectile> callback) {
         this.onProjectileRemoved = callback;
     }
+
     public List<Projectile> getProjectiles() {
         return projectiles;
     }

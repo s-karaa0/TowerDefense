@@ -28,6 +28,7 @@ import org.example.towerdefense.*;
 import org.example.towerdefense.Path.BuildSpots;
 import org.example.towerdefense.Path.GamePath;
 import org.example.towerdefense.Path.PathFactory;
+import org.example.towerdefense.Tower.Projectile;
 import org.example.towerdefense.Tower.Tower;
 import org.example.towerdefense.Wave.Enemy;
 import org.example.towerdefense.Wave.Wave;
@@ -48,6 +49,8 @@ public class GameController {
     private boolean guiSetup = false;
     private boolean endOfGame = false;
     private boolean conclusion; // true = won | false = lost
+
+    private static GameController gameController;
 
     //**************
     private HashSet<Enemy> enemyHashSet = new HashSet<>();
@@ -107,8 +110,21 @@ public class GameController {
     private final HBox moneyDisplay = new HBox(8);
     private final HBox resourceBar = new HBox(18);
     private final HBox hBox = new HBox(6);
-    private String difficulty;
+    private static String difficulty;
     private List<Point2D> buildSpots;
+
+    public Map<Point2D, Tower> getTowerMap() {
+        return towerMap;
+    }
+
+    public HashSet<Point2D> getUsedSpots() {
+        return usedSpots;
+    }
+
+    public void setUsedSpots(HashSet<Point2D> usedSpots) {
+        this.usedSpots = usedSpots;
+    }
+
     private HashSet<Point2D> usedSpots = new HashSet<>();
     private GamePath path;
 
@@ -116,6 +132,22 @@ public class GameController {
     private final VBox hoverStatsBox = new VBox(3); // Abstand 3px
     private final Label hoverDamageLabel = new Label();
     private final Label hoverSpeedLabel = new Label();
+
+    public Map<Point2D, ImageView> getSpotImageMap() {
+        return spotImageMap;
+    }
+
+    public void setSpotImageMap(Map<Point2D, ImageView> spotImageMap) {
+        this.spotImageMap = spotImageMap;
+    }
+
+    public Map<Point2D, Rectangle> getSpotMap() {
+        return spotMap;
+    }
+
+    public void setSpotMap(Map<Point2D, Rectangle> spotMap) {
+        this.spotMap = spotMap;
+    }
 
     private Map<Point2D, Rectangle> spotMap = new HashMap<>();
     private Map<Point2D, ImageView> spotImageMap = new HashMap<>();
@@ -128,8 +160,10 @@ public class GameController {
 
 
     public GameController(String difficulty) {
+        gameController = this;
         root.getStylesheets().add(getClass().getResource("/style/style.css").toExternalForm());
 
+        GameController.difficulty = difficulty;
         // Alle Elemente des eigentlichen Spielfeldes werden gemeinsam skaliert.
         gameWorld.getTransforms().add(worldScale);
         gameWorld.getChildren().add(backgroundimageView);
@@ -280,35 +314,27 @@ public class GameController {
 
                 if (tower != null) {
                     tower.getRangeCircle().setVisible(true);
+
+                    // !!! show tower stats
+                    hoverDamageLabel.setText("Damage: " + tower.getDamage());
+                    hoverSpeedLabel.setText("Speed: " + String.format("%.2f", tower.getCooldown()));
+                    // show at mouse pos
+                    hoverStatsBox.setLayoutX(e.getSceneX());
+                    hoverStatsBox.setLayoutY(e.getSceneY());
+                    // move in front of the tower image
+                    hoverStatsBox.toFront();
+                    hoverStatsBox.setVisible(true);
+
                 }
-            });
-
-            spot.setOnMouseExited(e -> {
-                Tower tower = towerMap.get((Point2D) spot.getUserData());
-
-                if (tower != null) {
-                    spot.setOnMouseEntered(c -> {
-                        tower.getRangeCircle().setVisible(true);
-
-                        // !!! show tower stats
-                        hoverDamageLabel.setText("Damage: " + tower.getDamage());
-                        hoverSpeedLabel.setText("Speed: " + String.format("%.2f", tower.getCooldown()));
-                        // show at mouse pos
-                        hoverStatsBox.setLayoutX(c.getSceneX());
-                        hoverStatsBox.setLayoutY(c.getSceneY());
-                        // move in front of the tower image
-                        hoverStatsBox.toFront();
-                        hoverStatsBox.setVisible(true);
-                    });
-                    spot.setOnMouseExited(c -> {
+                spot.setOnMouseExited(c -> {
+                    if(tower != null){
                         tower.getRangeCircle().setVisible(false);
                         hoverStatsBox.setVisible(false);
-                    });
-                }
+                    }
+                });
             });
 
         }
-
 
         // Game
         game = new Game(path);
@@ -423,6 +449,13 @@ public class GameController {
         };
     }
 
+    public static GameController getInstance() {
+        if (gameController == null) {
+            gameController = new GameController(difficulty);
+            System.out.println(difficulty);
+        }
+
+        return gameController;
     private void updateSideImage() {
 
         double scale = root.getHeight() / 800.0;
@@ -572,6 +605,7 @@ public class GameController {
 
     public void restartLoop() {
         loop.stop();
+        usedSpots.clear();
         deleteAllEnemies();
         game.resetGame();
         waveManager.resetAllWaves();
@@ -653,7 +687,8 @@ public class GameController {
         spd.setOnAction(e -> {
             if (!pay(tower.getSpeedCost())) {
                 return;
-            };
+            }
+            ;
             tower.upgradeSpeed();
             tower.raiseSpeedCost();
             refreshLabels.run();
@@ -773,6 +808,83 @@ public class GameController {
         System.out.println("Tower gebaut: " + selected);
     }
 
+    public void spawnLoadedTower(Point2D spot, int id, int dmg, double range, double speed) {
+        Image selectedImage = switch (id) {
+            case 1 -> tower2Img;
+            case 2 -> tower3Img;
+            case 3 -> tower4Img;
+            default -> tower1Img; // id 0
+        };
+
+        Color towerColor = switch (id) {
+            case 1 -> Color.BLUE;
+            case 2 -> Color.RED;
+            case 3 -> Color.WHITE;
+            default -> Color.GREEN;
+        };
+
+        if (selectedImage == null || spot == null) return;
+
+        Tower tower = new Tower(game, selectedImage, towerColor);
+        tower.overwriteToType(id);
+
+        // after overwrite set the new range, speed etc. from the towers
+        // problem is there are more tower types so ehhh lets look at that
+
+        tower.setDamage(dmg);
+        tower.setRange(range);
+        // i guess that's supposed to be speed of the projectiles from the tower?
+        tower.setCooldown(speed);
+        System.out.println("Stats:" + dmg + range + speed);
+        game.addTower(tower);
+
+        ImageView view = tower.getView();
+        view.setLayoutX(spot.getX() - 32);
+        view.setLayoutY(spot.getY() - 32);
+        view.setMouseTransparent(true);
+
+
+        Circle rangeCircle = tower.getRangeCircle();
+        rangeCircle.setRadius(range);
+        rangeCircle.setStroke(Color.BLACK);
+        rangeCircle.setFill(tower.getDerivedColor());
+        rangeCircle.setStrokeWidth(2);
+        rangeCircle.setVisible(false);
+
+        towerMap.put(spot, tower);
+        usedSpots.add(spot);
+
+        if (spotMap.get(spot) != null) spotMap.get(spot).setOpacity(0);
+        if (spotImageMap.get(spot) != null) spotImageMap.get(spot).setOpacity(0);
+
+        //root.getChildren().addAll(view, rangeCircle);
+        gameWorld.getChildren().addAll(view, rangeCircle);
+    }
+
+    // removes everything from the screen (towers, flying projectiles, ...)
+    public void clearBoard() {
+        deleteAllEnemies();
+        enemyHashSet.clear();
+
+        for (Tower tower : towerMap.values()) {
+            root.getChildren().removeAll(tower.getView(), tower.getRangeCircle());
+        }
+        towerMap.clear();
+        usedSpots.clear();
+
+        for (Projectile p : game.getProjectiles()) {
+            root.getChildren().remove(p.getView());
+        }
+        game.getProjectiles().clear();
+
+        for (Rectangle spot : spotMap.values()) {
+            spot.setOpacity(1.0);
+        }
+        for (ImageView spotImage : spotImageMap.values()) {
+            spotImage.setOpacity(1.0);
+        }
+
+        upgradeHBox.setVisible(false);
     /**
      * Source: Stack Overflow
      * https://stackoverflow.com/questions/16089304/javafx-imageview-without-any-smoothing
