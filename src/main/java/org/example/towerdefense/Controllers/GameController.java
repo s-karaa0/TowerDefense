@@ -539,7 +539,7 @@ public class GameController {
     }
 
     private String upgradeOption(String name, int cost) {
-        return "+ " + name + " (" + cost + ")";
+        return name + " (" + cost + ")";
     }
 
     private void upgradeHboxToMousePosition(double x, double y, Tower tower) {
@@ -548,6 +548,10 @@ public class GameController {
         Button dmg = new Button();
         Button spd = new Button();
         Button rng = new Button();
+
+        dmg.getStyleClass().add("upgrade-box");
+        spd.getStyleClass().add("upgrade-box");
+        rng.getStyleClass().add("upgrade-box");
 
         Runnable refreshLabels = () -> {
             dmg.setText(upgradeOption("Damage +", tower.getDamageCost()));
@@ -585,10 +589,21 @@ public class GameController {
         });
 
         upgradeHBox.getChildren().addAll(dmg, spd, rng);
-        upgradeHBox.setLayoutX(x - 100);
-        upgradeHBox.setLayoutY(y);
-        upgradeHBox.toFront();
+        upgradeHBox.setSpacing(2);
+        upgradeHBox.setAlignment(Pos.CENTER);
+
+        Point2D towerInRoot = gameWorld.localToParent(selectedSpot.getX(), selectedSpot.getY());
+        double scale = worldScale.getX();
+
         upgradeHBox.setVisible(true);
+        upgradeHBox.toFront();
+
+        upgradeHBox.applyCss();
+        upgradeHBox.autosize();
+
+        double w = upgradeHBox.prefWidth(-1);
+        upgradeHBox.setLayoutX(towerInRoot.getX() - w / 2.0);
+        upgradeHBox.setLayoutY(towerInRoot.getY() + 32 * scale + 4);
     }
 
     private boolean pay(int cost) {
