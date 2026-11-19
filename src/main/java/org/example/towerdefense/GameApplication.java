@@ -16,7 +16,6 @@
     import org.example.towerdefense.Controllers.SettingsController;
     import org.example.towerdefense.Controllers.StartController;
 
-    import java.awt.*;
     import java.io.IOException;
     import java.util.ArrayList;
     import java.util.List;
@@ -113,11 +112,14 @@
                             controller.setApplication(this);
     
                             Image bgImage = null;
-    
+                            Image sideImage = null;
+
     
                             // why not difficulty.equals()? because if null throws nullpointerexception
                             if ("easy".equals(difficulty)) {
                                 bgImage = new Image(getClass().getResource("/images/fields/field-easy_small.png").toExternalForm());
+                                sideImage = new Image(getClass().getResource("/images/side-images/woodern_background_orange_lighting.png").toExternalForm());
+
                                 MusicManager.playQueue(new ArrayList<>(List.of(
                                         "/music/game-easy2.mp3",
                                         "/music/game-easy3.mp3",
@@ -125,6 +127,7 @@
                                 )), "easy");
                             } else if ("normal".equals(difficulty)) {
                                 bgImage = new Image(getClass().getResource("/images/fields/field-normal_small.png").toExternalForm());
+                                sideImage = new Image(getClass().getResource("/images/side-images/woodern_background_orange_lighting.png").toExternalForm());
                                 MusicManager.playQueue(new ArrayList<>(List.of(
                                         "/music/game-normal.mp3",
                                         "/music/game-normal2.mp3",
@@ -132,6 +135,7 @@
                                 )), "normal");
                             } else if ("hard".equals(difficulty)) {
                                 bgImage = new Image(getClass().getResource("/images/fields/field-hard_small.png").toExternalForm());
+                                sideImage = new Image(getClass().getResource("/images/side-images/woodern_background_orange_lighting.png").toExternalForm());
                                 MusicManager.playQueue(new ArrayList<>(List.of(
                                         "/music/game-hard.mp3",
                                         "/music/game-hard2.mp3",
@@ -146,8 +150,9 @@
                             bg.setFitHeight(800);
                              */
 
-                            controller.getBackgroundImage(bgImage);
-    
+                            controller.setBackgroundImage(bgImage);
+                            controller.setSideImage(sideImage);
+
                             Scene scene = new Scene(root);
                             stage.setScene(scene);
                             stage.setTitle("Tower Defense Game");
@@ -166,6 +171,7 @@
                         Stage conclusionStage = new Stage();
                         conclusionStage.initOwner(stage);
                         conclusionStage.initModality(Modality.WINDOW_MODAL);
+                        conclusionStage.initStyle(StageStyle.UNDECORATED);
 
     
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));

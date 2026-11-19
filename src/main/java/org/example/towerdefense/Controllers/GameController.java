@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.Group;
@@ -15,8 +16,7 @@ import javafx.scene.transform.Scale;
 import javafx.scene.layout.HBox;
 import java.io.IOException;
 import java.util.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -81,8 +81,6 @@ public class GameController {
     private Tower selectedTower;
 
     private final Button stopButton = new Button("⚙ Settings");
-    //private final Button resumeButton = new Button("Resume");
-    //private final Button restartButton = new Button("Restart");
     private final Button normalSpeedButton = new Button("1x");
     private final Button doubleSpeedButton = new Button("2x");
     private final Button quadroupleSpeedButton = new Button("4x");
@@ -109,6 +107,8 @@ public class GameController {
 
     private Map<Point2D, Rectangle> spotMap = new HashMap<>();
     private Map<Point2D, ImageView> spotImageMap = new HashMap<>();
+
+    private Image sideImage;
 
     public void setApplication(GameApplication gameApp) {
         this.gameApp = gameApp;
@@ -303,6 +303,13 @@ public class GameController {
         game.setOnProjectileSpawned(p -> gameWorld.getChildren().add(p.getView()));
         game.setOnProjectileRemoved(p -> gameWorld.getChildren().remove(p.getView()));
 
+
+        sideImageView.setSmooth(false);
+        sideImageView.setPreserveRatio(false);
+
+        root.widthProperty().addListener((obs, oldVal, newVal) -> updateSideImage());
+        root.heightProperty().addListener((obs, oldVal, newVal) -> updateSideImage());
+
         // XML
         List<Wave> waves = WaveLoader.loadWaves();
         System.out.println("load waves: " + waves.size());
@@ -402,6 +409,36 @@ public class GameController {
                 updateGUI();
             }
         };
+    }
+
+    private void updateSideImage() {
+
+        double scale = root.getHeight() / 800.0;
+
+        double gameWidth = 1000 * scale;
+        double availableWidth = root.getWidth() - gameWidth;
+        double availableHeight = root.getHeight();
+
+        if (availableWidth <= 0 || availableHeight <= 0) {
+            sideImageView.setVisible(false);
+            return;
+        }
+
+        Image scaledImage = resampleToFill(
+                sideImage,
+                availableWidth,
+                availableHeight
+        );
+
+        sideImageView.setImage(scaledImage);
+
+        sideImageView.setFitWidth(availableWidth);
+        sideImageView.setFitHeight(availableHeight);
+
+        sideImageView.setLayoutX(gameWidth);
+        sideImageView.setLayoutY(0);
+
+        sideImageView.setVisible(true);
     }
 
     public void updateGUI() {
@@ -532,15 +569,18 @@ public class GameController {
         upgradeHBox.setVisible(false);
     }
 
-    public void getBackgroundImage(Image backgroundimg) {
+    public void setBackgroundImage(Image backgroundimg) {
         backgroundimageView.setImage(backgroundimg);
         backgroundimageView.setFitWidth(1000);
         backgroundimageView.setFitHeight(800);
         backgroundimageView.setPreserveRatio(false);
+        sideImageView.setSmooth(false);
     }
 
     public void setSideImage(Image image) {
+        this.sideImage = image;
         sideImageView.setImage(image);
+        sideImageView.setSmooth(true);
         updateWorldAndSideImage();
     }
 
@@ -685,6 +725,55 @@ public class GameController {
         towerChoice.hide();
 
         System.out.println("Tower gebaut: " + selected);
+    }
+
+    /**
+     * Source: Stack Overflow
+     * https://stackoverflow.com/questions/16089304/javafx-imageview-without-any-smoothing
+     */
+    private Image resampleToFill(Image input, double targetWidth, double targetHeight) {
+
+        int sourceWidth = (int) input.getWidth();
+        int sourceHeight = (int) input.getHeight();
+
+        int outputWidth = (int) Math.ceil(targetWidth);
+        int outputHeight = (int) Math.ceil(targetHeight);
+
+        WritableImage output = new WritableImage(outputWidth, outputHeight);
+
+        PixelReader reader = input.getPixelReader();
+        PixelWriter writer = output.getPixelWriter();
+
+        // Automatischen Skalierungsfaktor berechnen
+        double scale = Math.max(
+                (double) outputWidth / sourceWidth,
+                (double) outputHeight / sourceHeight
+        );
+
+        double visibleWidth = outputWidth / scale;
+        double visibleHeight = outputHeight / scale;
+
+        double offsetX = (sourceWidth - visibleWidth) / 2;
+        double offsetY = (sourceHeight - visibleHeight) / 2;
+
+        for (int y = 0; y < outputHeight; y++) {
+            for (int x = 0; x < outputWidth; x++) {
+
+                int sourceX = (int) (offsetX + x / scale);
+                int sourceY = (int) (offsetY + y / scale);
+
+                sourceX = Math.min(sourceX, sourceWidth - 1);
+                sourceY = Math.min(sourceY, sourceHeight - 1);
+
+                writer.setArgb(
+                        x,
+                        y,
+                        reader.getArgb(sourceX, sourceY)
+                );
+            }
+        }
+
+        return output;
     }
 
     /*
