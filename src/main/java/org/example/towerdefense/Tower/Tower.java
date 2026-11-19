@@ -30,7 +30,7 @@ public class Tower {
     private int speedCost = 75;
     private int rangeCost = 100;
 
-    public Tower(Game game, Image image, Color color) {
+    public Tower(Game game, Image image, Image projectileImage, Color color) {
         this.game = game;
         this.towerColor = color;
 
@@ -43,8 +43,9 @@ public class Tower {
         rangeCircle.setFill(towerColor);
         rangeCircle.setMouseTransparent(true);
 
-        shooter = createShooter(damage, range, cooldown);
+        shooter = createShooter(damage, range, cooldown, projectileImage);
     }
+
 
     /**
      * use after constructor so old code doesnt break
@@ -78,10 +79,9 @@ public class Tower {
         }
     }
 
-    protected TowerShooter createShooter(int damage, double range, double cooldown) {
-        return new TowerShooter(game, imageView, damage, this, cooldown, range, 500);
-    }
-
+    protected TowerShooter createShooter(int damage, double range, double cooldown, Image projectileImage) {
+        return new TowerShooter(game, imageView, damage, this, cooldown, range, 500, projectileImage);
+}
     public void update(double dt) {
         shooter.update(dt); //
 
