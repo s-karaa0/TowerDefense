@@ -79,7 +79,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.example.towerdefense/org.example.towerdefense.Launcher</mainClass>
+                            <mainClass>org.example.towerdefense.Launcher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
