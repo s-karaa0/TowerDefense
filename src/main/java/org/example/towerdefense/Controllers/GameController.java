@@ -7,12 +7,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.Group;
 import javafx.scene.transform.Scale;
@@ -48,11 +45,6 @@ public class GameController {
 
     private static final String[] SHOP_TOWERS = {"Tower1", "Tower2", "Tower3", "Tower4"};
     private static final int[] SHOP_COSTS = {100, 150, 200, 300};
-    private static final double SNAP_DISTANCE = 100; // in Spielfeld-Einheiten (1000 x 800)
-    private final VBox shopBox = new VBox();
-    private final List<ImageView> shopTiles = new ArrayList<>();
-    private final Rectangle dragHighlight = new Rectangle(64, 64);
-    private ImageView dragGhost;
     private GameApplication gameApp;
     private Game game;
     private Gameloop loop;
@@ -353,8 +345,6 @@ public class GameController {
         game.setOnProjectileSpawned(p -> gameWorld.getChildren().add(p.getView()));
         game.setOnProjectileRemoved(p -> gameWorld.getChildren().remove(p.getView()));
 
-        createShop();
-
 
         sideImageView.setSmooth(false);
         sideImageView.setPreserveRatio(false);
@@ -445,7 +435,7 @@ public class GameController {
         AnchorPane.setTopAnchor(hBox, 20.0);
         AnchorPane.setLeftAnchor(nextWaveButton, 30.0);
         AnchorPane.setBottomAnchor(nextWaveButton, 30.0);
-        root.getChildren().addAll(gameWorld, sideImageView, shopBox);
+        root.getChildren().addAll(gameWorld, sideImageView);
         root.getChildren().add(resourceBar);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
@@ -505,9 +495,6 @@ public class GameController {
     public void updateGUI() {
         hp.setText(String.valueOf(game.getHp()));
         money.setText(String.valueOf(game.getMoney()));
-        for (int i = 0; i < shopTiles.size(); i++) {
-            shopTiles.get(i).setOpacity(game.getMoney() >= SHOP_COSTS[i] ? 1.0 : 0.5);
-        }
         if (!guiSetup) {
             double rootX = root.getLayoutBounds().getWidth();
             double rootY = root.getLayoutBounds().getHeight();
@@ -666,141 +653,6 @@ public class GameController {
         sideImageView.setLayoutY(0);
         sideImageView.setFitWidth(remainingWidth);
         sideImageView.setFitHeight(height);
-
-        if (remainingWidth < 40) {
-            shopBox.setVisible(false);
-        } else {
-            double gapRatio = 0.15;
-            double sizeByWidth = remainingWidth * 0.7;
-            double sizeByHeight = (height * 0.8) / (4 + 3 * gapRatio);
-            double size = Math.min(sizeByWidth, sizeByHeight);
-            double gap = size * gapRatio;
-            double totalHeight = 4 * size + 3 * gap;
-
-            for (ImageView icon : shopTiles) {
-                icon.setFitWidth(size);
-                icon.setFitHeight(size);
-            }
-            shopBox.setSpacing(gap);
-            shopBox.setLayoutX(mapWidth + (remainingWidth - size) / 2);
-            shopBox.setLayoutY((height - totalHeight) / 2);
-        }
-    }
-
-
-
-    private void createShop() {
-
-        shopBox.setAlignment(Pos.TOP_CENTER);
-
-        Image[] images = {tower1Img, tower2Img, tower3Img, tower4Img};
-        for (int i = 0; i < SHOP_TOWERS.length; i++) {
-            shopBox.getChildren().add(createShopTile(i, images[i]));
-        }
-
-        dragHighlight.setFill(Color.TRANSPARENT);
-        dragHighlight.setStroke(Color.GREEN);
-        dragHighlight.setStrokeWidth(3);
-        dragHighlight.setMouseTransparent(true);
-    }
-
-    private ImageView createShopTile(int index, Image image) {
-        ImageView icon = new ImageView(image);
-        // bei false würd aussehen wie ingame aber sieht so stark vergrößert so besser aus
-        icon.setPreserveRatio(true);
-        //icon.setEffect(new DropShadow(8, Color.BLACK));
-        icon.setCursor(Cursor.OPEN_HAND);
-
-        icon.setOnMousePressed(e -> {
-            if (e.getButton() == MouseButton.PRIMARY) startShopDrag(image, e);
-        });
-        icon.setOnMouseDragged(this::updateShopDrag);
-        icon.setOnMouseReleased(e -> {
-            if (e.getButton() == MouseButton.PRIMARY) endShopDrag(index, e);
-        });
-
-        shopTiles.add(icon);
-        return icon;
-    }
-
-    private void startShopDrag(Image image, MouseEvent e) {
-        cancelShopDrag();
-        buildMenu.hide();
-        aimMenu.hide();
-        upgradeHBox.setVisible(false);
-
-        double size = 64 * worldScale.getX();
-        dragGhost = new ImageView(image);
-        dragGhost.setFitWidth(size);
-        dragGhost.setFitHeight(size);
-        dragGhost.setPreserveRatio(true);
-        dragGhost.setOpacity(0.5);
-        dragGhost.setMouseTransparent(true);
-        root.getChildren().add(dragGhost);
-
-        dragHighlight.setVisible(false);
-        gameWorld.getChildren().add(dragHighlight);
-
-        updateShopDrag(e);
-    }
-
-    private void updateShopDrag(MouseEvent e) {
-        if (dragGhost == null) return;
-
-        Point2D local = root.sceneToLocal(e.getSceneX(), e.getSceneY());
-        double half = dragGhost.getFitWidth() / 2;
-        dragGhost.setLayoutX(local.getX() - half);
-        dragGhost.setLayoutY(local.getY() - half);
-
-        Point2D spot = findFreeSpotNear(e.getSceneX(), e.getSceneY());
-        if (spot != null) {
-            dragHighlight.setLayoutX(spot.getX() - 32);
-            dragHighlight.setLayoutY(spot.getY() - 32);
-            dragHighlight.setVisible(true);
-        } else {
-            dragHighlight.setVisible(false);
-        }
-        e.consume();
-    }
-
-    private void endShopDrag(int index, MouseEvent e) {
-        Point2D spot = findFreeSpotNear(e.getSceneX(), e.getSceneY());
-        cancelShopDrag();
-        if (spot == null) return;
-
-        selectedSpot = spot;
-        boolean built = buildTower(SHOP_COSTS[index], SHOP_TOWERS[index]);
-
-        // bauplatz ausbleden
-        if (built) {
-            if (spotMap.get(spot) != null) spotMap.get(spot).setOpacity(0);
-            if (spotImageMap.get(spot) != null) spotImageMap.get(spot).setOpacity(0);
-        }
-    }
-
-    private void cancelShopDrag() {
-        if (dragGhost != null) {
-            root.getChildren().remove(dragGhost);
-            dragGhost = null;
-        }
-        gameWorld.getChildren().remove(dragHighlight);
-    }
-
-    private Point2D findFreeSpotNear(double sceneX, double sceneY) {
-        Point2D world = gameWorld.sceneToLocal(sceneX, sceneY);
-        if (world == null) return null;
-
-        Point2D best = null;
-        double bestDistance = SNAP_DISTANCE;
-        for (Point2D spot : buildSpots) {
-            if (usedSpots.contains(spot) || towerMap.containsKey(spot)) continue;
-            double distance = world.distance(spot);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                best = spot;
-            }
-        }
-        return best;
     }
 
     private String towerOption(String name, int cost) {
