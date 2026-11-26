@@ -43,7 +43,7 @@ public class Wave {
 
         switch (type) {
             case "NormalEnemy": //Stats for a normal enemy
-                this.health = 100;
+                this.health = 10;
                 this.speed = 65;
                 this.money = 10;
                 this.attack = 2;

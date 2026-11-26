@@ -240,5 +240,4 @@
         public boolean getConclusion() {
             return conclusion;
         }
-    
     }

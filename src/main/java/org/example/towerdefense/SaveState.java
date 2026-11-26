@@ -42,12 +42,13 @@ public class SaveState implements Serializable {
         try (FileOutputStream fileOutputStream = new FileOutputStream(file);
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
 
+            objectOutputStream.writeObject(gameController.getDifficulty());
+
             objectOutputStream.writeInt(waveManager.getGroup());
 
             objectOutputStream.writeInt(waveManager.getGame().getHp());
             objectOutputStream.writeInt(waveManager.getGame().getMoney());
 
-            // @ToDo add range upgrades etc.
             // after saving all of these, the range has to be defined in gamecontroller for the radius while hovering on the towers
             // objectOutputStream.writeInt()
 
@@ -65,6 +66,7 @@ public class SaveState implements Serializable {
     }
 
     public void loadState(WaveManager waveManager, GameController gameController) throws IOException {
+
         File directory = new File("./src/main/resources/savefile");
         File file = new File(directory, "savestate.txt");
 
@@ -76,15 +78,24 @@ public class SaveState implements Serializable {
             file.createNewFile();
         }
 
-        gameController.clearBoard();
-        gameController.stopLoop();
-        waveManager.resetAllWaves();
-        waveManager.getGame().resetGame();
-
         // Deserialization
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             ObjectInputStream in = new ObjectInputStream(fileInputStream);
+            String currentSavedDiff = in.readObject().toString();
+
+            if(!currentSavedDiff.equals(gameController.getDifficulty())){
+
+                in.close();
+                fileInputStream.close();
+                System.out.println("Nigga das ist falsche difficulty");
+                return;
+            }
+
+            gameController.clearBoard();
+            gameController.stopLoop();
+            waveManager.resetAllWaves();
+            waveManager.getGame().resetGame();
 
             waveManager.setGroup(in.readInt() - 1);
             waveManager.getGame().setHp(in.readInt());
@@ -98,8 +109,11 @@ public class SaveState implements Serializable {
                 double range = towerData1.getRange();
                 double speed = towerData1.getSpeed();
 
+
                 gameController.spawnLoadedTower(point2D, id, dmg, range, speed);
             }
+
+
 
             in.close();
             fileInputStream.close();

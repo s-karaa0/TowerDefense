@@ -14,6 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.Group;
 import javafx.scene.transform.Scale;
 import javafx.scene.layout.HBox;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -331,7 +332,7 @@ public class GameController {
 
                 }
                 spot.setOnMouseExited(c -> {
-                    if(tower != null){
+                    if (tower != null) {
                         tower.getRangeCircle().setVisible(false);
                         hoverStatsBox.setVisible(false);
                     }
@@ -813,7 +814,9 @@ public class GameController {
         return true;
     }
 
+    //
     public void spawnLoadedTower(Point2D spot, int id, int dmg, double range, double speed) {
+
         Image selectedImage = switch (id) {
             case 1 -> tower2Img;
             case 2 -> tower3Img;
@@ -831,14 +834,10 @@ public class GameController {
         if (selectedImage == null || spot == null) return;
 
         Tower tower = new Tower(game, selectedImage, selectedImage, towerColor);
+
         tower.overwriteToType(id);
-
-        // after overwrite set the new range, speed etc. from the towers
-        // problem is there are more tower types so ehhh lets look at that
-
         tower.setDamage(dmg);
         tower.setRange(range);
-        // i guess that's supposed to be speed of the projectiles from the tower?
         tower.setCooldown(speed);
         System.out.println("Stats:" + dmg + range + speed);
         game.addTower(tower);
@@ -939,6 +938,10 @@ public class GameController {
         }
 
         return output;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
     }
 
     /*
