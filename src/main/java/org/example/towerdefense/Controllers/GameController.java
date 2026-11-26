@@ -9,6 +9,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.Group;
@@ -45,6 +46,8 @@ public class GameController {
 
     private static final String[] SHOP_TOWERS = {"Tower1", "Tower2", "Tower3", "Tower4"};
     private static final int[] SHOP_COSTS = {100, 150, 200, 300};
+    private final VBox shopBox = new VBox();
+    private final List<ImageView> shopTiles = new ArrayList<>();
     private GameApplication gameApp;
     private Game game;
     private Gameloop loop;
@@ -345,6 +348,8 @@ public class GameController {
         game.setOnProjectileSpawned(p -> gameWorld.getChildren().add(p.getView()));
         game.setOnProjectileRemoved(p -> gameWorld.getChildren().remove(p.getView()));
 
+        createShop();
+
 
         sideImageView.setSmooth(false);
         sideImageView.setPreserveRatio(false);
@@ -435,7 +440,7 @@ public class GameController {
         AnchorPane.setTopAnchor(hBox, 20.0);
         AnchorPane.setLeftAnchor(nextWaveButton, 30.0);
         AnchorPane.setBottomAnchor(nextWaveButton, 30.0);
-        root.getChildren().addAll(gameWorld, sideImageView);
+        root.getChildren().addAll(gameWorld, sideImageView, shopBox);
         root.getChildren().add(resourceBar);
         root.getChildren().addAll(hBox, upgradeHBox);
         root.getChildren().add(nextWaveButton);
@@ -495,6 +500,9 @@ public class GameController {
     public void updateGUI() {
         hp.setText(String.valueOf(game.getHp()));
         money.setText(String.valueOf(game.getMoney()));
+        for (int i = 0; i < shopTiles.size(); i++) {
+            shopTiles.get(i).setOpacity(game.getMoney() >= SHOP_COSTS[i] ? 1.0 : 0.5);
+        }
         if (!guiSetup) {
             double rootX = root.getLayoutBounds().getWidth();
             double rootY = root.getLayoutBounds().getHeight();
@@ -653,6 +661,47 @@ public class GameController {
         sideImageView.setLayoutY(0);
         sideImageView.setFitWidth(remainingWidth);
         sideImageView.setFitHeight(height);
+
+        if (remainingWidth < 40) {
+            shopBox.setVisible(false);
+        } else {
+            double gapRatio = 0.15;
+            double sizeByWidth = remainingWidth * 0.7;
+            double sizeByHeight = (height * 0.8) / (4 + 3 * gapRatio);
+            double size = Math.min(sizeByWidth, sizeByHeight);
+            double gap = size * gapRatio;
+            double totalHeight = 4 * size + 3 * gap;
+
+            for (ImageView icon : shopTiles) {
+                icon.setFitWidth(size);
+                icon.setFitHeight(size);
+            }
+            shopBox.setSpacing(gap);
+            shopBox.setLayoutX(mapWidth + (remainingWidth - size) / 2);
+            shopBox.setLayoutY((height - totalHeight) / 2);
+        }
+    }
+
+
+
+    private void createShop() {
+
+        shopBox.setAlignment(Pos.TOP_CENTER);
+
+        Image[] images = {tower1Img, tower2Img, tower3Img, tower4Img};
+        for (int i = 0; i < SHOP_TOWERS.length; i++) {
+            shopBox.getChildren().add(createShopTile(i, images[i]));
+        }
+    }
+
+    private ImageView createShopTile(int index, Image image) {
+        ImageView icon = new ImageView(image);
+        // bei false würd aussehen wie ingame aber sieht so stark vergrößert so besser aus
+        icon.setPreserveRatio(true);
+        //icon.setEffect(new DropShadow(8, Color.BLACK));
+
+        shopTiles.add(icon);
+        return icon;
     }
 
     private String towerOption(String name, int cost) {
