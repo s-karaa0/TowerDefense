@@ -41,7 +41,6 @@ public class GameController {
     private Gameloop loop;
     private WaveManager waveManager;
     private boolean guiSetup = false;
-    private boolean drag = false;
     private boolean endOfGame = false;
     private boolean conclusion; // true = won | false = lost
 
@@ -184,11 +183,6 @@ public class GameController {
             spotImage.toFront();
 
             spot.setOnMouseClicked(e -> {
-                System.out.println(drag);
-
-                if (drag) {
-                    return;
-                }
 
                 selectedSpot = (Point2D) spot.getUserData();
                 Tower tower = towerMap.get(selectedSpot);
@@ -238,7 +232,6 @@ public class GameController {
         game = new Game(path);
         game.setOnProjectileSpawned(p -> root.getChildren().add(p.getView()));
         game.setOnProjectileRemoved(p -> root.getChildren().remove(p.getView()));
-        createShop();
 
         // XML
         List<Wave> waves = WaveLoader.loadWaves();
@@ -414,58 +407,6 @@ public class GameController {
         }
     }
 
-    public void createShop() {
-        Image towerImage1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev1_small.png")));
-        ImageView towerLev1 = new ImageView(towerImage1);
-        towerLev1.setFitWidth(64);
-        towerLev1.setFitHeight(64);
-        towerLev1.setLayoutX(200);
-        towerLev1.setLayoutY(720);
-
-        Image towerImage2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev2_small.png")));
-        ImageView towerLev2 = new ImageView(towerImage2);
-        towerLev2.setFitWidth(64);
-        towerLev2.setFitHeight(64);
-        towerLev2.setLayoutX(400);
-        towerLev2.setLayoutY(720);
-
-        Image towerImage3 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev3_small.png")));
-        ImageView towerLev3 = new ImageView(towerImage3);
-        towerLev3.setFitWidth(64);
-        towerLev3.setFitHeight(64);
-        towerLev3.setLayoutX(600);
-        towerLev3.setLayoutY(720);
-
-        Image towerImage4 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/towers/turm-lev4_small.png")));
-        ImageView towerLev4 = new ImageView(towerImage4);
-        towerLev4.setFitWidth(64);
-        towerLev4.setFitHeight(64);
-        towerLev4.setLayoutX(800);
-        towerLev4.setLayoutY(720);
-
-        root.getChildren().add(towerLev1);
-        root.getChildren().add(towerLev2);
-        root.getChildren().add(towerLev3);
-        root.getChildren().add(towerLev4);
-
-        towerLev1.setOnMouseClicked(event -> {
-            spawnTower(event, towerImage1);
-        });
-
-        towerLev2.setOnMouseClicked(event -> {
-            spawnTower(event, towerImage2);
-        });
-
-        towerLev3.setOnMouseClicked(event -> {
-            spawnTower(event, towerImage3);
-        });
-
-        towerLev4.setOnMouseClicked(event -> {
-            spawnTower(event, towerImage4);
-        });
-
-
-    }
 
     /**
      * private void addTowerMenu(ImageView view, Tower tower) {
@@ -684,66 +625,4 @@ public class GameController {
     }
 
      */
-
-
-    private void spawnTower(MouseEvent event, Image selectedImage) {
-
-        Color color = Color.BLACK;
-        Tower tower = new Tower(game, selectedImage, color);
-        ImageView view = tower.getView();
-        root.getChildren().add(view);
-        view.setLayoutX(event.getX() - 32);
-        view.setLayoutY(event.getY() - 32);
-        final boolean[] dragging = {true};
-
-        root.setOnMouseMoved(e -> {
-            if (dragging[0]) {
-                view.setLayoutX(e.getX() - 32);
-                view.setLayoutY(e.getY() - 32);
-            }
-        });
-
-        root.setOnMouseClicked(e -> {
-            if (drag) {
-                dragging[0] = false;
-                Point2D towerCenter = new Point2D(
-                        view.getLayoutX() + 32,
-                        view.getLayoutY() + 32
-                );
-
-                Point2D closestSpot = new Point2D(2, 2);
-                double closestDistance = Double.MAX_VALUE;
-
-                for (Point2D spot : buildSpots) {
-                    double distance = towerCenter.distance(spot);
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closestSpot = spot;
-                        System.out.println("--");
-                    }
-                }
-
-                selectedSpot = closestSpot;
-                System.out.println(selectedSpot);
-
-                if (closestSpot != null && closestDistance < 100 && !usedSpots.contains(closestSpot)) {
-                    buildTower(100, "tower1");
-                    view.setLayoutX(closestSpot.getX() - 32);
-                    view.setLayoutY(closestSpot.getY() - 32);
-                    view.toFront();
-                    usedSpots.add(closestSpot);
-                    root.setOnMouseMoved(null);
-                    drag = false;
-                    System.out.println("Tower placed");
-                } else {
-                    root.getChildren().remove(view);
-                    root.setOnMouseMoved(null);
-                    drag = false;
-                    System.out.println("Invalid placement");
-                }
-            }
-            drag = true;
-        });
-    }
-
 }

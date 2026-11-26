@@ -358,3 +358,63 @@
 .result-secondary-button:hover {
     -fx-background-color: rgba(140, 104, 53, 0.15);
 }
+
+
+.difficulty-choice {
+    -fx-background-color: #2a241b;          /* Dunkler, mittelalterlicher Hintergrund */
+    -fx-background-radius: 4px;             /* Abgerundete Ecken */
+    -fx-border-color: #c29b38;              /* Edler Gold-/Messingrand */
+    -fx-border-radius: 4px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 4px 8px;
+}
+
+/* Text und Pfeil innerhalb der geschlossenen ChoiceBox */
+.difficulty-choice .label {
+    -fx-text-fill: #e6dfcc;                 /* Heller Ton für den Text */
+    -fx-font-size: 14px;
+}
+
+.difficulty-choice .open-button {
+    -fx-background-color: transparent;
+}
+
+.difficulty-choice .open-button .arrow {
+    -fx-background-color: #c29b38;          /* Goldener Dropdown-Pfeil */
+}
+
+/* Hover-Effekt auf die geschlossene ChoiceBox */
+.difficulty-choice:hover {
+    -fx-border-color: #dfba53;              /* Helleres Gold bei Hover */
+    -fx-cursor: hand;
+}
+
+
+.choice-box .context-menu {
+    -fx-background-color: #1f1a14;          /* Sehr dunkler Hintergrund fürs Menü */
+    -fx-background-radius: 4px;
+    -fx-border-color: #c29b38;              /* Goldener Rand um das gesamte Menü */
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+}
+
+/* Einzelne Listeneinträge */
+.choice-box .menu-item {
+    -fx-padding: 8px 12px;
+}
+
+.choice-box .menu-item .label {
+    -fx-text-fill: #e6dfcc;                 /* Textfarbe der Optionen */
+    -fx-font-size: 14px;
+}
+
+/* Hover-Effekt auf einzelne Einträge in der Liste */
+.choice-box .menu-item:focused,
+.choice-box .menu-item:hover {
+    -fx-background-color: #3d3427;          /* Hervorhebung bei Auswahl/Hover */
+}
+
+.choice-box .menu-item:focused .label,
+.choice-box .menu-item:hover .label {
+    -fx-text-fill: #ffffff;                 /* Reines Weiß beim Hover für bessere Lesbarkeit */
+}
