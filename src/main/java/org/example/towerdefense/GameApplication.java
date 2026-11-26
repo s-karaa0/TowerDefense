@@ -8,10 +8,7 @@
     import javafx.scene.layout.*;
     import javafx.stage.Modality;
     import javafx.stage.Stage;
-    import org.example.towerdefense.Controllers.ConclusionController;
-    import org.example.towerdefense.Controllers.GameController;
-    import org.example.towerdefense.Controllers.SettingsController;
-    import org.example.towerdefense.Controllers.StartController;
+    import org.example.towerdefense.Controllers.*;
 
     import java.io.IOException;
     import java.util.ArrayList;
@@ -28,7 +25,8 @@
         public enum SceneState {
             start,
             game,
-            conclusion
+            conclusion,
+            map
         }
     
         public SceneState getCurrentState() {
@@ -56,34 +54,34 @@
                         Stage settingsStage = new Stage();
                         settingsStage.initOwner(stage);
                         settingsStage.initModality(Modality.WINDOW_MODAL);
-    
+
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
                         Parent root = fxmlLoader.load();
-    
+
                         Scene settingsScene = new Scene(root);
                         settingsStage.setScene(settingsScene);
                         SettingsController settingsController = fxmlLoader.getController();
                         settingsController.setApplication(this);
-    
+
                         settingsStage.setTitle("Settings");
                         settingsStage.centerOnScreen();
                         settingsStage.show();
-    
+
                         break;
                     }
-    
+
                     case "start": {
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
                         Parent root = fxmlLoader.load();
-    
+
                         StartController startController = fxmlLoader.getController();
                         startController.getApplication(this);
-    
+
                         Scene scene = new Scene(root);
                         stage.setScene(scene);
                         stage.centerOnScreen();
                         isRunning = false;
-    
+
                         currentState = SceneState.start;
                         MusicManager.playQueue(new ArrayList<>(List.of(
                                 "/music/menu2.mp3",
@@ -92,17 +90,17 @@
                         )), "menu");
                         break;
                     }
-    
+
                     case "game": {
                         if (!isRunning) {
                             isRunning = true;
                             GameController controller = new GameController(difficulty);
                             Pane root = controller.getRoot();
                             controller.setApplication(this);
-    
+
                             Image bgImage = null;
-    
-    
+
+
                             // why not difficulty.equals()? because if null throws nullpointerexception
                             if ("easy".equals(difficulty)) {
                                 bgImage = new Image(getClass().getResource("/images/fields/field-easy_small.png").toExternalForm());
@@ -135,20 +133,18 @@
                              */
 
                             controller.getBackgroundImage(bgImage);
-    
+
                             Scene scene = new Scene(root, 1000, 800);
                             stage.setScene(scene);
                             stage.centerOnScreen();
                             stage.setTitle("Tower Defense Game");
                             controller.startLoop();
-    
+
                             setGameController(controller);
                         }
-    
                         currentState = SceneState.game;
                         break;
                     }
-    
                     case "conclusion": {
 
 
@@ -156,10 +152,10 @@
                         conclusionStage.initOwner(stage);
                         conclusionStage.initModality(Modality.WINDOW_MODAL);
 
-    
+
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
                         Parent root = fxmlLoader.load();
-    
+
                         Scene conclusionScene = new Scene(root);
                         conclusionStage.setScene(conclusionScene);
                         ConclusionController conclusionController = fxmlLoader.getController();
@@ -167,19 +163,39 @@
                         conclusionStage.centerOnScreen();
                         conclusionStage.show();
                         isRunning = false;
-    
+
                         conclusionController.getConclusion(conclusion);
-    
+
                         currentState = SceneState.conclusion;
                         break;
                     }
-    
+                    case "map": {
+
+
+                        Stage mapStage = new Stage();
+                        mapStage.initOwner(stage);
+                        mapStage.initModality(Modality.WINDOW_MODAL);
+
+
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
+                        Parent root = fxmlLoader.load();
+
+                        Scene mapScene = new Scene(root);
+                        mapStage.setScene(mapScene);
+                        MapController mapController = fxmlLoader.getController();
+                        mapController.setApplication(this);
+                        mapStage.centerOnScreen();
+                        mapStage.show();
+                        isRunning = false;
+
+                        currentState = SceneState.map;
+                        break;
+                    }
                 }
-    
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-    
         }
     
         public void setGameController(GameController gameCtr) {
