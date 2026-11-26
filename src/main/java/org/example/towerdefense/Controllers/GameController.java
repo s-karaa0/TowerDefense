@@ -770,7 +770,7 @@ public class GameController {
 
         if (selectedImage == null) return false;
 
-        Tower tower = new Tower(game, selectedImage, selectedImage, towerColor);
+        Tower tower = new Tower(game, selectedImage, projectileImage, towerColor);
         tower.overwriteToType(id);
 
         if (game.getMoney() < tower.getBuildCost()) {
