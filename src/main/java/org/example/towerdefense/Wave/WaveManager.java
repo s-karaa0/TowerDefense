@@ -25,33 +25,13 @@ public class WaveManager {
         waveManager = this;
     }
 
-    private static final Image NormalEnemy =
-            new Image(Objects.requireNonNull(WaveManager.class
-                            .getResource("/images/Enemies/red_enemy.png"))
-                    .toExternalForm());
 
-    private static final Image FastEnemy =
-            new Image(Objects.requireNonNull(WaveManager.class
-                            .getResource("/images/Enemies/enemy-lev2_small.png"))
-                    .toExternalForm());
-
-    private static final Image StrongEnemy =
-            new Image(Objects.requireNonNull(WaveManager.class
-                            .getResource("/images/Enemies/enemy-lev3_small.png"))
-                    .toExternalForm());
 
     private int enemyId = 0;
 
     public WaveManager(Game game, List<Wave> waves) {
         this.game = game;
         this.waves = waves;
-
-        BossEnemy.add(new Image(Objects.requireNonNull(WaveManager.class
-                        .getResource("/images/bosses/kiwi-boss.png"))
-                .toExternalForm()));
-        BossEnemy.add(new Image(Objects.requireNonNull(WaveManager.class
-                        .getResource("/images/bosses/slime-boss.png"))
-                .toExternalForm()));
     }
 
     public static WaveManager getInstance() {
@@ -83,31 +63,6 @@ public class WaveManager {
                 wave.setSpawnTimer(0);
                 // if its the last wave, then the if from above cancels any new one
                 waveIndex = wave.getWaveID();
-
-                switch (wave.getType()) {
-                    case "NormalEnemy": {
-                        wave.setImage(NormalEnemy);
-                        break;
-                    }
-
-                    case "FastEnemy": {
-                        wave.setImage(FastEnemy);
-                        break;
-                    }
-
-                    case "StrongEnemy": {
-                        wave.setImage(StrongEnemy);
-                        break;
-                    }
-
-                    case "BossEnemy": {
-                        wave.setImage(BossEnemy.get(bossindex));
-                        ++bossindex;
-                        break;
-                    }
-
-                }
-
                 wave.setFinished(false);
             }
         }

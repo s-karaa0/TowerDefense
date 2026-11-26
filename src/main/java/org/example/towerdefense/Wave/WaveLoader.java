@@ -33,34 +33,29 @@ public class WaveLoader {
 
                 Element waveElement = (Element) waveNodes.item(i);
 
+                // the group the wave belongs to
                 int group = Integer.parseInt(
                         waveElement.getElementsByTagName("group").item(0).getTextContent());
 
+                // the id of the wave
                 int waveID = Integer.parseInt(
                         waveElement.getElementsByTagName("waveID").item(0).getTextContent());
 
+                // the amount of enemies in the wave
                 int count = Integer.parseInt(
                         waveElement.getElementsByTagName("enemyCount").item(0).getTextContent());
 
+                // the time it takes to spawn enemies after another
                 double interval = Double.parseDouble(
                         waveElement.getElementsByTagName("spawnInterval").item(0).getTextContent());
 
-                float health = Float.parseFloat(
-                        waveElement.getElementsByTagName("health").item(0).getTextContent());
-
-                float speed = Float.parseFloat(
-                        waveElement.getElementsByTagName("speed").item(0).getTextContent());
-
-                int money = Integer.parseInt(
-                        waveElement.getElementsByTagName("money").item(0).getTextContent());
-
-                float attack = Float.parseFloat(
-                        waveElement.getElementsByTagName("attack").item(0).getTextContent());
-
-
                 String type = waveElement.getElementsByTagName("type").item(0).getTextContent();
+                String bosstype = null;
+                if (waveElement.getElementsByTagName("bossType").item(0) != null) {
+                    bosstype = waveElement.getElementsByTagName("bossType").item(0).getTextContent();
+                }
 
-                waves.add(new Wave(group, waveID, count, interval, health, speed, money, attack, type));
+                waves.add(new Wave(group, waveID, count, interval, type, bosstype));
             }
 
         } catch (Exception e) {
