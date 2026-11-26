@@ -687,7 +687,7 @@ public class GameController {
             }
             tower.upgradeDamage();
             tower.raiseDamageCost();
-            refreshLabels.run();
+            upgradeHBox.setVisible(false);
         });
 
         spd.setOnAction(e -> {
@@ -697,7 +697,7 @@ public class GameController {
             ;
             tower.upgradeSpeed();
             tower.raiseSpeedCost();
-            refreshLabels.run();
+            upgradeHBox.setVisible(false);
         });
 
         rng.setOnAction(e -> {
@@ -707,7 +707,7 @@ public class GameController {
             tower.upgradeRange();
             tower.getRangeCircle().setRadius(tower.getRangeCircle().getRadius() + 10);
             tower.raiseRangeCost();
-            refreshLabels.run();
+            upgradeHBox.setVisible(false);
         });
 
         upgradeHBox.getChildren().addAll(dmg, spd, rng);
