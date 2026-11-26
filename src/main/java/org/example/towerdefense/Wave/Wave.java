@@ -26,9 +26,9 @@ public class Wave {
     private int spawned = 0;
     private int activeEnemies;
 
-    private final String type;
 
-    private Image image;
+
+    private final Image image;
 
     private static Wave wave;
 
@@ -39,7 +39,7 @@ public class Wave {
         this.enemyCount = enemyCount;
         this.spawnInterval = spawnInterval;
         this.activeEnemies = enemyCount; // these are the enemies on the screen
-        this.type = type;
+
 
         switch (type) {
             case "NormalEnemy": //Stats for a normal enemy
@@ -57,7 +57,7 @@ public class Wave {
                 this.attack = 3;
                 this.money = 15;
                 this.image = new Image(Objects.requireNonNull(WaveManager.class
-                                .getResource("/images/Enemies/enemy-lev2_small.png"))
+                                .getResource("/images/Enemies/ice_enemy.png"))
                         .toExternalForm());
                 break;
             case "StrongEnemy": //stats for a strong enemy
@@ -66,18 +66,38 @@ public class Wave {
                 this.attack = 10;
                 this.money = 15;
                 this.image = new Image(Objects.requireNonNull(WaveManager.class
-                                .getResource("/images/Enemies/enemy-lev3_small.png"))
+                                .getResource("/images/Enemies/enemy-lev4_small.png"))
                         .toExternalForm());
                 break;
             case "BossEnemy":   //stats for a boss enemy
                 switch (bosstype) { // there are multiple types of bosses
                     case "kiwi":
-                        this.health = 1000;
+                        this.health = 850;
                         this.speed = 25;
                         this.attack = 50;
-                        this.money = 100;
+                        this.money = 250;
                         this.image = new Image(Objects.requireNonNull(WaveManager.class
                                         .getResource("/images/bosses/kiwi-boss.png"))
+                                .toExternalForm());
+                        break;
+
+                    case "snow":
+                        this.health = 1000;
+                        this.speed = 30;
+                        this.attack = 50;
+                        this.money = 400;
+                        this.image = new Image(Objects.requireNonNull(WaveManager.class
+                                        .getResource("/images/bosses/snow-boss.png"))
+                                .toExternalForm());
+                        break;
+
+                    case "slime":
+                        this.health = 1000;
+                        this.speed = 50;
+                        this.attack = 50;
+                        this.money = 400;
+                        this.image = new Image(Objects.requireNonNull(WaveManager.class
+                                        .getResource("/images/bosses/slime-boss.png"))
                                 .toExternalForm());
                         break;
 
@@ -126,14 +146,8 @@ public class Wave {
         isFinished = finished;
     }
 
-    public int getGroup() {return group;}
-
     public int getActiveEnemies() {return activeEnemies;}
     public void setActiveEnemies(int activeEnemies) {this.activeEnemies = activeEnemies;}
-
-    public String getType() {
-        return type;
-    }
 
     public Image getImage() {
         return image;

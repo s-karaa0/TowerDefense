@@ -59,7 +59,7 @@ public class WaveLoader {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage() + " in WaveLoader.java");
         }
 
         return waves;

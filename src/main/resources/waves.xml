@@ -57,7 +57,7 @@
         <enemyCount>4</enemyCount>
         <spawnInterval>0.2</spawnInterval>
         <type>BossEnemy</type>
-        <bossType>kiwi</bossType>
+        <bossType>snow</bossType>
     </wave>
 
 

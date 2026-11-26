@@ -42,7 +42,6 @@ public class StartController {
         difficulty = fieldChoiceBox.getValue();
         gameApp.setDifficulty(difficulty);
 
-        System.out.println(difficulty);
         gameApp.switchScene("game", "game");
     }
 
