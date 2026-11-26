@@ -14,8 +14,8 @@ public class PathFactory {
             case "easy":
                 segments = List.of(
                         new GamePath.BezierSegment(
-                                new Point2D(0, 460),
-                                new Point2D(0, 460),
+                                new Point2D(-30, 460),
+                                new Point2D(-30, 460),
                                 new Point2D(250, 460),
                                 new Point2D(250, 460)
                         ),
@@ -101,46 +101,68 @@ public class PathFactory {
             case "normal":
                 segments = List.of(
                         new GamePath.BezierSegment(
-                                new Point2D(50, 400),
-                                new Point2D(50, 400),
-                                new Point2D(200, 400),
-                                new Point2D(200, 400)
+                                new Point2D(-70, 382), new Point2D(-70, 382),
+                                new Point2D(210, 382), new Point2D(210, 382)
                         ),
+                        // corner up
                         new GamePath.BezierSegment(
-                                new Point2D(200, 400),
-                                new Point2D(400, 400),
-                                new Point2D(200, 100),
-                                new Point2D(400, 100)
+                                new Point2D(210, 382), new Point2D(273, 382),
+                                new Point2D(273, 382), new Point2D(273, 320)
                         ),
+                        // vertical up at x=273
                         new GamePath.BezierSegment(
-                                new Point2D(400, 100),
-                                new Point2D(600, 100),
-                                new Point2D(400, 700),
-                                new Point2D(600, 700)
+                                new Point2D(273, 320), new Point2D(273, 320),
+                                new Point2D(273, 130), new Point2D(273, 130)
                         ),
+                        // top hump
                         new GamePath.BezierSegment(
-                                new Point2D(600, 700),
-                                new Point2D(600, 700),
-                                new Point2D(800, 700),
-                                new Point2D(800, 700)
+                                new Point2D(273, 130), new Point2D(273, 47),
+                                new Point2D(483, 47), new Point2D(483, 130)
                         ),
+                        // vertical down at x=483
                         new GamePath.BezierSegment(
-                                new Point2D(800, 700),
-                                new Point2D(900, 700),
-                                new Point2D(900, 700),
-                                new Point2D(900, 500)
+                                new Point2D(483, 130), new Point2D(483, 130),
+                                new Point2D(483, 657), new Point2D(483, 657)
                         ),
+                        // bottom-left corner
                         new GamePath.BezierSegment(
-                                new Point2D(900, 500),
-                                new Point2D(900, 350),
-                                new Point2D(700, 350),
-                                new Point2D(700, 500)
+                                new Point2D(483, 657), new Point2D(483, 697),
+                                new Point2D(483, 697), new Point2D(523, 697)
                         ),
+                        // bottom run at y=697
                         new GamePath.BezierSegment(
-                                new Point2D(700, 500),
-                                new Point2D(700, 620),
-                                new Point2D(800, 600),
-                                new Point2D(1000, 600)
+                                new Point2D(523, 697), new Point2D(523, 697),
+                                new Point2D(810, 697), new Point2D(810, 697)
+                        ),
+                        // bottom-right corner up to the loop
+                        new GamePath.BezierSegment(
+                                new Point2D(810, 697), new Point2D(903, 697),
+                                new Point2D(903, 697), new Point2D(903, 600)
+                        ),
+                        // up the right side of the loop
+                        new GamePath.BezierSegment(
+                                new Point2D(903, 600), new Point2D(903, 600),
+                                new Point2D(903, 487), new Point2D(903, 487)
+                        ),
+                        // loop: right -> top
+                        new GamePath.BezierSegment(
+                                new Point2D(903, 487), new Point2D(903, 429),
+                                new Point2D(856, 382), new Point2D(798, 382)
+                        ),
+                        // loop: top -> left
+                        new GamePath.BezierSegment(
+                                new Point2D(798, 382), new Point2D(740, 382),
+                                new Point2D(693, 429), new Point2D(693, 487)
+                        ),
+                        // loop: left -> bottom
+                        new GamePath.BezierSegment(
+                                new Point2D(693, 487), new Point2D(693, 545),
+                                new Point2D(740, 592), new Point2D(798, 592)
+                        ),
+                        // exit to the right at y=592
+                        new GamePath.BezierSegment(
+                                new Point2D(798, 592), new Point2D(798, 592),
+                                new Point2D(1060, 592), new Point2D(1060, 592)
                         )
                 );
                 break;
@@ -150,8 +172,8 @@ public class PathFactory {
 
                         // START
                         new GamePath.BezierSegment(
-                                new Point2D(0, 100),
-                                new Point2D(0, 100),
+                                new Point2D(-30, 100),
+                                new Point2D(-30, 100),
                                 new Point2D(680, 100),
                                 new Point2D(680, 100)
                         ),

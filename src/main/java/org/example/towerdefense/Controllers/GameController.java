@@ -103,7 +103,10 @@ public class GameController {
     private final Button doubleSpeedButton = new Button("2x");
     private final Button quadroupleSpeedButton = new Button("4x");
     private final Button nextWaveButton = new Button("Nächste Welle");
+    // bridge for the second level (2)
+    private final Rectangle bridge = new Rectangle();
     private final Label hp = new Label();
+    private Boolean next = false;
     private final ImageView healthHeart =
             new ImageView(new Image(getClass().getResourceAsStream("/images/hud/bright-red-pixel-heart-design-png.png")));
     private final HBox healthDisplay = new HBox(8);
@@ -496,6 +499,8 @@ public class GameController {
     public void updateGUI() {
         hp.setText(String.valueOf(game.getHp()));
         money.setText(String.valueOf(game.getMoney()));
+        nextWaveButton.setVisible(next);
+
         if (!guiSetup) {
             double rootX = root.getLayoutBounds().getWidth();
             double rootY = root.getLayoutBounds().getHeight();
@@ -509,6 +514,9 @@ public class GameController {
             hp.setFont(new Font("Arial", 20));
             hp.setTextAlignment(TextAlignment.LEFT);
             hp.setTextFill(Color.WHITE);
+
+            nextWaveButton.setLayoutX(30);
+            nextWaveButton.setLayoutY(500);
 
             money.setFont(new Font("Arial", 20));
             money.setTextFill(Color.WHITE);
@@ -529,6 +537,12 @@ public class GameController {
             }
         }
 
+        if((waveManager .groupEnemyCount() * 0.8) <= waveManager.waveEnemyCount()){
+            next=true;
+        }else {
+            next=false;
+        }
+
         enemyHashSet.removeIf(e -> {
             if (!game.getEnemies().contains(e)) {
                 gameWorld.getChildren().remove(e.getView());
@@ -536,6 +550,8 @@ public class GameController {
             }
             return false;
         });
+
+
 
         if (((waveManager.getEndOfAllWaves() && enemyHashSet.isEmpty()) || game.getHp() <= 0) && !endOfGame) {
             if (waveManager.getEndOfAllWaves()) {

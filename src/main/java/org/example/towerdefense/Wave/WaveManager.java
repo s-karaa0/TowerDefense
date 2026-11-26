@@ -147,6 +147,33 @@ public class WaveManager {
         return enemyId;
     }
 
+    public int groupEnemyCount() {
+        Wave wave = null;
+        int groupEnemyCount = 0;
+        for(int i=0; i<activeWaves.size(); i++){
+            wave = activeWaves.get(i);
+            if (wave.getGroup() == group){
+                for (int j = 0; j < wave.getEnemyCount(); j++){
+                    groupEnemyCount++;
+                }
+            }
+        }
+        System.out.println(groupEnemyCount);
+        return  groupEnemyCount;
+    }
+
+    public int waveEnemyCount() {
+        Wave wave = null;
+        int currentEnemyCount = 0;
+        for (int i = 0; i < activeWaves.size(); i++) {
+            wave = activeWaves.get(i);
+            if (wave.getGroup() == group) {
+                currentEnemyCount += wave.getSpawned();
+            }
+        }
+        System.out.println(currentEnemyCount);
+        return currentEnemyCount;
+    }
 
     public boolean getEndOfAllWaves() {
         return endOfAllWaves;
