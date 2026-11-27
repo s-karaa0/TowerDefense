@@ -89,6 +89,7 @@ public class WaveManager {
                             group,
                             wave.getWaveID()
                     );
+                    enemy.setEnemyType(wave.getEnemyType());
 
                     enemy.setImageView(wave.getImage());
                     enemy.getView().setLayoutX(-100);
