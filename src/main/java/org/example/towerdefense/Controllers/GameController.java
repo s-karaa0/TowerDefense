@@ -1,6 +1,8 @@
 package org.example.towerdefense.Controllers;
 
+import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,6 +14,7 @@ import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.Group;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.transform.Scale;
 import javafx.scene.layout.HBox;
 import java.io.IOException;
@@ -26,6 +29,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 import org.example.towerdefense.*;
 import org.example.towerdefense.Path.BuildSpots;
 import org.example.towerdefense.Path.GamePath;
@@ -41,6 +45,7 @@ public class GameController {
     private final AnchorPane root = new AnchorPane();
     private final Group gameWorld = new Group();
     private final Scale worldScale = new Scale(1, 1, 0, 0);
+    private final Map<Integer, Image> stainImages = new HashMap<>();
 
     // Bildbereich rechts neben dem Spielfeld (Bild später setzen!!)
     private final ImageView sideImageView = new ImageView();
@@ -162,6 +167,7 @@ public class GameController {
 
 
     public GameController(String difficulty) {
+        loadStainImages();
         gameController = this;
         root.getStylesheets().add(getClass().getResource("/style/style.css").toExternalForm());
 
@@ -518,6 +524,70 @@ public class GameController {
 
     }
 
+    private void loadStainImages() {
+        loadStain(1, "/images/enemy-stains/normal-stain.png");
+        loadStain(2, "/images/enemy-stains/fast-stain.png");
+        loadStain(3, "/images/enemy-stains/strong-stain.png");
+        loadStain(4, "/images/enemy-stains/kiwi-stain.png");
+        loadStain(5, "/images/enemy-stains/snow-stain.png");
+        loadStain(6, "/images/enemy-stains/slime-stain.png");
+    }
+
+    private void loadStain(int enemyId, String path) {
+        Image image = new Image(
+                Objects.requireNonNull(
+                        getClass().getResourceAsStream(path),
+                        "Stain image not found: " + path
+                )
+        );
+
+        stainImages.put(enemyId, image);
+    }
+
+    private void spawnStainAt(double cx, double cy, int enemyId) {
+
+        Image stainImg = stainImages.get(enemyId);
+
+        // Falls es keinen passenden Fleck gibt
+        if (stainImg == null) {
+            return;
+        }
+
+        double angle = Math.random() * Math.PI * 2;
+        double dist = 10;
+
+        double sx = cx + Math.cos(angle) * dist;
+        double sy = cy + Math.sin(angle) * dist;
+
+        double size = 24;
+
+        ImageView stain = new ImageView(stainImg);
+        stain.setFitWidth(size);
+        stain.setFitHeight(size);
+        stain.setPreserveRatio(true);
+        stain.setSmooth(false);
+
+        stain.setRotate(Math.random() * 360);
+        stain.setOpacity(0.8);
+        stain.setMouseTransparent(true);
+
+        stain.setLayoutX(sx - size / 2.0);
+        stain.setLayoutY(sy - size / 2.0);
+
+        gameWorld.getChildren().add(1, stain);
+
+        PauseTransition wait = new PauseTransition(Duration.seconds(6));
+
+        FadeTransition fade = new FadeTransition(Duration.seconds(1), stain);
+        fade.setFromValue(0.8);
+        fade.setToValue(0);
+
+        SequentialTransition seq = new SequentialTransition(wait, fade);
+
+        seq.setOnFinished(ev -> gameWorld.getChildren().remove(stain));
+        seq.play();
+    }
+
     public void sync() {
         // add enemies, to the Set
         for (Enemy e : game.getEnemies()) {
@@ -530,7 +600,17 @@ public class GameController {
 
         enemyHashSet.removeIf(e -> {
             if (!game.getEnemies().contains(e)) {
-                gameWorld.getChildren().remove(e.getView());
+                var view = e.getView();
+                var b = view.getBoundsInParent();
+                gameWorld.getChildren().remove(view);
+
+                if (e.getHealth() <= 0) {
+                    spawnStainAt(
+                            b.getMinX() + b.getWidth() / 2.0,
+                            b.getMinY() + b.getHeight() / 2.0,
+                            e.getEnemyType()
+                    );
+                }
                 return true;
             }
             return false;

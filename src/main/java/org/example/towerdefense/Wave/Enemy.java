@@ -19,7 +19,7 @@ public class Enemy {
     private double distance = 0;
     private boolean finished = false;
     private ImageView view;
-    //private static final Map<String, Image> imageCache = new HashMap<>();
+    private int enemyType;
 
     public boolean getFinished(){return finished;}
     public float getHealth() {
@@ -39,6 +39,13 @@ public class Enemy {
     }
     public void setMoneyDropped(int moneyDropped) {
         this.moneyDropped = moneyDropped;
+    }
+    public int getEnemyType() {
+        return enemyType;
+    }
+
+    public void setEnemyType(int enemyType) {
+        this.enemyType = enemyType;
     }
 
 

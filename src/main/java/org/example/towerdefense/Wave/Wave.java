@@ -25,6 +25,11 @@ public class Wave {
     private double spawnTimer = 0;
     private int spawned = 0;
     private int activeEnemies;
+    private final int enemyType;
+
+    public int getEnemyType() {
+        return enemyType;
+    }
 
 
 
@@ -50,6 +55,7 @@ public class Wave {
                 this.image = new Image(Objects.requireNonNull(WaveManager.class
                                 .getResource("/images/Enemies/red_enemy.png"))
                         .toExternalForm());
+                this.enemyType = 1;
                 break;
             case "FastEnemy":   //stats for a fast enemy
                 this.health = 100;
@@ -59,6 +65,7 @@ public class Wave {
                 this.image = new Image(Objects.requireNonNull(WaveManager.class
                                 .getResource("/images/Enemies/ice_enemy.png"))
                         .toExternalForm());
+                this.enemyType = 2;
                 break;
             case "StrongEnemy": //stats for a strong enemy
                 this.health = 200;
@@ -68,6 +75,7 @@ public class Wave {
                 this.image = new Image(Objects.requireNonNull(WaveManager.class
                                 .getResource("/images/Enemies/enemy-lev4_small.png"))
                         .toExternalForm());
+                this.enemyType = 3;
                 break;
             case "BossEnemy":   //stats for a boss enemy
                 switch (bosstype) { // there are multiple types of bosses
@@ -79,6 +87,7 @@ public class Wave {
                         this.image = new Image(Objects.requireNonNull(WaveManager.class
                                         .getResource("/images/bosses/kiwi-boss.png"))
                                 .toExternalForm());
+                        this.enemyType = 4;
                         break;
 
                     case "snow":
@@ -89,6 +98,7 @@ public class Wave {
                         this.image = new Image(Objects.requireNonNull(WaveManager.class
                                         .getResource("/images/bosses/snow-boss.png"))
                                 .toExternalForm());
+                        this.enemyType = 5;
                         break;
 
                     case "slime":
@@ -99,6 +109,7 @@ public class Wave {
                         this.image = new Image(Objects.requireNonNull(WaveManager.class
                                         .getResource("/images/bosses/slime-boss.png"))
                                 .toExternalForm());
+                        this.enemyType = 6;
                         break;
 
                     default:
@@ -109,6 +120,7 @@ public class Wave {
                         this.image = new Image(Objects.requireNonNull(WaveManager.class
                                         .getResource("/images/Enemies/enemy-lev4_small.png"))
                                 .toExternalForm());
+                        this.enemyType = 1;
                 }
                 break;
 
